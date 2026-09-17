@@ -302,19 +302,18 @@
     "subject": "DBMS",
     "question": "What does isolation mean in the context of database transactions?",
     "answerable": true,
-    "answer": "Isolation is the guarantee that a transaction’s intermediate state is never visible to any other concurrent computation. It means that while a transaction is executing, other transactions cannot see its partial updates, and the effects of the transaction appear all at once when it commits. In transaction theory this property is formalized as **serializability** – the outcome of concurrently executing transactions must be equivalent to some serial (one‑after‑another) execution [4].  \n\n- Isolation is essentially “atomicity in the face of concurrency”: concurrent transactions must not interact through intermediate results [3].  \n- The strongest form of isolation is achieved with two‑phase locking (full serializable isolation), which prevents even read‑uncommitted anomalies [1].  \n- Weaker isolation levels (e.g., snapshot isolation) still hide intermediate writes but may allow non‑serializable schedules [2].  ",
+    "answer": "Isolation is the property that determines **when and how changes made by one operation become visible to other concurrent users or transactions**. In a database it means that a transaction’s intermediate updates are not seen by other transactions until the isolation rules allow it, ensuring that concurrent access does not interfere with each other’s view of the data[1].  \n\n**Key points from the material**\n\n- **Concurrency control**: Isolation is one of the ACID properties; it guarantees that concurrent transactions behave as if they were executed serially, preventing unwanted interactions[5].  \n- **Visibility of changes**: The isolation level decides the point at which a transaction’s modifications become visible to other operations (e.g., after commit under strict isolation, never under “read‑uncommitted”)[1].  \n- **Impact on security**: If a transaction runs under a low‑isolation level (e.g., read‑uncommitted), confidential data written temporarily may be exposed to other concurrent transactions, even if the writer deletes it before committing[3].  \n\nThus, isolation in database transactions is the mechanism that controls the visibility of a transaction’s intermediate state to other concurrent transactions, preserving correctness and preventing interference.",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
       1,
-      2,
       3,
-      4
+      5
     ],
     "correctness": 1,
     "faithfulness": 2,
-    "reason": "The assistant correctly defines isolation as serializability and non-interaction but misses the reference's specific point that isolation is 'one half of atomicity' (with failure atomicity being the other half), which is explicitly stated in source [4]."
+    "reason": "The assistant misses the reference's specific point that isolation is 'one half of atomicity' and that the other half involves failed transactions, instead focusing on visibility and security."
   },
   {
     "id": "q19",
@@ -576,6 +575,110 @@
     "reason": "The assistant accurately defines the congestion window and its relationship to the advertised window using the minimum function, fully supported by Source [1] and consistent with the reference answer."
   },
   {
+    "id": "q34",
+    "subject": "DBMS",
+    "question": "What is normalization in DBMS and why do we do it?",
+    "answerable": true,
+    "answer": "Normalization is the process of analysing a relational table to determine how much redundant data it contains and then restructuring the schema to eliminate that redundancy [1]. It relies on functional‑dependency theory and moves a design through a series of normal forms (1NF, 2NF, 3NF, BCNF), each of which imposes stricter dependency rules and therefore reduces the chance of update anomalies [1][4].\n\n**Why we normalize**\n\n- **Characterize redundancy** – Normalization lets us measure the level of duplicate information in a schema [1].\n- **Remove redundancy** – By transforming the schema into higher normal forms we eliminate unnecessary copies of data, which minimizes storage waste and keeps the data consistent [1].\n- **Prevent update anomalies** – Higher normal forms guarantee fewer insert, delete, and update problems because non‑key attributes are not dependent on other non‑key attributes [1][4].\n- **Facilitate reliable design** – Normalizing tables before they are created ensures that the resulting entities satisfy the required normal form, avoiding later redesign effort and anomalies [4].\n\nIn short, normalization is a design technique that identifies and removes data redundancy, leading to a cleaner, more maintainable relational schema with fewer update anomalies.",
+    "model": "openai/gpt-oss-120b",
+    "refused_before_llm": false,
+    "refused": false,
+    "citations": [
+      1,
+      4
+    ],
+    "correctness": 2,
+    "faithfulness": 2,
+    "reason": "The assistant's answer accurately reflects the reference answer's key points regarding the definition and goals of normalization, and all specific claims are directly supported by the provided sources."
+  },
+  {
+    "id": "q35",
+    "subject": "DBMS",
+    "question": "What is the difference between a primary key and a foreign key?",
+    "answerable": true,
+    "answer": "A **primary key** is a candidate key chosen by the designer to uniquely identify every tuple in a table; it must be unique and cannot be null, and it is shown in an ER diagram by underlining the attribute [1].  \n\nA **foreign key** is an attribute (or set of attributes) in a table that references the primary key of another table; it may be null and must have the same data type as the referenced primary key [1][3].  \n\n**Key differences**\n\n- **Purpose**:  \n  - Primary key → identifies rows within its own table.  \n  - Foreign key → creates a link to rows in a different (parent) table.  \n\n- **Uniqueness**:  \n  - Primary key values are unique across the table.  \n  - Foreign key values need not be unique; they can repeat to represent many‑to‑one relationships.  \n\n- **Nullability**:  \n  - Primary key cannot be null.  \n  - Foreign key can be null (representing an unknown or optional relationship).  \n\n- **Data‑type requirement**:  \n  - Both must share the same data type as the referenced key, but only the foreign key must match the parent’s primary key type [1][3].  \n\n- **Diagram notation**:  \n  - Primary key is underlined in the ER model.  \n  - Foreign key is indicated by a relationship line pointing to the referenced primary key.  \n\nThese distinctions define how tables are uniquely identified and related in a relational database.",
+    "model": "openai/gpt-oss-120b",
+    "refused_before_llm": false,
+    "refused": false,
+    "citations": [
+      1,
+      3
+    ],
+    "correctness": 2,
+    "faithfulness": 1,
+    "reason": "The assistant claims that foreign keys are indicated by a relationship line pointing to the referenced primary key in the ER model, a specific diagrammatic detail not explicitly stated in the provided sources (which only mention underlining for primary keys)."
+  },
+  {
+    "id": "q36",
+    "subject": "DBMS",
+    "question": "What conditions must a table meet to be in third normal form?",
+    "answerable": true,
+    "answer": "A table is in **Third Normal Form (3NF)** when it satisfies two conditions:\n\n- **It is already in Second Normal Form** – the relation must be in 1NF and every non‑key attribute must be fully dependent on the whole primary key, with no partial dependencies [3].\n- **All transitive dependencies are removed** – no non‑key attribute may be functionally dependent on another non‑key attribute; any such dependency must be placed in a separate table [3][4].\n\nThus, 3NF requires the table to be in 2NF **and** to have no transitive dependencies among its attributes.",
+    "model": "openai/gpt-oss-120b",
+    "refused_before_llm": false,
+    "refused": false,
+    "citations": [
+      3,
+      4
+    ],
+    "correctness": 2,
+    "faithfulness": 2,
+    "reason": "The assistant correctly identifies the two conditions for 3NF (being in 2NF and removing transitive dependencies) and accurately describes the 2NF requirement as stated in the sources."
+  },
+  {
+    "id": "q37",
+    "subject": "DBMS",
+    "question": "What is a functional dependency?",
+    "answerable": true,
+    "answer": "A functional dependency (FD) is a constraint between two sets of attributes in a relation where the value of one attribute (or set of attributes) **deterministically** determines the value of another attribute (or set of attributes) — the left‑hand side is called the **determinant** and the right‑hand side the **dependent** [1].  \n\n- Formally, for a relation R, attribute Y is functionally dependent on attribute X (written X → Y) if, for every valid instance of X, that value of X uniquely determines the value of Y [1].  \n- FD’s are a kind of attribute‑level constraint drawn from the semantics of the application domain and are used to understand relationships among data and to guide normalization [2].  \n- In the FD diagram, the determinant appears on the left side and the dependent on the right side [1][3].  \n\nThese definitions capture the essential meaning of a functional dependency as presented in the study material.",
+    "model": "openai/gpt-oss-120b",
+    "refused_before_llm": false,
+    "refused": false,
+    "citations": [
+      1,
+      2,
+      3
+    ],
+    "correctness": 2,
+    "faithfulness": 2,
+    "reason": "The assistant's answer accurately reflects the reference definition and all specific claims (such as the terms determinant/dependent and the formal definition) are directly supported by the provided sources."
+  },
+  {
+    "id": "q38",
+    "subject": "DBMS",
+    "question": "What is the difference between DDL and DML in SQL?",
+    "answerable": true,
+    "answer": "DDL (Data Definition Language) and DML (Data Manipulation Language) serve different purposes in SQL.\n\n- **DDL** is used to define and modify the structure of database objects. It includes statements such as **CREATE DATABASE**, **CREATE TABLE**, **ALTER TABLE**, and **DROP TABLE** that create, change, or remove schemas, tables, constraints, and other objects [2][1]. When a constraint is added with DDL, existing data are checked for violations [1].\n\n- **DML** is used to work with the data stored in those structures. It includes **SELECT**, **INSERT**, **UPDATE**, and **DELETE** statements that query, add, modify, or remove rows in tables [3].\n\n**Key differences**\n\n| Aspect | DDL | DML |\n|--------|-----|-----|\n| Purpose | Define/alter the database schema and objects | Manipulate the actual data within the tables |\n| Typical commands | `CREATE`, `ALTER`, `DROP` (e.g., `CREATE TABLE`, `ALTER TABLE`, `DROP TABLE`) | `SELECT`, `INSERT`, `UPDATE`, `DELETE` |\n| Effect on data | May affect metadata; constraints are validated against existing rows | Directly reads or changes row‑level data |\n| Transaction behavior | Often auto‑committed; changes are permanent once executed | Can be rolled back or committed as part of a transaction |\n\nThus, DDL shapes the *structure* of the database, while DML handles the *content* of that structure.",
+    "model": "openai/gpt-oss-120b",
+    "refused_before_llm": false,
+    "refused": false,
+    "citations": [
+      1,
+      2,
+      3
+    ],
+    "correctness": 2,
+    "faithfulness": 1,
+    "reason": "The assistant includes a claim about transaction behavior (auto-commit vs rollback) that is not supported by the provided sources."
+  },
+  {
+    "id": "q39",
+    "subject": "DBMS",
+    "question": "What is referential integrity?",
+    "answerable": true,
+    "answer": "Referential integrity is a rule that requires every foreign‑key value to correspond to an existing primary‑key value in the related (parent) table, or to be NULL. It prevents “orphan” rows—records whose foreign‑key does not match any primary‑key in the referenced table[4]. In practice the DBMS enforces this constraint when tables are created, ensuring that a child row cannot reference a non‑existent parent row[3].",
+    "model": "openai/gpt-oss-120b",
+    "refused_before_llm": false,
+    "refused": false,
+    "citations": [
+      3,
+      4
+    ],
+    "correctness": 2,
+    "faithfulness": 2,
+    "reason": "The assistant correctly defines referential integrity as requiring a foreign key to match a primary key or be null, and accurately cites the sources for the definition and the prevention of orphan records."
+  },
+  {
     "id": "u01",
     "subject": "not covered",
     "question": "What are the SOLID principles in object-oriented design?",
@@ -669,8 +772,8 @@
     "question": "What is database sharding?",
     "answerable": false,
     "answer": "I couldn't find this in the study material.",
-    "model": null,
-    "refused_before_llm": true,
+    "model": "openai/gpt-oss-120b",
+    "refused_before_llm": false,
     "refused": true,
     "citations": []
   },

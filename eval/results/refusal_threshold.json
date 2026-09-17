@@ -1,5 +1,5 @@
 {
-  "threshold": 0.0185,
+  "threshold": 0.0171,
   "answered": 1.0,
   "refused_before_llm": 0.4666666666666667
 }
