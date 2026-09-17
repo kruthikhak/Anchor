@@ -12,8 +12,8 @@ TEXT_FLAGS = pymupdf.TEXT_DEHYPHENATE | pymupdf.TEXT_MEDIABOX_CLIP
 # so both rank well for question-shaped queries while being useless as sources.
 SKIP_SECTIONS = re.compile(
     r"^(index( of \w+)?|bibliography|references|further reading|notes|(table of )?contents"
-    r"|acknowledg\w*|preface|about this book|about the exercises|steal this book|image credits|colophon"
-    r"|exercises|discussion and exercises|programming projects|exploration projects)$",
+    r"|acknowledg\w*|preface|about (this|the) book|about the authors?|about the exercises|steal this book"
+    r"|image credits|colophon|versioning history|.*exercises|programming projects|exploration projects)$",
     re.I,
 )
 
@@ -80,7 +80,19 @@ def is_furniture(block, height, furniture):
     return y1 > 0.85 * height and round(y1 / 3) in bottom
 
 
-def extract_blocks(path, doc_id):
+def read_toc(doc, fix=None):
+    toc = [(level, clean(title), page) for level, title, page in doc.get_toc() if page >= 1]
+    if not fix:
+        return toc
+    # some PDFs ship a broken table of contents, corpus.json carries a small fix for those
+    if fix.get("ignore"):
+        toc = [entry for entry in toc if not re.match(fix["ignore"], entry[1], re.I)]
+    if fix.get("flatten"):
+        toc = [(1, title, page) for _, title, page in toc]
+    return toc
+
+
+def extract_blocks(path, doc_id, toc_fix=None):
     doc = pymupdf.open(path)
     pages = [
         [b for b in page.get_text("blocks", flags=TEXT_FLAGS, sort=True) if b[6] == 0]
@@ -89,7 +101,7 @@ def extract_blocks(path, doc_id):
     heights = [page.rect.height for page in doc]
     furniture = find_furniture(pages, heights)
 
-    toc = [(level, clean(title), page) for level, title, page in doc.get_toc() if page >= 1]
+    toc = read_toc(doc, toc_fix)
     starts = defaultdict(list)
     for level, title, page in toc:
         starts[page].append((level, title))

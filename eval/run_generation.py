@@ -2,8 +2,11 @@ import hashlib
 import json
 import re
 import sqlite3
+import sys
 import time
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # so this runs from any folder
 
 from openai import RateLimitError
 
@@ -83,8 +86,8 @@ def is_refusal(answer):
 
 def main():
     rows = [json.loads(line) for line in open(EVAL_DIR / "golden_set.jsonl", encoding="utf-8")]
-    threshold = json.loads((RESULTS_DIR / "refusal_threshold.json").read_text())["threshold"]
-    assistant = Assistant(min_score=threshold)
+    threshold = config.REFUSAL_THRESHOLD
+    assistant = Assistant()
     llm = CachedLLM(EVAL_DIR / "cache" / "llm.sqlite")
 
     results = []

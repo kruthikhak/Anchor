@@ -70,6 +70,11 @@
     "subjects": ["DBMS"],
     "url": "",
     "note": "host blocks scripted downloads, save the PDF by hand from https://collection.bccampus.ca/textbook/eyeW6Vi8/",
-    "license": "CC BY 4.0"
+    "license": "CC BY 4.0",
+    "toc_fix": {
+      "why": "this PDF nests every chapter under Acknowledgements and lists each chapter's authors as a section of their own",
+      "flatten": true,
+      "ignore": "^adrienne watt"
+    }
   }
 ]

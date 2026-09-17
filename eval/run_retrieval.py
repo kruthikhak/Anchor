@@ -1,8 +1,11 @@
 import json
 import re
 import statistics
+import sys
 import time
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # so this runs from any folder
 
 from rag import config
 from rag.assistant import Assistant

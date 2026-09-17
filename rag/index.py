@@ -42,8 +42,8 @@ def bm25_tokens(text):
     return STEMMER.stemWords(words)
 
 
-def save_chunks(chunks):
-    with open(config.INDEX_DIR / "chunks.jsonl", "w", encoding="utf-8") as f:
+def save_chunks(chunks, directory=config.INDEX_DIR):
+    with open(directory / "chunks.jsonl", "w", encoding="utf-8") as f:
         for chunk in chunks:
             f.write(json.dumps(asdict(chunk), ensure_ascii=False) + "\n")
 
@@ -53,10 +53,10 @@ def load_chunks():
         return [Chunk(**json.loads(line)) for line in f]
 
 
-def build_dense(chunks, variant):
+def build_dense(chunks, variant, directory=config.INDEX_DIR):
     texts = [c.context_text if variant == "contextual" else c.text for c in chunks]
     vectors = embedder().encode(texts, batch_size=32, normalize_embeddings=True, show_progress_bar=True)
     # vectors are unit length, so inner product is cosine similarity
     index = faiss.IndexFlatIP(vectors.shape[1])
     index.add(vectors.astype(np.float32))
-    faiss.write_index(index, str(config.INDEX_DIR / f"dense_{variant}.faiss"))
+    faiss.write_index(index, str(directory / f"dense_{variant}.faiss"))

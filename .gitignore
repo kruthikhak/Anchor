@@ -7,4 +7,5 @@ __pycache__/
 # PDFs come from scripts/download_corpus.py and the index from scripts/build_index.py
 data/raw/
 data/index/
+data/index_building/
 eval/cache/

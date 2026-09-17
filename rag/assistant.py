@@ -48,7 +48,7 @@ def cited_numbers(answer, n_sources):
 
 
 class Assistant:
-    def __init__(self, retriever=None, method="hybrid", rerank=True, k=5, expand=0, min_score=None):
+    def __init__(self, retriever=None, method="hybrid", rerank=True, k=5, expand=0, min_score=config.REFUSAL_THRESHOLD):
         self.retriever = retriever or Retriever()
         self.method = method
         self.rerank = rerank
@@ -76,7 +76,8 @@ class Assistant:
         query = self.rewrite(question, history)
         hits = self.retriever.search(query, method=self.method, rerank=self.rerank, k=self.k)
 
-        if self.min_score is not None and (not hits or hits[0].rerank_score < self.min_score):
+        # the score check needs reranker scores, so it's skipped when reranking is switched off
+        if not hits or (self.rerank and hits[0].rerank_score < self.min_score):
             return Prepared(question, query, grounded=False, closest=hits[:3])
         return Prepared(question, query, self.build_sources(hits))
 

@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -16,6 +17,11 @@ QUERY_INSTRUCTION = "Represent this sentence for searching relevant passages: "
 CHUNK_TOKENS = 380
 OVERLAP_TOKENS = 60
 MIN_CHUNK_TOKENS = 80
+
+# questions whose best passage reranks below this are refused without calling the LLM;
+# eval/calibrate_refusal.py writes the value, 0 means everything goes to the LLM
+_threshold_file = ROOT / "eval" / "results" / "refusal_threshold.json"
+REFUSAL_THRESHOLD = json.loads(_threshold_file.read_text())["threshold"] if _threshold_file.exists() else 0.0
 
 GROQ_BASE_URL = "https://api.groq.com/openai/v1"
 ANSWER_MODEL = "openai/gpt-oss-120b"
