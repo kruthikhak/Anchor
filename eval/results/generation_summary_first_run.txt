@@ -1,0 +1,33 @@
+Answers on 33 answerable and 10 not-covered questions
+answer model openai/gpt-oss-120b, judge qwen/qwen3.8-27b, refusal threshold 0.5025
+
+answerable questions
+  answered instead of refusing   27/33 (82%)
+  fully correct (2/2)            20/33 (61%)
+  at least partly correct        27/33 (82%)
+  fully faithful to sources      21/27 (78%)
+  cite at least one source       16/27 (59%)
+
+questions the books don't cover
+  correctly refused              10/10 (100%)
+    stopped by retrieval score   8
+    refused by the LLM           2
+
+worth a look:
+  q01  Which data structure does BFS use, and how long does it take on a graph?  ->  refused
+  q02  How does chaining handle collisions in a hash table?  ->  The assistant misses the reference's specific point that the expected list length is bounded by the load factor under a universal hash function, instead relying on the implementation-specific invariant of load factor <= 1 from a different source.
+  q03  Why is union-find with union by rank and path compression considered almost constant time?  ->  The assistant claims the inverse Ackermann function is at most 5, whereas the provided sources explicitly state it is at most about 4.
+  q06  Can I use Dijkstra's algorithm on a graph with negative edge weights?  ->  The assistant correctly states that Dijkstra's algorithm cannot be used with negative weights and explains why, but it misses the specific recommendation to use Bellman-Ford instead, which is a key part of the reference answer.
+  q08  How do you find the minimum of every fixed-size window in an array efficiently?  ->  refused
+  q09  What is backtracking? Explain with the N-Queens problem.  ->  The assistant claims the algorithm only needs to remember occupied columns and diagonals, whereas sources [2] and [4] explicitly state that for the N-Queens problem, one must remember the positions of all previously placed queens in complete detail.
+  q10  What's the difference between a stack and a queue?  ->  refused
+  q12  How does quicksort work?  ->  The assistant's answer is faithful to the sources but misses the worst-case O(n^2) complexity mentioned in the reference answer.
+  q15  What does ACID stand for?  ->  refused
+  q16  What is write-ahead logging?  ->  The assistant incorrectly claims that data pages are written back to normal locations only after the commit record is logged, whereas the sources state that entities must be written to persistent storage (or the log) before the commit entry is written.
+  q18  What does isolation mean in the context of database transactions?  ->  refused
+  q20  What is the difference between a process and a thread?  ->  The claim that a process ends when all its threads have terminated is not explicitly supported by the provided sources, which only define the thread's lifetime and the process's composition.
+  q23  What is thrashing?  ->  refused
+  q26  What is a context switch?  ->  The assistant misses the reference's specific note that some authors use the term exclusively for process switching, although all factual claims are supported by the sources.
+  q28  TCP vs UDP: what's the difference?  ->  The assistant claims UDP is 'inherently half-duplex per datagram' and lists specific use cases (SSH, DNS, VoIP) which are not supported by the provided sources.
+  q30  What is ARP used for?  ->  The assistant's answer is factually supported by the sources but misses the specific detail about table entries timing out mentioned in the reference answer.
+  q31  What are the layers of the OSI model?  ->  The assistant omits the reference's note about the Internet architecture not using session and presentation layers as separate layers, and includes specific functional details (e.g., encryption, dialog control) for the upper layers that are not explicitly stated in the provided sources.

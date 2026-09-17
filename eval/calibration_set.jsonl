@@ -1,0 +1,35 @@
+{"question": "What is the Bellman-Ford algorithm used for?", "answerable": true}
+{"question": "How does heap sort work?", "answerable": true}
+{"question": "What are the advantages of a linked list over an array?", "answerable": true}
+{"question": "What is a skiplist?", "answerable": true}
+{"question": "What does the Floyd-Warshall algorithm compute?", "answerable": true}
+{"question": "What does it mean for a problem to be NP-hard?", "answerable": true}
+{"question": "When does a greedy algorithm give the optimal answer?", "answerable": true}
+{"question": "What is the running time of merge sort?", "answerable": true}
+{"question": "Why do operating systems use virtual memory?", "answerable": true}
+{"question": "What is a monitor in concurrent programming?", "answerable": true}
+{"question": "How does round-robin scheduling work?", "answerable": true}
+{"question": "What information does an inode store?", "answerable": true}
+{"question": "What is an undo log used for?", "answerable": true}
+{"question": "How does an HTTP request and response work?", "answerable": true}
+{"question": "Why does IP fragment packets?", "answerable": true}
+{"question": "How is flow control different from congestion control?", "answerable": true}
+{"question": "How does Ethernet detect collisions?", "answerable": true}
+{"question": "What is stored in a routing table?", "answerable": true}
+{"question": "What is a segment tree used for?", "answerable": true}
+{"question": "What is snapshot isolation?", "answerable": true}
+{"question": "What is GraphQL?", "answerable": false}
+{"question": "What is overfitting in machine learning?", "answerable": false}
+{"question": "How do Kafka consumer groups work?", "answerable": false}
+{"question": "What is Spring Boot used for?", "answerable": false}
+{"question": "How do smart contracts work on Ethereum?", "answerable": false}
+{"question": "What is the attention mechanism in transformers?", "answerable": false}
+{"question": "How does git rebase differ from git merge?", "answerable": false}
+{"question": "What are React hooks?", "answerable": false}
+{"question": "How do I create a pandas DataFrame?", "answerable": false}
+{"question": "What is the difference between supervised and unsupervised learning?", "answerable": false}
+{"question": "How do you center a div in CSS?", "answerable": false}
+{"question": "What is a Python list comprehension?", "answerable": false}
+{"question": "How does OAuth 2.0 authorization work?", "answerable": false}
+{"question": "When should you put Memcached in front of a database?", "answerable": false}
+{"question": "How does MongoDB store documents?", "answerable": false}

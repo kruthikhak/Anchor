@@ -1,0 +1,394 @@
+{
+  "summary": {
+    "A": {
+      "name": "dense only",
+      "hit@1": 0.5151515151515151,
+      "hit@3": 0.8484848484848485,
+      "hit@5": 0.8484848484848485,
+      "mrr@10": 0.6805555555555555,
+      "ms_per_query": 31.067042000358924
+    },
+    "B": {
+      "name": "BM25 only",
+      "hit@1": 0.7272727272727273,
+      "hit@3": 0.9090909090909091,
+      "hit@5": 0.9090909090909091,
+      "mrr@10": 0.803030303030303,
+      "ms_per_query": 1.4247909984987928
+    },
+    "C": {
+      "name": "hybrid (BM25 + dense, RRF)",
+      "hit@1": 0.696969696969697,
+      "hit@3": 0.8787878787878788,
+      "hit@5": 0.8787878787878788,
+      "mrr@10": 0.7861952861952861,
+      "ms_per_query": 17.777791999833426
+    },
+    "D": {
+      "name": "C + section headers",
+      "hit@1": 0.5757575757575758,
+      "hit@3": 0.8484848484848485,
+      "hit@5": 0.9090909090909091,
+      "mrr@10": 0.720959595959596,
+      "ms_per_query": 18.998875000761473
+    },
+    "E": {
+      "name": "C + reranker (bge-reranker-base)",
+      "hit@1": 0.8181818181818182,
+      "hit@3": 0.9393939393939394,
+      "hit@5": 0.9393939393939394,
+      "mrr@10": 0.873015873015873,
+      "ms_per_query": 2188.753667000128
+    },
+    "F": {
+      "name": "D + reranker (bge-reranker-base)",
+      "hit@1": 0.7575757575757576,
+      "hit@3": 0.9393939393939394,
+      "hit@5": 0.9696969696969697,
+      "mrr@10": 0.8588744588744588,
+      "ms_per_query": 3154.028917000687
+    },
+    "G": {
+      "name": "F with a small reranker (MiniLM-L6)",
+      "hit@1": 0.6060606060606061,
+      "hit@3": 0.9090909090909091,
+      "hit@5": 0.9090909090909091,
+      "mrr@10": 0.7563131313131313,
+      "ms_per_query": 1197.067374998369
+    },
+    "context_recall_expand_0": 0.9696969696969697,
+    "context_recall_expand_2": 0.9696969696969697
+  },
+  "questions": {
+    "q01": {
+      "question": "Which data structure does BFS use, and how long does it take on a graph?",
+      "A": 1,
+      "B": 1,
+      "C": 1,
+      "D": 1,
+      "E": 1,
+      "F": 1,
+      "G": 1
+    },
+    "q02": {
+      "question": "How does chaining handle collisions in a hash table?",
+      "A": 1,
+      "B": 3,
+      "C": 1,
+      "D": 1,
+      "E": 1,
+      "F": 1,
+      "G": 1
+    },
+    "q03": {
+      "question": "Why is union-find with union by rank and path compression considered almost constant time?",
+      "A": 1,
+      "B": 1,
+      "C": 1,
+      "D": 1,
+      "E": 1,
+      "F": 1,
+      "G": 1
+    },
+    "q04": {
+      "question": "Explain the two pointers approach for array problems.",
+      "A": 1,
+      "B": 2,
+      "C": 1,
+      "D": 1,
+      "E": 1,
+      "F": 1,
+      "G": 1
+    },
+    "q05": {
+      "question": "When is it impossible to topologically sort a directed graph?",
+      "A": 1,
+      "B": 1,
+      "C": 1,
+      "D": 1,
+      "E": 1,
+      "F": 1,
+      "G": 1
+    },
+    "q06": {
+      "question": "Can I use Dijkstra's algorithm on a graph with negative edge weights?",
+      "A": 2,
+      "B": 1,
+      "C": 2,
+      "D": 2,
+      "E": 1,
+      "F": 1,
+      "G": 2
+    },
+    "q07": {
+      "question": "What is memoization and how does it speed up a recursive Fibonacci function?",
+      "A": 2,
+      "B": 1,
+      "C": 1,
+      "D": 1,
+      "E": 1,
+      "F": 1,
+      "G": 1
+    },
+    "q08": {
+      "question": "How do you find the minimum of every fixed-size window in an array efficiently?",
+      "A": 1,
+      "B": 1,
+      "C": 1,
+      "D": 1,
+      "E": 1,
+      "F": 1,
+      "G": 1
+    },
+    "q09": {
+      "question": "What is backtracking? Explain with the N-Queens problem.",
+      "A": 2,
+      "B": 1,
+      "C": 1,
+      "D": 1,
+      "E": 1,
+      "F": 2,
+      "G": 2
+    },
+    "q10": {
+      "question": "What's the difference between a stack and a queue?",
+      "A": 3,
+      "B": 1,
+      "C": 3,
+      "D": 2,
+      "E": 2,
+      "F": 1,
+      "G": 1
+    },
+    "q11": {
+      "question": "How does Kruskal's algorithm build a minimum spanning tree, and what is its time complexity?",
+      "A": 1,
+      "B": 2,
+      "C": 2,
+      "D": 2,
+      "E": 1,
+      "F": 2,
+      "G": 2
+    },
+    "q12": {
+      "question": "How does quicksort work?",
+      "A": 1,
+      "B": 1,
+      "C": 1,
+      "D": 1,
+      "E": 1,
+      "F": 1,
+      "G": 1
+    },
+    "q13": {
+      "question": "What is amortized analysis and why is it needed?",
+      "A": 1,
+      "B": 1,
+      "C": 1,
+      "D": 1,
+      "E": 1,
+      "F": 1,
+      "G": 1
+    },
+    "q14": {
+      "question": "Why do databases and file systems use B-trees instead of binary search trees?",
+      "A": null,
+      "B": null,
+      "C": null,
+      "D": 8,
+      "E": 7,
+      "F": 7,
+      "G": 6
+    },
+    "q15": {
+      "question": "What does ACID stand for?",
+      "A": 2,
+      "B": 1,
+      "C": 1,
+      "D": 1,
+      "E": 1,
+      "F": 1,
+      "G": 1
+    },
+    "q16": {
+      "question": "What is write-ahead logging?",
+      "A": 1,
+      "B": 1,
+      "C": 1,
+      "D": 2,
+      "E": 1,
+      "F": 1,
+      "G": 1
+    },
+    "q17": {
+      "question": "How does two-phase locking make concurrent transactions serializable?",
+      "A": 1,
+      "B": 1,
+      "C": 1,
+      "D": 1,
+      "E": 1,
+      "F": 1,
+      "G": 1
+    },
+    "q18": {
+      "question": "What does isolation mean in the context of database transactions?",
+      "A": null,
+      "B": null,
+      "C": null,
+      "D": null,
+      "E": null,
+      "F": 5,
+      "G": null
+    },
+    "q19": {
+      "question": "What conditions must hold for a deadlock to occur?",
+      "A": null,
+      "B": 1,
+      "C": null,
+      "D": 4,
+      "E": 1,
+      "F": 1,
+      "G": 3
+    },
+    "q20": {
+      "question": "What is the difference between a process and a thread?",
+      "A": 1,
+      "B": 1,
+      "C": 1,
+      "D": 1,
+      "E": 1,
+      "F": 1,
+      "G": 1
+    },
+    "q21": {
+      "question": "What is a semaphore and what operations does it support?",
+      "A": 2,
+      "B": 1,
+      "C": 1,
+      "D": 2,
+      "E": 2,
+      "F": 2,
+      "G": 2
+    },
+    "q22": {
+      "question": "What is priority inversion?",
+      "A": 1,
+      "B": 3,
+      "C": 1,
+      "D": 3,
+      "E": 1,
+      "F": 1,
+      "G": 2
+    },
+    "q23": {
+      "question": "What is thrashing?",
+      "A": 8,
+      "B": 1,
+      "C": 1,
+      "D": 1,
+      "E": 1,
+      "F": 1,
+      "G": 1
+    },
+    "q24": {
+      "question": "What is a page fault and who handles it?",
+      "A": 6,
+      "B": null,
+      "C": 9,
+      "D": null,
+      "E": 1,
+      "F": 1,
+      "G": 8
+    },
+    "q25": {
+      "question": "What is a race condition and how does mutual exclusion prevent it?",
+      "A": 3,
+      "B": 1,
+      "C": 2,
+      "D": 4,
+      "E": 1,
+      "F": 2,
+      "G": 3
+    },
+    "q26": {
+      "question": "What is a context switch?",
+      "A": 1,
+      "B": 1,
+      "C": 1,
+      "D": 1,
+      "E": 1,
+      "F": 1,
+      "G": 1
+    },
+    "q27": {
+      "question": "Explain the TCP three-way handshake.",
+      "A": 2,
+      "B": 1,
+      "C": 1,
+      "D": 1,
+      "E": 1,
+      "F": 1,
+      "G": 2
+    },
+    "q28": {
+      "question": "TCP vs UDP: what's the difference?",
+      "A": 2,
+      "B": 1,
+      "C": 1,
+      "D": 2,
+      "E": 3,
+      "F": 2,
+      "G": 1
+    },
+    "q29": {
+      "question": "What is slow start in TCP?",
+      "A": 2,
+      "B": 1,
+      "C": 1,
+      "D": 1,
+      "E": 1,
+      "F": 1,
+      "G": 1
+    },
+    "q30": {
+      "question": "What is ARP used for?",
+      "A": 2,
+      "B": 2,
+      "C": 2,
+      "D": 3,
+      "E": 1,
+      "F": 2,
+      "G": 2
+    },
+    "q31": {
+      "question": "What are the layers of the OSI model?",
+      "A": 1,
+      "B": 1,
+      "C": 1,
+      "D": 1,
+      "E": 1,
+      "F": 1,
+      "G": 1
+    },
+    "q32": {
+      "question": "What does DNS do?",
+      "A": 1,
+      "B": 3,
+      "C": 2,
+      "D": 2,
+      "E": 3,
+      "F": 1,
+      "G": 2
+    },
+    "q33": {
+      "question": "What is the congestion window in TCP and how does it relate to the advertised window?",
+      "A": 1,
+      "B": 1,
+      "C": 1,
+      "D": 1,
+      "E": 1,
+      "F": 1,
+      "G": 1
+    }
+  }
+}

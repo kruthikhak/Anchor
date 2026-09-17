@@ -1,0 +1,6 @@
+{
+  "threshold": 0.5025,
+  "balanced_accuracy": 0.875,
+  "answered": 0.95,
+  "refused": 0.8
+}
