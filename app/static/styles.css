@@ -254,6 +254,10 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.01em; }
 }
 .chip:hover { border-color: var(--accent); color: var(--accent-dark); }
 .timing { margin-left: auto; font: 400 11.5px var(--mono); color: var(--ink-muted); }
+.chip.grounding { margin-left: auto; }
+.chip.grounding:disabled { cursor: default; opacity: 0.75; }
+.chip.is-on { background: #fdf3e0; border-color: #e0b874; color: #7a5312; }
+.unchecked { background: #fdf3e0; border-bottom: 1.5px dotted #c98a2e; }
 
 /* sources under an answer */
 .sources { display: flex; flex-wrap: wrap; gap: 8px; }

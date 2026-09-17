@@ -48,6 +48,14 @@ faithfulness, checking every factual claim in the assistant's answer against the
 Reply with JSON only: {{"correctness": 0, "faithfulness": 0, "reason": "one short sentence"}}"""
 
 
+def seconds(value):
+    """Groq reports its reset times like '577ms', '12.5s' or '1m30s'."""
+    total = 0.0
+    for amount, unit in re.findall(r"([\d.]+)(ms|m|s|h)", value):
+        total += float(amount) * {"ms": 0.001, "s": 1, "m": 60, "h": 3600}[unit]
+    return min(total, 90)
+
+
 class CachedLLM:
     # eval runs get repeated while tuning, and the free tier is slow, so responses are kept on disk
     def __init__(self, path):
@@ -61,14 +69,20 @@ class CachedLLM:
         if row:
             return json.loads(row[0])
 
-        for attempt in range(6):
+        for attempt in range(8):
             try:
-                response = client().chat.completions.create(**request)
+                raw = client().chat.completions.with_raw_response.create(**request)
                 break
             except RateLimitError:
-                time.sleep(20 * (attempt + 1))
+                time.sleep(60)  # the free tier budget is per minute, so waiting less just fails again
         else:
             raise RuntimeError(f"still rate limited on {request['model']}")
+
+        response = raw.parse()
+        # a request of this size needs a few thousand tokens of headroom; wait for the window to
+        # roll over rather than firing another call and taking a 429
+        if int(raw.headers.get("x-ratelimit-remaining-tokens", 99999)) < 4000:
+            time.sleep(seconds(raw.headers.get("x-ratelimit-reset-tokens", "10s")))
 
         result = {"content": response.choices[0].message.content or "", "model": response.model}
         self.db.execute("insert into calls values (?, ?)", (key, json.dumps(result)))

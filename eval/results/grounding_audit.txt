@@ -1,0 +1,26 @@
+Sentence-level grounding over 39 answers
+a sentence counts as backed when a passage scores at least 0.05 against it.
+Sentences that cite a source are checked against that source; the rest against every
+retrieved passage, because an uncited sentence is often the next step of a credited point.
+
+  sentences                  258
+  carry a citation           139 (54%)
+  cited and backed by it     132 (95% of cited)
+  backed by no passage       24 (9%)
+
+sentences nothing supports:
+  q04  [no citation, best 0.000]  This guarantees that each element is visited a constant number of times.
+  q04  [no citation, best 0.001]  Hence the method yields linear‑time scans for problems that would otherwise require nested loops.
+  q34  [no citation, best 0.001]  Facilitate maintenance – A well‑normalized schema is easier to modify and extend because changes affect only one place rather than multiple 
+  q04  [no citation, best 0.005]  This approach is a core “sliding‑window” pattern that turns many naïve `O(n²)` solutions into `O(n)` (or `O(n log n)` when a sort is require
+  q28  [cites [5, 4], best 0.008]  Connection state – TCP establishes a connection with a three‑way handshake and maintains per‑connection state (e.g., sequence numbers, timer
+  q34  [no citation, best 0.008]  Improve data integrity – Fewer redundant copies mean fewer chances for inconsistent data, making the database more reliable.
+  q04  [no citation, best 0.008]  If `a[L] + a[R] < x`, increment `L`; if the sum > `x`, decrement `R`; if equal, report the pair.
+  q08  [no citation, best 0.012]  Push the new element (or its index) to the back.
+  q28  [no citation, best 0.014]  UDP is chosen for latency‑sensitive or simple message‑oriented applications where occasional loss is acceptable (e.g., DNS, streaming, VoIP)
+  q08  [no citation, best 0.015]  Maintain a monotonic queue (deque) that stores indices or values in increasing order.
+  q04  [no citation, best 0.016]  Set `L` at the first element and `R` at the last.
+  q13  [no citation, best 0.019]  A straightforward per‑operation analysis would either over‑estimate (by using the worst‑case cost for every step) or under‑estimate (by igno
+  q07  [no citation, best 0.023]  Consequently the total work reduces to a single constant‑time addition per index, i.e.
+  q04  [no citation, best 0.023]  While the sum ≤ `x`, move `R` right to enlarge the window; if the sum exceeds `x`, move `L` right to shrink it.
+  q11  [no citation, best 0.033]  When all vertices belong to a single component, the selected edges form an MST.

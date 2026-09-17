@@ -1,9 +1,8 @@
 NOT_FOUND = "I couldn't find this in the study material."
 
-# the rules that never change, whatever the student asked for
-GROUNDING = f"""You are a study assistant for engineering students preparing for placement interviews.
-
-Work only from the numbered sources you are given. Cite as you go: put the source number in plain square brackets, like [2] or [1][3], right after each sentence or bullet point it supports. Don't use 【】 brackets or line numbers.
+# The rules that never change, whatever the student asked for. They go last in the system prompt:
+# when the writing style came last instead, faithfulness in the eval fell from 87% to 74%.
+RULES = f"""Answer using only the numbered sources you are given. Cite as you go: put the source number in plain square brackets, like [2] or [1][3], right after each sentence or bullet point it supports. Don't use 【】 brackets or line numbers.
 
 If the sources do not contain what is needed, reply with exactly this sentence and nothing else:
 {NOT_FOUND}
@@ -25,7 +24,8 @@ MODES = {
 
 
 def system_prompt(mode="explain"):
-    return GROUNDING + "\n\n" + MODES.get(mode, MODES["explain"])
+    style = MODES.get(mode, MODES["explain"])
+    return f"You are a study assistant for engineering students preparing for placement interviews.\n\n{style}\n\n{RULES}"
 
 PRACTICE_SYSTEM = """You write practice questions for engineering students preparing for placement interviews.
 

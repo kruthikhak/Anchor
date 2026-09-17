@@ -11,6 +11,7 @@ from pydantic import BaseModel
 
 from rag import config, prompts
 from rag.assistant import Assistant, cited_numbers, tidy_citations
+from rag.grounding import check, summarise
 from rag.index import STOPWORDS, TOKEN
 from rag.llm import chat
 
@@ -42,6 +43,11 @@ class AskRequest(BaseModel):
 class PracticeRequest(BaseModel):
     topic: str
     subject: str | None = None
+
+
+class GroundingRequest(BaseModel):
+    answer: str
+    sources: list[dict]
 
 
 def docs_for(subject):
@@ -134,6 +140,13 @@ def practice(request: PracticeRequest):
         "questions": questions,
         "sources": [source_json(s.number, s.hit, s.text) for s in prepared.sources],
     }
+
+
+@app.post("/api/grounding")
+def grounding(request: GroundingRequest):
+    # the same cross-encoder that ranked the passages now scores each sentence against what it cites
+    rows = check(request.answer, request.sources)
+    return {"sentences": rows, **summarise(rows)}
 
 
 @app.get("/api/library")
