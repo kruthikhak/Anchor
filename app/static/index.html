@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anchor · grounded study assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">A</span>
+      <span>
+        <strong>Anchor</strong>
+        <small>every answer anchored to a page</small>
+      </span>
+    </div>
+
+    <nav class="nav" id="nav">
+      <button class="nav-item is-active" data-view="ask">Ask</button>
+      <button class="nav-item" data-view="library">Library</button>
+      <button class="nav-item" data-view="evaluation">Evaluation</button>
+    </nav>
+
+    <div class="side-block">
+      <p class="side-label">Subject</p>
+      <div class="subjects" id="subjects"></div>
+    </div>
+
+    <div class="side-block side-recent">
+      <p class="side-label">Recent questions</p>
+      <div class="recent" id="recent"></div>
+    </div>
+
+    <div class="side-foot">
+      <p class="side-label">Highlight</p>
+      <div class="swatches" id="swatches"></div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <section class="view" id="view-ask">
+      <header class="topbar">
+        <div class="modes" id="modes">
+          <button class="mode is-active" data-mode="explain">Explain</button>
+          <button class="mode" data-mode="simple">Simple</button>
+          <button class="mode" data-mode="quiz">Quiz me</button>
+          <button class="mode" data-mode="socratic">Socratic</button>
+        </div>
+        <button class="ghost" id="new-thread">New thread</button>
+      </header>
+
+      <div class="thread" id="thread">
+        <div class="welcome">
+          <h1>Ask the shelf, not the internet.</h1>
+          <p>Answers come only from nine openly licensed textbooks on data structures, algorithms, operating systems, databases and networks. Every claim carries the page it came from, and questions the books don't cover get an honest "not in the library".</p>
+          <div class="starters" id="starters"></div>
+        </div>
+      </div>
+
+      <form class="composer" id="composer">
+        <input id="question" autocomplete="off" placeholder="Ask anything from the placement syllabus…">
+        <button type="submit" id="send">Ask</button>
+      </form>
+    </section>
+
+    <section class="view" id="view-library" hidden>
+      <header class="topbar"><h2>The library</h2><span class="muted" id="library-count"></span></header>
+      <div class="cards" id="library"></div>
+    </section>
+
+    <section class="view" id="view-evaluation" hidden>
+      <header class="topbar"><h2>How well it works</h2><span class="muted" id="eval-models"></span></header>
+      <div class="eval" id="evaluation"></div>
+    </section>
+
+  </main>
+
+  <aside class="drawer" id="drawer" hidden>
+    <div class="drawer-head">
+      <span class="drawer-title" id="drawer-title">Source</span>
+      <button class="icon" id="drawer-close" aria-label="Close source">✕</button>
+    </div>
+    <div class="drawer-body" id="drawer-body"></div>
+  </aside>
+
+</div>
+<script src="/static/app.js"></script>
+</body>
+</html>

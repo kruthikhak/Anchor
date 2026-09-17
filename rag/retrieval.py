@@ -54,12 +54,16 @@ class Retriever:
         return [int(i) for i in top[np.argsort(-scores[top])] if scores[i] > 0]
 
     # a pool of 20 scored the same as 30 in the eval and reranks about 40% faster on CPU
-    def search(self, query, method="hybrid", rerank=True, k=5, pool=20, rerank_model=config.RERANK_MODEL):
+    def search(self, query, method="hybrid", rerank=True, k=5, pool=20, rerank_model=config.RERANK_MODEL, docs=None):
+        depth = pool if docs is None else pool * 5  # narrowing to one subject throws candidates away
         rankings = {}
         if method in ("dense", "hybrid"):
-            rankings["dense"] = self.dense_ranking(query, pool)
+            rankings["dense"] = self.dense_ranking(query, depth)
         if method in ("bm25", "hybrid"):
-            rankings["bm25"] = self.bm25_ranking(query, pool)
+            rankings["bm25"] = self.bm25_ranking(query, depth)
+        if docs is not None:
+            rankings = {name: [i for i in r if self.chunks[i].doc_id in docs] for name, r in rankings.items()}
+        rankings = {name: r[:pool] for name, r in rankings.items()}
         positions = {name: {idx: rank for rank, idx in enumerate(r, start=1)} for name, r in rankings.items()}
 
         if rerank:

@@ -72,9 +72,9 @@ class Assistant:
         )
         return (response.choices[0].message.content or "").strip() or question
 
-    def prepare(self, question, history=None):
+    def prepare(self, question, history=None, docs=None):
         query = self.rewrite(question, history)
-        hits = self.retriever.search(query, method=self.method, rerank=self.rerank, k=self.k)
+        hits = self.retriever.search(query, method=self.method, rerank=self.rerank, k=self.k, docs=docs)
 
         # the score check needs reranker scores, so it's skipped when reranking is switched off
         if not hits or (self.rerank and hits[0].rerank_score < self.min_score):
@@ -97,17 +97,17 @@ class Assistant:
         return sources
 
     @staticmethod
-    def messages(prepared):
+    def messages(prepared, mode="explain"):
         return [
-            {"role": "system", "content": prompts.ANSWER_SYSTEM},
+            {"role": "system", "content": prompts.system_prompt(mode)},
             {"role": "user", "content": prompts.answer_request(prepared.search_query, prepared.sources)},
         ]
 
-    def stream(self, prepared):
+    def stream(self, prepared, mode="explain"):
         if not prepared.grounded:
             yield prompts.NOT_FOUND
             return
-        for event in chat(self.messages(prepared), stream=True, **GENERATION):
+        for event in chat(self.messages(prepared, mode), stream=True, **GENERATION):
             if event.choices and event.choices[0].delta.content:
                 yield event.choices[0].delta.content
 
