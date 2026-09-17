@@ -1,0 +1,8 @@
+pymupdf>=1.24
+sentence-transformers>=3.0
+faiss-cpu>=1.8
+rank-bm25>=0.2.2
+snowballstemmer>=2.2
+openai>=1.40
+python-dotenv>=1.0
+certifi

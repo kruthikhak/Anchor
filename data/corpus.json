@@ -1,0 +1,75 @@
+[
+  {
+    "id": "erickson-algorithms",
+    "title": "Algorithms",
+    "authors": "Jeff Erickson",
+    "subjects": ["DSA"],
+    "url": "https://jeffe.cs.illinois.edu/teaching/algorithms/book/Algorithms-JeffE.pdf",
+    "license": "CC BY 4.0"
+  },
+  {
+    "id": "erickson-hashing-notes",
+    "title": "Hash Tables (lecture notes)",
+    "authors": "Jeff Erickson",
+    "subjects": ["DSA"],
+    "url": "https://jeffe.cs.illinois.edu/teaching/algorithms/notes/05-hashing.pdf",
+    "license": "CC BY 4.0"
+  },
+  {
+    "id": "erickson-union-find-notes",
+    "title": "Disjoint Sets (lecture notes)",
+    "authors": "Jeff Erickson",
+    "subjects": ["DSA"],
+    "url": "https://jeffe.cs.illinois.edu/teaching/algorithms/notes/11-unionfind.pdf",
+    "license": "CC BY 4.0"
+  },
+  {
+    "id": "erickson-amortized-analysis-notes",
+    "title": "Amortized Analysis (lecture notes)",
+    "authors": "Jeff Erickson",
+    "subjects": ["DSA"],
+    "url": "https://jeffe.cs.illinois.edu/teaching/algorithms/notes/09-amortize.pdf",
+    "license": "CC BY 4.0"
+  },
+  {
+    "id": "open-data-structures",
+    "title": "Open Data Structures (pseudocode edition)",
+    "authors": "Pat Morin",
+    "subjects": ["DSA", "DBMS"],
+    "url": "https://opendatastructures.org/ods-python.pdf",
+    "license": "CC BY 2.5"
+  },
+  {
+    "id": "competitive-programmers-handbook",
+    "title": "Competitive Programmer's Handbook",
+    "authors": "Antti Laaksonen",
+    "subjects": ["DSA"],
+    "url": "https://github.com/pllk/cphb/raw/master/book.pdf",
+    "license": "CC BY-NC-SA 4.0"
+  },
+  {
+    "id": "hailperin-operating-systems",
+    "title": "Operating Systems and Middleware (rev 1.3.1)",
+    "authors": "Max Hailperin",
+    "subjects": ["Operating Systems", "DBMS"],
+    "url": "https://www.cs.utexas.edu/~ans/classes/cs439/osm-rev1.3.1.pdf",
+    "license": "CC BY-SA 3.0"
+  },
+  {
+    "id": "peterson-davie-computer-networks",
+    "title": "Computer Networks: A Systems Approach (v6.1)",
+    "authors": "Larry Peterson, Bruce Davie",
+    "subjects": ["Computer Networks"],
+    "url": "https://github.com/SystemsApproach/book/releases/download/v6.1/book.pdf",
+    "license": "CC BY 4.0"
+  },
+  {
+    "id": "watt-database-design",
+    "title": "Database Design (2nd edition)",
+    "authors": "Adrienne Watt, Nelson Eng",
+    "subjects": ["DBMS"],
+    "url": "",
+    "note": "host blocks scripted downloads, save the PDF by hand from https://collection.bccampus.ca/textbook/eyeW6Vi8/",
+    "license": "CC BY 4.0"
+  }
+]

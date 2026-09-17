@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+.env
+
+# PDFs come from scripts/download_corpus.py and the index from scripts/build_index.py
+data/raw/
+data/index/
+eval/cache/
