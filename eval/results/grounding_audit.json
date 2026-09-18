@@ -12,8 +12,8 @@
       "id": "q02",
       "question": "How does chaining handle collisions in a hash table?",
       "total": 6,
-      "attributed": 4,
-      "citedBacked": 4,
+      "attributed": 5,
+      "citedBacked": 5,
       "supported": 6
     },
     {
@@ -27,10 +27,10 @@
     {
       "id": "q04",
       "question": "Explain the two pointers approach for array problems.",
-      "total": 20,
+      "total": 11,
       "attributed": 2,
       "citedBacked": 2,
-      "supported": 13
+      "supported": 8
     },
     {
       "id": "q05",
@@ -43,50 +43,50 @@
     {
       "id": "q06",
       "question": "Can I use Dijkstra's algorithm on a graph with negative edge weights?",
-      "total": 7,
-      "attributed": 4,
-      "citedBacked": 4,
-      "supported": 7
+      "total": 3,
+      "attributed": 1,
+      "citedBacked": 1,
+      "supported": 3
     },
     {
       "id": "q07",
       "question": "What is memoization and how does it speed up a recursive Fibonacci function?",
-      "total": 5,
-      "attributed": 4,
-      "citedBacked": 4,
-      "supported": 4
+      "total": 7,
+      "attributed": 5,
+      "citedBacked": 5,
+      "supported": 7
     },
     {
       "id": "q08",
       "question": "How do you find the minimum of every fixed-size window in an array efficiently?",
-      "total": 6,
-      "attributed": 1,
-      "citedBacked": 1,
+      "total": 8,
+      "attributed": 4,
+      "citedBacked": 2,
       "supported": 4
     },
     {
       "id": "q09",
       "question": "What is backtracking? Explain with the N-Queens problem.",
-      "total": 8,
-      "attributed": 6,
-      "citedBacked": 6,
-      "supported": 8
+      "total": 12,
+      "attributed": 9,
+      "citedBacked": 7,
+      "supported": 10
     },
     {
       "id": "q10",
       "question": "What's the difference between a stack and a queue?",
-      "total": 3,
-      "attributed": 2,
-      "citedBacked": 2,
-      "supported": 3
+      "total": 9,
+      "attributed": 3,
+      "citedBacked": 3,
+      "supported": 8
     },
     {
       "id": "q11",
       "question": "How does Kruskal's algorithm build a minimum spanning tree, and what is its time complexity?",
-      "total": 8,
-      "attributed": 3,
-      "citedBacked": 3,
-      "supported": 7
+      "total": 9,
+      "attributed": 4,
+      "citedBacked": 4,
+      "supported": 8
     },
     {
       "id": "q12",
@@ -99,7 +99,7 @@
     {
       "id": "q13",
       "question": "What is amortized analysis and why is it needed?",
-      "total": 5,
+      "total": 4,
       "attributed": 2,
       "citedBacked": 2,
       "supported": 4
@@ -107,10 +107,10 @@
     {
       "id": "q14",
       "question": "Why do databases and file systems use B-trees instead of binary search trees?",
-      "total": 10,
-      "attributed": 4,
+      "total": 13,
+      "attributed": 5,
       "citedBacked": 4,
-      "supported": 10
+      "supported": 9
     },
     {
       "id": "q15",
@@ -123,26 +123,26 @@
     {
       "id": "q16",
       "question": "What is write-ahead logging?",
-      "total": 8,
+      "total": 7,
       "attributed": 3,
       "citedBacked": 3,
-      "supported": 6
+      "supported": 7
     },
     {
       "id": "q17",
       "question": "How does two-phase locking make concurrent transactions serializable?",
-      "total": 9,
-      "attributed": 5,
-      "citedBacked": 5,
-      "supported": 9
+      "total": 18,
+      "attributed": 6,
+      "citedBacked": 6,
+      "supported": 17
     },
     {
       "id": "q18",
       "question": "What does isolation mean in the context of database transactions?",
       "total": 6,
       "attributed": 4,
-      "citedBacked": 3,
-      "supported": 5
+      "citedBacked": 4,
+      "supported": 6
     },
     {
       "id": "q19",
@@ -155,26 +155,26 @@
     {
       "id": "q20",
       "question": "What is the difference between a process and a thread?",
-      "total": 12,
-      "attributed": 7,
-      "citedBacked": 7,
-      "supported": 12
+      "total": 9,
+      "attributed": 6,
+      "citedBacked": 6,
+      "supported": 9
     },
     {
       "id": "q21",
       "question": "What is a semaphore and what operations does it support?",
-      "total": 5,
+      "total": 4,
       "attributed": 4,
       "citedBacked": 4,
-      "supported": 5
+      "supported": 4
     },
     {
       "id": "q22",
       "question": "What is priority inversion?",
-      "total": 8,
-      "attributed": 7,
-      "citedBacked": 7,
-      "supported": 8
+      "total": 6,
+      "attributed": 3,
+      "citedBacked": 3,
+      "supported": 6
     },
     {
       "id": "q23",
@@ -203,26 +203,26 @@
     {
       "id": "q26",
       "question": "What is a context switch?",
-      "total": 2,
-      "attributed": 1,
-      "citedBacked": 1,
-      "supported": 2
+      "total": 3,
+      "attributed": 2,
+      "citedBacked": 2,
+      "supported": 3
     },
     {
       "id": "q27",
       "question": "Explain the TCP three-way handshake.",
-      "total": 11,
+      "total": 9,
       "attributed": 7,
-      "citedBacked": 5,
+      "citedBacked": 7,
       "supported": 9
     },
     {
       "id": "q28",
       "question": "TCP vs UDP: what's the difference?",
-      "total": 12,
-      "attributed": 9,
-      "citedBacked": 7,
-      "supported": 9
+      "total": 9,
+      "attributed": 6,
+      "citedBacked": 6,
+      "supported": 8
     },
     {
       "id": "q29",
@@ -236,25 +236,25 @@
       "id": "q30",
       "question": "What is ARP used for?",
       "total": 3,
-      "attributed": 2,
-      "citedBacked": 2,
+      "attributed": 3,
+      "citedBacked": 3,
       "supported": 3
     },
     {
       "id": "q31",
       "question": "What are the layers of the OSI model?",
-      "total": 8,
+      "total": 9,
       "attributed": 7,
-      "citedBacked": 6,
-      "supported": 7
+      "citedBacked": 7,
+      "supported": 9
     },
     {
       "id": "q32",
       "question": "What does DNS do?",
-      "total": 5,
-      "attributed": 4,
-      "citedBacked": 4,
-      "supported": 5
+      "total": 2,
+      "attributed": 1,
+      "citedBacked": 1,
+      "supported": 2
     },
     {
       "id": "q33",
@@ -262,217 +262,192 @@
       "total": 4,
       "attributed": 2,
       "citedBacked": 2,
-      "supported": 4
+      "supported": 3
     },
     {
       "id": "q34",
       "question": "What is normalization in DBMS and why do we do it?",
-      "total": 8,
-      "attributed": 4,
-      "citedBacked": 4,
-      "supported": 6
+      "total": 7,
+      "attributed": 6,
+      "citedBacked": 6,
+      "supported": 7
     },
     {
       "id": "q35",
       "question": "What is the difference between a primary key and a foreign key?",
-      "total": 13,
-      "attributed": 7,
-      "citedBacked": 7,
-      "supported": 13
+      "total": 12,
+      "attributed": 3,
+      "citedBacked": 3,
+      "supported": 12
     },
     {
       "id": "q36",
       "question": "What conditions must a table meet to be in third normal form?",
-      "total": 3,
+      "total": 4,
       "attributed": 2,
       "citedBacked": 2,
-      "supported": 3
+      "supported": 4
     },
     {
       "id": "q37",
       "question": "What is a functional dependency?",
-      "total": 6,
-      "attributed": 5,
-      "citedBacked": 5,
-      "supported": 6
+      "total": 5,
+      "attributed": 4,
+      "citedBacked": 4,
+      "supported": 5
     },
     {
       "id": "q38",
       "question": "What is the difference between DDL and DML in SQL?",
-      "total": 9,
+      "total": 7,
       "attributed": 3,
       "citedBacked": 3,
-      "supported": 9
+      "supported": 7
     },
     {
       "id": "q39",
       "question": "What is referential integrity?",
-      "total": 2,
-      "attributed": 1,
+      "total": 3,
+      "attributed": 2,
       "citedBacked": 1,
       "supported": 2
     }
   ],
   "weak": [
     {
-      "id": "q04",
-      "score": 6.202623626450077e-05,
-      "cited": [],
-      "text": "This guarantees that each element is visited a constant number of times."
-    },
-    {
-      "id": "q04",
-      "score": 0.0005240211030468345,
-      "cited": [],
-      "text": "Hence the method yields linear\u2011time scans for problems that would otherwise require nested loops."
-    },
-    {
-      "id": "q34",
-      "score": 0.000861082342453301,
-      "cited": [],
-      "text": "Facilitate maintenance \u2013 A well\u2011normalized schema is easier to modify and extend because changes affect only one place rather than multiple duplicated rows."
-    },
-    {
-      "id": "q04",
-      "score": 0.004638368263840675,
-      "cited": [],
-      "text": "This approach is a core \u201csliding\u2011window\u201d pattern that turns many na\u00efve `O(n\u00b2)` solutions into `O(n)` (or `O(n\u202flog\u202fn)` when a sort is required)."
-    },
-    {
-      "id": "q28",
-      "score": 0.007501859683543444,
-      "cited": [
-        5,
-        4
-      ],
-      "text": "Connection state \u2013 TCP establishes a connection with a three\u2011way handshake and maintains per\u2011connection state (e.g., sequence numbers, timers) for the lifetime of the flow; UDP has no connection setup and carries no per\u2011flow state\u202f[5][4]."
-    },
-    {
-      "id": "q34",
-      "score": 0.007514587137848139,
-      "cited": [],
-      "text": "Improve data integrity \u2013 Fewer redundant copies mean fewer chances for inconsistent data, making the database more reliable."
-    },
-    {
-      "id": "q04",
-      "score": 0.008122296072542667,
-      "cited": [],
-      "text": "If `a[L] + a[R] < x`, increment `L`; if the sum >\u202f`x`, decrement `R`; if equal, report the pair."
-    },
-    {
-      "id": "q08",
-      "score": 0.011900732293725014,
-      "cited": [],
-      "text": "Push the new element (or its index) to the back."
-    },
-    {
-      "id": "q28",
-      "score": 0.013868504203855991,
-      "cited": [],
-      "text": "UDP is chosen for latency\u2011sensitive or simple message\u2011oriented applications where occasional loss is acceptable (e.g., DNS, streaming, VoIP)."
-    },
-    {
-      "id": "q08",
-      "score": 0.015467538498342037,
-      "cited": [],
-      "text": "Maintain a monotonic queue (deque) that stores indices or values in increasing order."
-    },
-    {
-      "id": "q04",
-      "score": 0.015587772242724895,
-      "cited": [],
-      "text": "Set `L` at the first element and `R` at the last."
-    },
-    {
-      "id": "q13",
-      "score": 0.018743788823485374,
-      "cited": [],
-      "text": "A straightforward per\u2011operation analysis would either over\u2011estimate (by using the worst\u2011case cost for every step) or under\u2011estimate (by ignoring the expensive steps)."
-    },
-    {
-      "id": "q07",
-      "score": 0.022973239421844482,
-      "cited": [],
-      "text": "Consequently the total work reduces to a single constant\u2011time addition per index, i.e."
-    },
-    {
-      "id": "q04",
-      "score": 0.023365356028079987,
-      "cited": [],
-      "text": "While the sum \u2264\u202f`x`, move `R` right to enlarge the window; if the sum exceeds `x`, move `L` right to shrink it."
-    },
-    {
-      "id": "q11",
-      "score": 0.03264734894037247,
-      "cited": [],
-      "text": "When all vertices belong to a single component, the selected edges form an MST."
-    },
-    {
-      "id": "q16",
-      "score": 0.033855486661195755,
-      "cited": [],
-      "text": "The log serves as the single source of truth for recovery, enabling the system to reconstruct the correct state after a crash."
-    },
-    {
-      "id": "q04",
-      "score": 0.047924261540174484,
-      "cited": [],
-      "text": "Each pointer can advance only toward the end (or toward the center) and never retreats, so the total number of moves is at most `2n`."
-    },
-    {
-      "id": "q16",
-      "score": 0.04794967547059059,
-      "cited": [],
-      "text": "In practice, WAL allows the system to write changes to fast volatile buffers (e.g., RAM) and defer the slower writes to the actual data pages, while still meeting the ACID durability requirement."
-    },
-    {
-      "id": "q28",
-      "score": 0.06005764752626419,
-      "cited": [
-        4
-      ],
-      "text": "UDP preserves message boundaries: each send results in a single datagram that is received as a whole\u202f[4]."
-    },
-    {
-      "id": "q18",
-      "score": 0.06111391261219978,
-      "cited": [
-        1
-      ],
-      "text": "Visibility timing: It specifies the point at which the effects of a transaction are exposed to other operations\u2014either only after commit (strict isolation) or earlier under weaker levels[1]."
-    },
-    {
-      "id": "q03",
-      "score": 0.07122351229190826,
-      "cited": [
-        5,
-        3
-      ],
-      "text": "Consequently, the total time for m operations on n elements is O(m\u202f\u03b1(n)), which for m\u202f\u2248\u202fn is essentially linear, i.e., each operation behaves like a constant\u2011time step in practice\u202f[5][3]."
-    },
-    {
-      "id": "q31",
-      "score": 0.5023438930511475,
+      "id": "q14",
+      "score": 0.00014302032650448382,
       "cited": [
         5
       ],
-      "text": "Layer\u202f6 \u2013 Presentation \u2013 (not detailed in the material but part of the standard seven\u2011layer model)[5]"
+      "text": "Fewer levels translate directly into fewer disk accesses per search, insert, or delete\u202f[5]."
     },
     {
-      "id": "q27",
-      "score": 0.8797358870506287,
-      "cited": [
-        2
-      ],
-      "text": "After sending this ACK the client transitions to ESTABLISHED[2]."
+      "id": "q14",
+      "score": 0.00019804913608822972,
+      "cited": [],
+      "text": "Such multi\u2011dimensional indexing would be inefficient with a BST."
     },
     {
-      "id": "q27",
-      "score": 0.9357719421386719,
+      "id": "q09",
+      "score": 0.0007197249215096235,
       "cited": [
-        2
+        3
       ],
-      "text": "The server moves to SYN_RCVD[2]."
+      "text": "Check feasibility: a placement is allowed only if the column\u202fx, the main diagonal\u202fx\u202f+\u202fy, and the anti\u2011diagonal\u202fx\u202f\u2011\u202fy\u202f+\u202fn\u20111 are all free; otherwise skip that choice\u202f[3]."
+    },
+    {
+      "id": "q09",
+      "score": 0.0029792007990181446,
+      "cited": [
+        1,
+        5
+      ],
+      "text": "The algorithm explores all possible sequences of column choices (the decision tree) and discards any partial placement that violates the constraints, guaranteeing that every valid arrangement will eventually be reached\u202f[1][5]."
+    },
+    {
+      "id": "q17",
+      "score": 0.004888548050075769,
+      "cited": [],
+      "text": "Growing \u2192 shrinking phases prevent premature unlocks."
+    },
+    {
+      "id": "q04",
+      "score": 0.00619730819016695,
+      "cited": [],
+      "text": "The pointers delimit a window (a sub\u2011array or a candidate pair)."
+    },
+    {
+      "id": "q14",
+      "score": 0.009665052406489849,
+      "cited": [],
+      "text": "Shallow height \u2013 With a large branching factor the height of a B\u2011tree is logarithmic in the number of entries but with a much smaller constant than a BST."
+    },
+    {
+      "id": "q39",
+      "score": 0.013568038120865822,
+      "cited": [
+        3
+      ],
+      "text": "In practice the DBMS enforces this constraint when tables are created, ensuring that a child row cannot reference a non\u2011existent parent row[3]."
+    },
+    {
+      "id": "q10",
+      "score": 0.013866228982806206,
+      "cited": [],
+      "text": "Use\u2011case intuition: stack behaves like a pile of plates (you take the last one placed); queue behaves like a line at a checkout (first person served first)."
+    },
+    {
+      "id": "q08",
+      "score": 0.01655508577823639,
+      "cited": [
+        1
+      ],
+      "text": "Pop from the front if the element at the front is now outside the window (its index\u202f<\u202fcurrent\u202findex\u202f\u2212\u202fwindow\u202fsize\u202f+\u202f1)\u202f[1]."
+    },
+    {
+      "id": "q14",
+      "score": 0.01816924847662449,
+      "cited": [],
+      "text": "This means each I/O brings many keys into memory, whereas a BST node holds only one key and would require many more block reads to traverse the same height."
+    },
+    {
+      "id": "q08",
+      "score": 0.019728420302271843,
+      "cited": [],
+      "text": "Push `x` to the back of the deque."
+    },
+    {
+      "id": "q08",
+      "score": 0.019934391602873802,
+      "cited": [],
+      "text": "Use a monotonic deque (a double\u2011ended queue) that always stores the elements of the current window in increasing order:"
+    },
+    {
+      "id": "q08",
+      "score": 0.024719465523958206,
+      "cited": [
+        1
+      ],
+      "text": "Pop from the back while the last element in the deque is larger than `x`; those larger elements can never become the minimum of any future window that includes `x`\u202f[1]."
+    },
+    {
+      "id": "q04",
+      "score": 0.029312117025256157,
+      "cited": [],
+      "text": "moves is bounded by the length of the array."
+    },
+    {
+      "id": "q28",
+      "score": 0.031007220968604088,
+      "cited": [],
+      "text": "Their main differences are:"
+    },
+    {
+      "id": "q03",
+      "score": 0.03567495569586754,
+      "cited": [
+        5
+      ],
+      "text": "Consequently, the total time for m Find/Union operations on n elements is O(m\u202f\u03b1(n)), which is essentially linear in the number of operations\u202f[5]."
+    },
+    {
+      "id": "q11",
+      "score": 0.03680448979139328,
+      "cited": [],
+      "text": "Continue until all vertices belong to a single component; the kept edges form the MST."
+    },
+    {
+      "id": "q33",
+      "score": 0.042036272585392,
+      "cited": [],
+      "text": "The effective sending limit at any moment is the smaller of the two windows:"
+    },
+    {
+      "id": "q04",
+      "score": 0.04979715868830681,
+      "cited": [],
+      "text": "other pointer may be moved again, always keeping the window valid for the"
     }
   ]
 }

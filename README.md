@@ -114,8 +114,30 @@ Both are kept in the table above rather than quietly deleted.
 | Questions outside the library correctly refused | 10/10 |
 
 The judge is `qwen/qwen3.8-27b`, a different model family from the one writing the answers, so it
-isn't marking its own style. Every LLM call in the evaluation is cached on disk, so a rerun costs
-nothing unless something actually changed.
+isn't marking its own style. Every LLM call in the evaluation is cached on disk by its exact
+request, so rerunning `python eval/run_generation.py` reproduces the numbers above exactly, in under
+a minute and without spending any API budget.
+
+### Every sentence, checked against its source
+
+`python eval/audit_grounding.py` scores each sentence of an answer against the passage it cites,
+reusing the cross-encoder that ranked the passages in the first place. Sentences without a citation
+are scored against every retrieved passage instead, because an uncited sentence is usually the next
+step of a point already credited rather than an invention. No LLM is involved, so this measure is
+deterministic and independent of the judge above.
+
+| Across 255 sentences from 39 answers | Result |
+|---|---|
+| Sentences carrying a citation | 54% |
+| Cited sentences backed by what they cite | 95% |
+| Sentences backed by no retrieved passage | 8% |
+
+That last 8% is the part worth reading. It holds the genuine problems, such as a B-tree answer
+claiming that multi-dimensional indexing "would be inefficient with a BST", which no passage says,
+and a sentence whose citation points at a passage that doesn't back it. It also has false positives:
+terse steps like "Push x to the back of the deque", and even a stack-of-plates analogy that Open
+Data Structures really does use. So the number is a reading list, not a verdict. The app shows the
+same count under every answer and can highlight the weak sentences in place.
 
 ### Two things the evaluation caught
 
@@ -125,13 +147,19 @@ nothing unless something actually changed.
   question costs one call and a wrongly refused one loses a correct answer, so the threshold now
   only blocks what scores below every answerable calibration question. Wrong refusals went to zero
   and out-of-scope refusals stayed at 10/10.
-- **Prompt order changes faithfulness.** Splitting the system prompt so the writing style came last
-  dropped faithfulness from 87% to 74%. Moving the grounding rules back to the end recovered it.
+- **Restructuring the prompt cost faithfulness.** Adding study modes meant reorganising the system
+  prompt. Two reorganised versions scored 74% and 72% on faithfulness against 87% for the original.
+  Each ran once with answers sampled at temperature 0.3, so part of that gap may be run-to-run noise,
+  but both landed well below. My first explanation (the order of the instructions) was wrong: moving
+  the grounding rules to the end made it no better. Explain mode, the default and the one measured
+  here, now uses the original prompt word for word, and the other modes swap only its final style
+  paragraph.
 
 ## What it still gets wrong
 
 - A few answers add small details the passages don't state, such as calling UDP "simplex per
-  datagram". The evaluation page lists every one the judge flagged.
+  datagram". The evaluation page lists every one the judge flagged, and the grounding audit above
+  finds the same cases without asking an LLM.
 - The write-ahead logging answer gets the order of commit and data writes wrong in every run so far.
 - Two questions retrieve the wrong passages: why file systems prefer B-trees, and what isolation
   means for transactions.

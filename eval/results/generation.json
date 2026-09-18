@@ -4,41 +4,41 @@
     "subject": "DSA",
     "question": "Which data structure does BFS use, and how long does it take on a graph?",
     "answerable": true,
-    "answer": "BFS is implemented with a **queue** (the “bag” q that stores vertices to be explored) — each vertex is enqueued once and dequeued once [1].  \nWhen the graph is stored with adjacency lists, the whole traversal runs in **\\(O(n+m)\\) time** (linear in the number of vertices \\(n\\) and edges \\(m\\)) [1][3].",
+    "answer": "BFS is implemented with a **queue** (the algorithm repeatedly enqueues newly discovered vertices and dequeues them for processing) [1].  \n\nWhen the graph is stored with adjacency‑list representation, the whole BFS runs in **Θ(n + m)** time – O(n) for the queue operations on the n vertices plus O(m) for scanning each adjacency list once [1].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
-      1,
-      3
+      1
     ],
-    "correctness": 1,
+    "correctness": 2,
     "faithfulness": 2,
-    "reason": "The answer correctly identifies the queue and time complexity but misses the reference's point about BFS visiting nodes in increasing order of distance/shortest paths."
+    "reason": "The assistant correctly identifies the queue data structure and the O(n+m) time complexity, both of which are explicitly supported by Source [1]."
   },
   {
     "id": "q02",
     "subject": "DSA",
     "question": "How does chaining handle collisions in a hash table?",
     "answerable": true,
-    "answer": "Chaining resolves collisions by storing all keys that hash to the same table index in a linked list (or other secondary container) attached to that slot.  \n- Each table entry `T[i]` holds a pointer to a list of items whose hash value is `i` [1].  \n- When searching for a key `x`, the algorithm computes `h(x)` (O(1)) and then scans the entire list `T[h(x)]`; the cost is `O(1 + l(x))`, where `l(x)` is the list length [1].  \n- Insertion and deletion also require computing the hash and then adding or removing the element from the appropriate list, which also takes `O(1 + l(x))` time [1].  \n- By keeping the load factor α = n/​m ≤ 1 (i.e., the average list length ≤ 1), the expected list length is constant, so the expected time for `add`, `remove`, and `find` is O(1) [4].  \n\nThus, chaining handles collisions by grouping colliding keys into separate lists per bucket, allowing constant‑time hash computation and linear‑time scanning of only the items that share the same bucket.",
+    "answer": "Chaining resolves collisions by storing all keys that hash to the same table index in a linked list (or other secondary container) attached to that slot.  \n\n- Each table entry `T[i]` holds a pointer to a list of items whose hash value is `i` [1].  \n- When inserting, the key is hashed to index `i` and then appended to the list `T[i]` [3].  \n- Searching for a key `x` requires computing `h(x)` (O(1)) and then scanning the list `T[h(x)]`; the cost is `O(1 + l(x))`, where `l(x)` is the list length [1].  \n- Deletion works similarly: locate `x` in its list and remove it, also in `O(1 + l(x))` time [1].  \n\nThe expected length of each list is the load factor α = n/m, so with a good hash function the expected search, insert, and delete times are constant [1][4].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
       1,
+      3,
       4
     ],
-    "correctness": 1,
+    "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant misses the specific condition mentioned in the reference that the expected list length bound relies on a (near-)universal hash function, instead attributing the O(1) expectation solely to the load factor constraint."
+    "reason": "The assistant correctly identifies the mechanism of chaining (linked lists per slot), the search/insert/delete costs based on list length, and the expected list length bound by the load factor, all of which are supported by the provided sources."
   },
   {
     "id": "q03",
     "subject": "DSA",
     "question": "Why is union-find with union by rank and path compression considered almost constant time?",
     "answerable": true,
-    "answer": "Union‑Find with **union‑by‑rank** and **path compression** runs in *almost* constant time because each operation’s amortized cost is bounded by the inverse Ackermann function α, which grows so slowly that for any realistic input size it is a tiny constant (often taken as ≤ 4).\n\n- The combination of union‑by‑rank (which keeps tree height bounded by ⌊log n⌋) and path compression (which flattens the tree on each Find) yields an amortized bound of **O(α(n))** per Find or Union operation [5].  \n- α(n) is the inverse of the Ackermann function; its growth is slower than any iterated logarithm, so even for astronomically large n the value of α(n) is at most a small constant (the notes suggest thinking of it as “4”) [3].  \n- Consequently, the total time for m operations on n elements is **O(m α(n))**, which for m ≈ n is essentially linear, i.e., each operation behaves like a constant‑time step in practice [5][3].\n\nThus, union‑by‑rank plus path compression gives an *almost* constant‑time disjoint‑set structure because its amortized cost is bounded by the practically constant inverse Ackermann function.",
+    "answer": "Union‑Find with **union‑by‑rank** and **path compression** runs in *almost* constant time because each operation’s amortized cost is bounded by the inverse Ackermann function α, which grows so slowly that it is treated as a constant for all practical input sizes.\n\n- The combination of union‑by‑rank (which keeps tree height ≤ ⌊log n⌋) and path compression (which flattens the tree on every Find) gives an amortized cost of **O(α(n))** per Find or Union operation [5].  \n- The inverse Ackermann function α(n) is “almost‑but‑not‑quite‑constant”; for any realistic n it is ≤ 4, so the cost behaves like a constant in practice [3][5].  \n- Consequently, the total time for m Find/Union operations on n elements is **O(m α(n))**, which is essentially linear in the number of operations [5].  \n\nThus, the data structure is said to have *almost constant* time per operation.",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
@@ -48,14 +48,14 @@
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant correctly identifies the inverse Ackermann function as the bound and explains the roles of union by rank and path compression, with all claims supported by the provided sources."
+    "reason": "The assistant correctly identifies the inverse Ackermann function bound and the practical constant value of 4, supported by sources [3] and [5], and accurately describes the mechanisms of union by rank and path compression as per source [1]."
   },
   {
     "id": "q04",
     "subject": "DSA",
     "question": "Explain the two pointers approach for array problems.",
     "answerable": true,
-    "answer": "The two‑pointers technique solves many array problems by keeping **two indices that only move forward (or only move inward)** and updating them based on the current sub‑array or pair under consideration.  \n\n- **Idea** – Maintain a left pointer `L` and a right pointer `R` that delimit a window (sub‑array) or a candidate pair. At each step one of the pointers is advanced while the other may stay or move in the opposite direction, never moving leftwards for a forward‑only version. This guarantees that each element is visited a constant number of times.  \n\n- **Sub‑array‑sum (positive numbers)** – Start with `L = 0`, `R = 0` and a running sum of the window. While the sum ≤ `x`, move `R` right to enlarge the window; if the sum exceeds `x`, move `L` right to shrink it. When the sum equals `x` a solution is found. Because each pointer moves at most `n` steps, the total work is **O(n)** [1][2].  \n\n- **2‑SUM (after sorting)** – Sort the array (cost `O(n log n)`). Set `L` at the first element and `R` at the last. If `a[L] + a[R] < x`, increment `L`; if the sum > `x`, decrement `R`; if equal, report the pair. Both pointers traverse the array at most once, giving **O(n)** pointer moves after the sort, so the overall complexity is **O(n log n)** [2][4].  \n\n- **Why it is efficient** – The algorithm’s runtime is bounded by the total number of pointer moves. Each pointer can advance only toward the end (or toward the center) and never retreats, so the total number of moves is at most `2n`. Hence the method yields linear‑time scans for problems that would otherwise require nested loops.  \n\n- **Typical steps**  \n  1. Initialise the two pointers (often at the ends or at the start of the array).  \n  2. Compute the condition (e.g., current sum, current pair sum).  \n  3. Move the appropriate pointer according to the condition.  \n  4. Stop when a solution is found or when the pointers cross.  \n\nThis approach is a core “sliding‑window” pattern that turns many naïve `O(n²)` solutions into `O(n)` (or `O(n log n)` when a sort is required).",
+    "answer": "The two‑pointers technique solves many array problems by keeping **two indices that only move forward (or only move inward)** and updating them based on the current sub‑array or pair.\n\n**How it works**\n\n* Start with two pointers, usually called `left` and `right`.  \n* The pointers delimit a window (a sub‑array or a candidate pair).  \n* On each step one pointer is moved while the other stays, then the\n  other pointer may be moved again, always keeping the window valid for the\n  condition being checked.  \n* Because each pointer only moves in one direction, the total number of\n  moves is bounded by the length of the array.\n\n**Typical examples**\n\n| Problem | Pointer movement | Key idea |\n|---------|------------------|----------|\n| Sub‑array with given sum `x` (all numbers > 0) | `right` moves right while the current sum ≤ `x`; when the sum exceeds `x`, `left` moves right one step. | Maintain the sum of the window `[left … right]`; when it equals `x` we have a solution. |\n| 2‑SUM (find two numbers that add to `x`) | After sorting, `left` starts at index 0 and `right` at the last index. If `a[left]+a[right] < x` move `left` right; if > `x` move `right` left; stop when the sum equals `x`. | The sorted order guarantees that moving the smaller pointer increases the sum and moving the larger pointer decreases it. |\n\n**Complexity**\n\n* Each pointer traverses the array at most once, so the total work of moving the pointers is **O(n)**.  \n* For 2‑SUM the array must first be sorted, costing **O(n log n)**; the pointer phase is O(n) → overall **O(n log n)** [4].  \n* For the sub‑array‑sum problem no sorting is needed, giving a pure **O(n)** solution [1][2].\n\nThus, the two‑pointers approach reduces many naïve O(n²) scans to linear (or near‑linear) time by exploiting monotonic movement of two indices.",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
@@ -66,7 +66,7 @@
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant correctly explains the two pointers approach, covering the key points of the reference (O(n) time for subarray sum, O(n log n) for 2SUM with sorting) and all factual claims are supported by the provided sources."
+    "reason": "The assistant correctly explains the two pointers approach, covering the key points of the reference (O(n) movement, subarray sum, and 2SUM with sorting) and all factual claims are supported by the provided sources."
   },
   {
     "id": "q05",
@@ -90,43 +90,43 @@
     "subject": "DSA",
     "question": "Can I use Dijkstra's algorithm on a graph with negative edge weights?",
     "answerable": true,
-    "answer": "No. Dijkstra’s algorithm assumes that all edge weights are non‑negative; if any edge has a negative weight the algorithm can produce incorrect shortest‑path distances and its usual “wavefront” property no longer holds[3].  \n\n**Why it fails**  \n- The correctness proof relies on the fact that once a vertex is extracted from the priority queue its distance is final; negative edges can later produce a shorter path to that vertex, breaking this invariant[3].  \n- With negative edges the “expanding wavefront” intuition is invalid: the same vertex may be extracted many times and edges may be relaxed repeatedly, leading to exponential‑time behavior[5].  \n\n**What the literature says**  \n- Dijkstra’s original brute‑force version runs in \\(O(V^2)\\) and already requires non‑negative weights; the priority‑queue version (binary heap) also assumes non‑negative edges for its \\(O(E + V\\log V)\\) bound[2].  \n- When negative edges are present, algorithms such as Bellman‑Ford must be used instead, as they correctly handle negative weights (provided there are no negative cycles).  \n\n**Bottom line**: Dijkstra’s algorithm should only be applied to graphs that contain no negative‑weight edges. If the graph has any negative edges, the algorithm is not guaranteed to give correct results and may even run in exponential time.",
+    "answer": "No. Dijkstra’s algorithm assumes that all edge weights are non‑negative. If a graph contains a negative‑weight edge the algorithm can produce wrong shortest‑path distances and its “wave‑front” property breaks down. In fact, with negative edges the same vertex may be extracted many times and the number of relaxations can become exponential, so the usual efficient implementations no longer work correctly[3][5].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
-      2,
       3,
       5
     ],
-    "correctness": 2,
-    "faithfulness": 1,
-    "reason": "The assistant claims the priority-queue version has a complexity of O(E + V log V), but source [2] specifies this bound requires Fibonacci heaps, while the binary heap version mentioned in the same sentence is O(E + V log V) only if E is large enough or generally O(E log V), making the specific attribution slightly inaccurate or conflating different implementations."
+    "correctness": 1,
+    "faithfulness": 2,
+    "reason": "The answer correctly states that Dijkstra's algorithm cannot be used with negative weights and explains why, but it misses the reference's specific recommendation to use Bellman-Ford instead."
   },
   {
     "id": "q07",
     "subject": "DSA",
     "question": "What is memoization and how does it speed up a recursive Fibonacci function?",
     "answerable": true,
-    "answer": "Memoization is a technique that stores ( “memo‑izes” ) the result of each recursive call the first time it is computed and re‑uses that stored value on later calls instead of recomputing it [1][2].  \n\nIn the naïve recursive Fibonacci algorithm each call `RecFibo(k)` recomputes the same sub‑problems many times, leading to an exponential number of calls [1]. By adding a memo array `F[]` and writing each newly computed Fibonacci number into it (`F[n] ← MemFibo(n‑1) + MemFibo(n‑2)`) the algorithm fills the array from the bottom up, computing each `F[i]` exactly once [4]. Consequently the total work reduces to a single constant‑time addition per index, i.e. **O(n)** additions, which is an exponential improvement over the original exponential‑time recursion [4].",
+    "answer": "Memoization is a technique that stores the results of expensive function calls and re‑uses them when the same inputs occur again. In the context of the recursive Fibonacci computation, a memoized version (often called MemFibo) keeps an array F[] that records each Fibonacci number the first time it is computed; subsequent calls simply read the stored value instead of recomputing it [1][2].\n\n**How it speeds up the Fibonacci recursion**\n\n- The naïve recursive algorithm evaluates the same sub‑problems many times (e.g., RecFibo(n‑1) and RecFibo(n‑2) are called repeatedly), leading to an exponential number of calls [1].\n- With memoization, each entry F[i] is filled exactly once, from the bottom up (first F[2], then F[3], …, up to F[n]) [4].\n- After a value is stored, any later request for that index is answered in constant time by looking up the array, so the recurrence for each F[i] is evaluated only once [4].\n- Consequently the total work reduces to O(n) additions (linear time), which is an exponential improvement over the original exponential‑time recursion [4].\n\nThus, memoization transforms the exponential‑time recursive Fibonacci algorithm into a linear‑time algorithm by caching intermediate results and avoiding repeated recomputation.",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
       1,
       2,
+      3,
       4
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant correctly defines memoization and explains the speedup for Fibonacci using details (exponential recomputation, bottom-up filling, O(n) time) that are fully supported by the provided sources."
+    "reason": "The assistant's answer accurately reflects the reference answer's key points regarding memoization's definition and its linear time complexity for Fibonacci, and all specific claims are directly supported by the provided sources."
   },
   {
     "id": "q08",
     "subject": "DSA",
     "question": "How do you find the minimum of every fixed-size window in an array efficiently?",
     "answerable": true,
-    "answer": "Maintain a monotonic queue (deque) that stores indices or values in **increasing order**.  \n\n* When the window moves right, first discard the front element if it lies outside the new window.  \n* Then, while the back of the deque is larger than the incoming element, pop the back – those larger elements can never become the minimum for any future window.  \n* Push the new element (or its index) to the back.  \n* The element at the front of the deque is always the minimum of the current window.\n\nBecause each array element is inserted into the deque once and removed at most once, the whole process runs in **O(n)** time and O(k) space, where *k* is the window size [1].",
+    "answer": "Use a monotonic deque (a double‑ended queue) that always stores the elements of the current window in **increasing order**:\n\n1. **Initialize** an empty deque.  \n2. For each new element `x` as the window slides right:\n   * **Pop from the back** while the last element in the deque is larger than `x`; those larger elements can never become the minimum of any future window that includes `x` [1].\n   * **Push `x` to the back** of the deque.\n   * **Pop from the front** if the element at the front is now outside the window (its index < current index − window size + 1) [1].\n   * The element at the **front** of the deque is the minimum of the current window [1].\n\nBecause each array element is inserted into the deque once and removed at most once, the whole procedure runs in **O(n)** time and **O(k)** space, where `k` is the window size [1].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
@@ -135,14 +135,14 @@
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant correctly identifies the sliding window technique using a monotonic deque and the O(n) time complexity, fully aligning with the reference answer and supported by Source [1]."
+    "reason": "The assistant correctly identifies the sliding window minimum algorithm using a monotonic deque, accurately describing the operations and O(n) complexity as supported by Source [1]."
   },
   {
     "id": "q09",
     "subject": "DSA",
     "question": "What is backtracking? Explain with the N-Queens problem.",
     "answerable": true,
-    "answer": "Backtracking is a recursive search technique that builds a solution incrementally, trying each possible choice for the next component and back‑tracking when a choice leads to a conflict or dead‑end [1]. In each recursive call the algorithm makes exactly one decision that must be consistent with all earlier decisions, keeping only the minimal summary of those past choices [2].\n\n**N‑Queens as a backtracking example**\n\n* Goal: place n queens on an n × n chessboard so that no two share a row, column, or diagonal [5].\n* Recursive structure: start with an empty board and place queens row‑by‑row. For the current row y, try every column x; if placing a queen at (x, y) does not conflict with any previously placed queens (checked via column, main‑diagonal, and anti‑diagonal occupancy), mark the three constraints, recurse to the next row, and then undo the marks (backtrack) [3].\n* The algorithm stops when all n rows have been filled – a complete solution is found; otherwise it backtracks to try the next column [3].\n* The state that must be passed to each recursive call includes the current row index and the sets of occupied columns and diagonals, which summarize all earlier queen placements [2][4].\n\n```cpp\nvoid search(int y) {               // y = current row\n    if (y == n) { count++; return; }   // all queens placed\n    for (int x = 0; x < n; ++x) {\n        if (column[x] || diag1[x+y] || diag2[x-y+n-1]) continue; // conflict?\n        column[x] = diag1[x+y] = diag2[x-y+n-1] = 1;   // place queen\n        search(y+1);                                 // recurse\n        column[x] = diag1[x+y] = diag2[x-y+n-1] = 0;   // backtrack\n    }\n}\n```\n\nThus, backtracking systematically explores all possible queen placements, pruning only when a partial placement violates the constraints, and ultimately enumerates every valid solution.",
+    "answer": "Backtracking is a recursive search technique that builds a solution incrementally, trying every possible choice at each step and back‑tracking when a choice violates the problem’s constraints [1]. In each recursive call the algorithm makes **one decision**, keeps a compact summary of the decisions made so far, and explores all alternatives that are consistent with that summary [2][4].\n\n**N‑Queens example**\n\n*Problem*: Place n queens on an n × n chessboard so that no two queens share a row, column, or diagonal [5].\n\n*Backtracking process*  \n\n1. **Start with an empty board** (no queens placed).  \n2. **Decide row by row**: for the current row y, try every column x (0 … n‑1).  \n3. **Check feasibility**: a placement is allowed only if the column x, the main diagonal x + y, and the anti‑diagonal x ‑ y + n‑1 are all free; otherwise skip that choice [3].  \n4. **Place the queen** (mark column, diag1, diag2 as occupied) and **recurse** to the next row y + 1 [3].  \n5. **Backtrack**: when returning from recursion, unmark the column and diagonals to restore the state for the next trial [3].  \n6. **Terminate**: a solution is found when queens have been placed in all n rows; the algorithm then records or counts the solution [3].\n\n*Why it works*  \n- The algorithm explores **all possible sequences of column choices** (the decision tree) and discards any partial placement that violates the constraints, guaranteeing that every valid arrangement will eventually be reached [1][5].  \n- The only information needed to continue the search is the current board state (which columns and diagonals are occupied), a compact summary of past decisions [2][4].\n\nThus, backtracking systematically tries every queen placement row‑by‑row, pruning illegal partial configurations, and backtracks to explore alternative columns until all solutions are enumerated.",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
@@ -155,51 +155,49 @@
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant's answer accurately covers the key points of the reference (incremental construction, recursive trying, undoing conflicts) and every factual claim, including the code snippet and specific constraints, is directly supported by the provided sources."
+    "reason": "The assistant's answer accurately covers the key points of the reference (incremental construction, recursive trying, abandoning invalid choices) and every specific claim is directly supported by the provided sources, including the specific implementation details from Source [3]."
   },
   {
     "id": "q10",
     "subject": "DSA",
     "question": "What's the difference between a stack and a queue?",
     "answerable": true,
-    "answer": "A **stack** is a LIFO (last‑in‑first‑out) structure: new elements are added to the top and only the top element can be accessed or removed (push, pop, top) [1][5].  \n\nA **queue** is a FIFO (first‑in‑first‑out) structure: elements are added at the back and removed from the front; only the first (front) and last elements are directly accessible (enqueue/add, dequeue/remove, front) [1][2].  \n\nThus the key distinction is the ordering discipline: a stack returns the most recently added item, while a queue returns items in the order they were inserted.",
+    "answer": "A **stack** is a LIFO (last‑in‑first‑out) collection: the most recently added element is the only one that can be accessed or removed. In C++ you use `push` to add and `pop`/`top` to remove or read the element at the top, both in O(1) time[1].  \n\nA **queue** is a FIFO (first‑in‑first‑out) collection: elements are removed in the same order they were added. You `push` (or `add`) to the back and `pop`/`remove` (or `dequeue`) from the front, also in O(1) time[1][2].  \n\n**Key points**\n\n- **Access pattern**: stack → only the *top* element; queue → only the *front* (and sometimes the *back*) element.  \n- **Operations**:  \n  - Stack: `push(x)`, `pop()`, `top()` (all O(1)).  \n  - Queue: `add(x)`/`push(x)`, `remove()`/`pop()` (both O(1)); `front()` to read the first element.  \n- **Use‑case intuition**: stack behaves like a pile of plates (you take the last one placed); queue behaves like a line at a checkout (first person served first).  \n\nThese definitions are drawn directly from the descriptions of stack and queue operations in the provided material[1][2].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
       1,
-      2,
-      5
+      2
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant correctly identifies the LIFO vs FIFO distinction and specific operations (push/pop vs enqueue/dequeue) supported by the provided sources."
+    "reason": "The assistant correctly identifies the LIFO vs FIFO distinction and operation names (push/pop vs add/remove) supported by the sources, with no unsupported claims."
   },
   {
     "id": "q11",
     "subject": "DSA",
     "question": "How does Kruskal's algorithm build a minimum spanning tree, and what is its time complexity?",
     "answerable": true,
-    "answer": "Kruskal’s algorithm builds a minimum‑spanning tree (MST) by **scanning the edges in non‑decreasing order of weight** and adding each edge that connects two different components (i.e., does not create a cycle).  \n\n* Start with every vertex in its own component (no edges).  \n* Sort all edges by weight.  \n* For each edge \\(a\\!-\\!b\\) in the sorted list, test whether \\(a\\) and \\(b\\) are already in the same component; if not, **unite** the two components and include the edge in the growing forest.  \n* When all vertices belong to a single component, the selected edges form an MST.  \n\nThe correctness follows from the greedy exchange argument: the lightest edge of any cut must belong to some MST, so repeatedly adding the minimum‑weight safe edge never prevents optimality [2][5].\n\n**Time complexity**\n\n1. **Sorting the edge list** – \\(O(m \\log m)\\) (or \\(O(m \\log n)\\) since \\(m \\ge n-1\\)) [2][4].  \n2. **Union‑Find operations** – each `same` (find) and `unite` (union) is performed in \\(O(\\log n)\\) time using a union‑find data structure, giving a total of \\(O(m \\log n)\\) for processing all edges [3].  \n\nThe sorting step dominates, so the overall running time of Kruskal’s algorithm is **\\(O(m \\log m)\\) ≈ \\(O(m \\log n)\\)**, and the space usage is \\(O(m + n)\\) for the edge list and the union‑find structure.",
+    "answer": "Kruskal’s algorithm builds a minimum‑spanning tree (MST) by **scanning the edges in non‑decreasing order of weight and adding each edge that connects two different components** (i.e., does not create a cycle).  \n\n* Start with every vertex in its own component (no edges).  \n* Sort all edges by weight.  \n* For each edge \\(a\\!-\\!b\\) in the sorted list, check whether \\(a\\) and \\(b\\) are already in the same component (`same(a,b)`).  \n* If they are in different components, unite the two components (`unite(a,b)`) and keep the edge in the growing forest.  \n* Continue until all vertices belong to a single component; the kept edges form the MST.  \n\nThe correctness argument is that the minimum‑weight edge must belong to any MST, and by repeatedly adding the next lightest safe edge we never lose optimality [2].\n\n**Time complexity**\n\n* Sorting the edge list costs \\(O(m \\log m)\\) (or \\(O(m \\log E)\\) which is the same order) [4][2].  \n* The union‑find structure implements `same` and `unite` in \\(O(\\log n)\\) time per operation, giving \\(O(m \\log n)\\) for processing all edges [3].  \n\nThus the overall running time is dominated by the sorting step, yielding **\\(O(m \\log m) = O(m \\log n)\\)** for Kruskal’s algorithm [2][3][4].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
       2,
       3,
-      4,
-      5
+      4
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant correctly describes the algorithm's steps (sorting edges, union-find for cycle detection) and time complexity (O(m log m) or O(m log n)), with all claims directly supported by the provided sources."
+    "reason": "The assistant correctly describes the algorithm's steps (sorting edges, using union-find to avoid cycles) and accurately derives the time complexity O(E log V) from the provided sources, matching the reference answer."
   },
   {
     "id": "q12",
     "subject": "DSA",
     "question": "How does quicksort work?",
     "answerable": true,
-    "answer": "Quicksort sorts an array by repeatedly **choosing a pivot**, partitioning the array around that pivot, and then recursively sorting the two resulting sub‑arrays.\n\n* **Pick a pivot** – a random element `x` (or any element) is selected from the current subarray `a[i..i+n‑1]` [1][2].\n* **Partition** – the subarray is rearranged in‑place so that  \n  * all elements `< x` appear before the pivot,  \n  * all elements `= x` are grouped together, and  \n  * all elements `> x` appear after the pivot.  \n  The partitioning loop moves indices `p` forward and `q` backward, swapping elements as needed, without using extra space [1][3].\n* **Recursive calls** – after partitioning, quicksort is invoked on the left part (elements `< x`) and on the right part (elements `> x`) while the middle part (the pivot and any duplicates) is already in its final position [1][2][3].\n\nThe initial call is `quick_sort(a,0,length(a))`, which sorts the whole array in place [1][3].\n\n**Performance (from the material)**  \n* Expected number of comparisons for `n` distinct elements ≤ `2 n ln n + O(n)` → expected time `O(n log n)` [4].  \n* The recursion tree of quicksort on distinct keys is equivalent to a random binary search tree, which underlies the expected‑case analysis [3][4].\n\nThus, quicksort works by a divide‑and‑conquer process that partitions around a pivot and recursively sorts the partitions, achieving expected `O(n log n)` time with only `O(1)` extra space.",
+    "answer": "Quicksort sorts an array by repeatedly **choosing a pivot**, partitioning the array around that pivot, and recursively sorting the two resulting sub‑arrays.\n\n- **Pick a pivot** – the algorithm selects a random element `x` from the current subarray `a[i..i+n‑1]` (or any fixed rule) [1][2].\n- **Partition** – the subarray is rearranged in‑place so that  \n  * all elements `< x` appear before the pivot,  \n  * all elements `= x` are grouped with the pivot, and  \n  * all elements `> x` appear after it.  \n  The partitioning loop moves indices `p` forward and `q` backward, swapping elements as needed, without using extra space [1][3].\n- **Recursive calls** – after partitioning, quicksort is called on the left part (elements `< x`) and on the right part (elements `> x`) [1][2]. The base case is a subarray of size 0 or 1, which is already sorted [1].\n\nBecause the pivot is chosen randomly, the recursion tree of quicksort is equivalent to a random binary search tree, giving an **expected** running time of  \n\n\\[\n\\Theta(n \\log n)\n\\]\n\nwith at most \\(2n\\ln n + O(n)\\) comparisons on average for distinct elements [4]. The algorithm works **in‑place**, sorting the original array without extra copies [1][3].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
@@ -218,44 +216,43 @@
     "subject": "DSA",
     "question": "What is amortized analysis and why is it needed?",
     "answerable": true,
-    "answer": "Amortized analysis is a technique for evaluating the total running time of a sequence of operations by spreading (or “amortizing”) the cost of expensive operations over many cheap ones. Instead of measuring the cost of each individual operation, it estimates the overall time used by all operations during the execution of the algorithm [1].\n\nIt is needed because some algorithms contain operations whose cost varies widely—most steps may be cheap while occasional steps are expensive. A straightforward per‑operation analysis would either over‑estimate (by using the worst‑case cost for every step) or under‑estimate (by ignoring the expensive steps). Amortized analysis gives a true picture of efficiency by accounting for the limited number of costly operations across the whole sequence [1][2][4].",
+    "answer": "Amortized analysis is a technique that evaluates the **total** time spent by a sequence of operations and then spreads (or “amortizes”) that cost over all the operations, rather than looking at each operation in isolation [1].  \n\nIt is needed because some algorithms contain operations whose individual running times can vary widely—some may be cheap, others expensive—but the expensive operations occur only rarely. A straightforward worst‑case analysis of each operation would therefore give a misleading picture of the algorithm’s overall efficiency. By accounting for the whole sequence, amortized analysis shows that the average cost per operation remains low even though occasional operations take longer [1][4].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
       1,
-      2,
       4
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant correctly defines amortized analysis as bounding total cost over a sequence and explains its necessity by noting that worst-case per-operation analysis can overstate real costs, which aligns with the reference and is fully supported by the provided sources."
+    "reason": "The assistant correctly defines amortized analysis as bounding total cost over a sequence and explains its necessity by noting that worst-case analysis of individual operations can be misleading, which aligns with the reference and is fully supported by sources [1] and [4]."
   },
   {
     "id": "q14",
     "subject": "DBMS",
     "question": "Why do databases and file systems use B-trees instead of binary search trees?",
     "answerable": true,
-    "answer": "B‑trees are preferred in databases and file systems because they are **designed for external (disk) memory** and give far fewer I/O operations than binary search trees.\n\n- A B‑tree node stores **O(B) keys**, where B is chosen so the whole node fits in one disk block.  Thus each node read or write transfers many keys at once, and the cost of an operation is proportional only to the **number of nodes accessed**, not to the number of individual keys [5].  \n- Binary search trees store only one key per node, so a search would require a disk access for every level of the tree, leading to many more I/Os.  \n\n- B‑trees are **balanced**: every leaf is at the same depth, guaranteeing logarithmic‑height searches, inserts and deletes even for very large data sets [1][2].  \n\n- Because keys are kept in sorted order inside each node, B‑trees support **ordered operations** (range scans, predecessor/successor queries) directly.  This ordering is essential for structures such as extent maps, where one must find “the largest key ≤ x” to locate the extent containing a given file block [2].  \n\n- The **dual‑indexing** used by file systems like XFS (one B‑tree indexed by location, another by size) relies on the ability to search by key order and to locate the smallest free extent that fits a request (best‑fit) without scanning the whole free‑space map [3].  \n\nIn contrast, hash tables (often used with binary trees) can only locate keys by equality and cannot efficiently answer range or predecessor queries, making them unsuitable for the ordered‑access patterns required by databases and file systems.  \n\nTherefore, B‑trees provide **logarithmic‑time ordered access with minimal disk I/O**, which is why they are the data structure of choice for persistent storage systems.",
+    "answer": "B‑trees are preferred in databases and file systems because they are far more I/O‑efficient and support ordered operations that binary search trees (BSTs) cannot provide on disk‑resident data.\n\n- **Node size matches disk blocks** – A B‑tree node stores O(B) keys, so the branching factor B is chosen so that one node fits exactly in a single disk block (e.g., 4 KB) [5]. This means each I/O brings many keys into memory, whereas a BST node holds only one key and would require many more block reads to traverse the same height.\n\n- **Shallow height** – With a large branching factor the height of a B‑tree is logarithmic in the number of entries but with a much smaller constant than a BST. Fewer levels translate directly into fewer disk accesses per search, insert, or delete [5].\n\n- **No parent pointers** – B‑tree nodes do not keep parent links, so operations such as splitting during insertion modify only a few nodes (typically three) and avoid costly updates of many pointers [4]. This reduces external‑memory accesses compared with a BST that would need to update parent references on rotations.\n\n- **Ordered‑key operations** – B‑trees preserve the total order of keys, allowing efficient range queries and “nearest‑neighbor” searches (e.g., finding the extent that contains a given file block) [2]. Hash tables can locate exact keys quickly but cannot answer ordered queries, and BSTs on disk would require many more I/Os to traverse the tree.\n\n- **Specialized indexing for free‑space management** – File systems like XFS use two B‑plus‑trees: one indexed by extent location and another by extent size, enabling fast best‑fit or first‑fit allocation policies [3]. Such multi‑dimensional indexing would be inefficient with a BST.\n\nIn contrast, a binary search tree stores a single key per node, leading to deeper trees and many more disk reads, and it lacks the built‑in ability to perform ordered range scans efficiently. Hence databases and file systems adopt B‑trees (or B⁺‑trees) to minimize I/O, support ordered operations, and simplify block‑aligned node management.",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
-      1,
       2,
       3,
+      4,
       5
     ],
-    "correctness": 1,
+    "correctness": 2,
     "faithfulness": 1,
-    "reason": "The assistant misses the reference's specific point about tree height being proportional to log base B of n to minimize block reads, and makes an unsupported claim that binary search trees require a disk access for every level."
+    "reason": "The assistant claims that B-trees support ordered operations that binary search trees 'cannot provide,' which is factually incorrect as BSTs also support ordered operations, although the sources do not explicitly state that BSTs lack this capability."
   },
   {
     "id": "q15",
     "subject": "DBMS",
     "question": "What does ACID stand for?",
     "answerable": true,
-    "answer": "ACID stands for **Atomicity, Consistency, Isolation, Durability**[1].",
+    "answer": "ACID is an acronym for **Atomicity, Consistency, Isolation, Durability**[1].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
@@ -271,7 +268,7 @@
     "subject": "DBMS",
     "question": "What is write-ahead logging?",
     "answerable": true,
-    "answer": "Write‑ahead logging (WAL) is the discipline that a transaction system follows to guarantee durability and recoverability:\n\n* **Log first, data later** – before any updated entity is written to its normal location on persistent storage, the corresponding **undo (and usually redo) entry** must be recorded in the write‑ahead log. This ensures that, after a crash, the recovery process can locate the information needed to undo or redo the transaction [1][3].\n\n* **Commit record after data** – the transaction’s **commit entry** is written to the log only after all the entity updates have been flushed to persistent storage. This prevents the system from reporting a transaction as committed when its effects have not yet been made durable [1].\n\n* **Durability guarantee** – because the log is stored on persistent media (disk, flash, etc.), once the commit record appears in the log the transaction’s effects are considered durable; the recovery process can later replay the log to bring the database’s normal storage up‑to‑date [1][3].\n\nIn practice, WAL allows the system to write changes to fast volatile buffers (e.g., RAM) and defer the slower writes to the actual data pages, while still meeting the ACID durability requirement. The log serves as the single source of truth for recovery, enabling the system to reconstruct the correct state after a crash.",
+    "answer": "Write‑ahead logging (WAL) is the rule that a transaction’s **undo/redo information must be written to a persistent log before any of the transaction’s actual data pages are written to their normal locations**.  \n\n- The log is written first, then the updated entities are written back; only after both steps is the commit record appended to the log [1].  \n- This ordering guarantees that, after a crash, the recovery process can locate all necessary undo entries (by reading the log) and can redo the committed updates, because the log already contains a durable record of the commit [1][3].  \n- The three WAL rules are:  \n  1. All undo entries needed for recovery are on stable storage before any data page is written.  \n  2. The commit record is written to the log after the data pages have been flushed.  \n  3. All updated entities are written back to persistent storage before the commit entry is written [1].  \n\nThus, WAL provides durability by ensuring that the log contains a persistent record of every change before the change becomes visible in the database, allowing recovery to reconstruct a consistent state after a crash.",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
@@ -281,51 +278,49 @@
     ],
     "correctness": 1,
     "faithfulness": 1,
-    "reason": "The assistant incorrectly states that the commit record is written only after data is flushed to persistent storage, whereas the sources indicate that the log (including commit records) can serve as the persistent storage for updates, and the reference answer defines WAL as logging before data updates."
+    "reason": "The assistant incorrectly states that the commit record is written after data pages are flushed, whereas the source explicitly states that entities must be written back before the commit entry is written, and the reference defines commit as occurring when the commit record is logged."
   },
   {
     "id": "q17",
     "subject": "DBMS",
     "question": "How does two-phase locking make concurrent transactions serializable?",
     "answerable": true,
-    "answer": "Two‑phase locking (2PL) guarantees that any interleaving of concurrent transactions can be reordered into a serial order, because the lock‑acquire and lock‑release pattern forces a strict “growing” phase followed by a “shrinking” phase for each transaction.  \n\n**Why this yields serializability**\n\n* A transaction must **lock each entity before its first read or write** and **unlock it only after its last access** to that entity — this is the first 2PL rule [5].  \n* Because a lock is held from the first access until the end of the transaction, no other transaction can acquire a conflicting lock on the same entity while the first transaction is in its “growing” phase.  \n* Consequently, the history can be transformed by swapping non‑conflicting actions (actions on different entities or two reads of the same entity) without violating lock semantics. The only swaps that are forbidden are the seven conflicting pairs listed in the proof of serializability [5].  \n* By repeatedly applying these safe swaps, the interleaved history can be reordered into a **serial history** (all actions of one transaction before all actions of another) while preserving the observed read/write results [3][5].  \n* Since such a serial ordering exists, the original concurrent execution is **serializable** [1].\n\nThus, the two‑phase discipline—acquire‑once‑before‑use, release‑once‑after‑use—prevents cycles of lock dependencies and ensures that every concurrent execution is equivalent to some serial execution. This is the formal basis for the statement that “two‑phase locking ensures serializability” [2][5].",
+    "answer": "Two‑phase locking (2PL) forces every transaction to **acquire all the locks it will need before it releases any lock**.  \nBecause of this discipline the interleaving of actions from different transactions can always be reordered, by swapping non‑conflicting actions, into a schedule that is equivalent to some serial execution – i.e., the history is serializable.\n\n**Why it works**\n\n* A transaction’s execution is split into two phases [3]:  \n\n  1. **Growing phase** – from its first action up to (but not including) its first unlock, it may only **lock** objects.  \n  2. **Shrinking phase** – from its first unlock to its last action, it may only **unlock** objects.  \n\n  No lock is released before all needed locks have been obtained.\n\n* The lock rules guarantee that for any entity *x* a transaction  \n\n  * locks *x* exactly once **before** its first read/write of *x* and unlocks it exactly once **after** its last read/write [5].  \n  * obtains an exclusive lock (or upgrades to exclusive) before writing [5].\n\n* Because locks are held until the end of the transaction, two transactions cannot interleave in a way that creates a **conflict** (read‑write, write‑read, write‑write) on the same entity while one of them has already released the lock [5]. If two actions operate on different entities they can be swapped without affecting correctness [5].\n\n* The proof sketch (from the material) shows that any history that obeys these rules can be transformed, by a series of equivalence‑preserving swaps of non‑conflicting actions, into a serial history [3][5]. Since such a transformation exists, the original concurrent execution is **serializable**.\n\n**Key points**\n\n- **Growing → shrinking** phases prevent premature unlocks.  \n- **Lock‑once, unlock‑once** per entity ensures a clear ordering of accesses.  \n- **Exclusive lock before write** avoids write‑write conflicts.  \n- The ability to reorder non‑conflicting actions proves that every 2PL schedule is conflict‑serializable, i.e., equivalent to some serial execution.  \n\nThus, by adhering to the two‑phase locking discipline, concurrent transactions are guaranteed to be serializable.",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
-      1,
-      2,
       3,
       5
     ],
     "correctness": 2,
-    "faithfulness": 1,
-    "reason": "The assistant claims that 2PL 'prevents cycles of lock dependencies,' a specific mechanism not explicitly stated in the provided sources, which instead rely on equivalence-preserving swaps to prove serializability."
+    "faithfulness": 2,
+    "reason": "The assistant correctly identifies the growing/shrinking phases and the guarantee of serializability, and all specific claims about locking rules and proof techniques are supported by the provided sources."
   },
   {
     "id": "q18",
     "subject": "DBMS",
     "question": "What does isolation mean in the context of database transactions?",
     "answerable": true,
-    "answer": "Isolation is the property that determines **when and how the changes made by one transaction become visible to other concurrent users or transactions**. It controls the visibility of intermediate results so that concurrent operations do not interfere with each other, ensuring that each transaction sees a consistent view of the database while it is executing[1].  \n\nKey points  \n\n- **Concurrency control**: Isolation is what allows multiple users to access the same record without adversely affecting transaction processing[2].  \n- **Visibility timing**: It specifies the point at which the effects of a transaction are exposed to other operations—either only after commit (strict isolation) or earlier under weaker levels[1].  \n- **Relation to other ACID properties**: In the ACID model, isolation is essentially “atomicity in the face of concurrency”; it guarantees that concurrent transactions behave as if they were executed serially[5].  \n\nThus, isolation in database transactions is about managing the visibility of a transaction’s intermediate states to preserve correctness when many transactions run at the same time.",
+    "answer": "Isolation is the property that determines **when and how changes made by one operation become visible to other concurrent users or transactions**. In a database it means that a transaction’s intermediate updates are not seen by other transactions until the isolation rules allow it, ensuring that concurrent access does not interfere with each other’s view of the data[1].  \n\n**Key points from the material**\n\n- **Concurrency control**: Isolation is one of the ACID properties; it guarantees that concurrent transactions behave as if they were executed serially, preventing unwanted interactions[5].  \n- **Visibility of changes**: The isolation level decides the point at which a transaction’s modifications become visible to other operations (e.g., after commit under strict isolation, never under “read‑uncommitted”)[1].  \n- **Impact on security**: If a transaction runs under a low‑isolation level (e.g., read‑uncommitted), confidential data written temporarily may be exposed to other concurrent transactions, even if the writer deletes it before committing[3].  \n\nThus, isolation in database transactions is the mechanism that controls the visibility of a transaction’s intermediate state to other concurrent transactions, preserving correctness and preventing interference.",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
       1,
-      2,
+      3,
       5
     ],
     "correctness": 1,
-    "faithfulness": 1,
-    "reason": "The answer misses the reference's key point that isolation is 'one half of atomicity' (with the other half being failure atomicity), and incorrectly attributes the definition of 'concurrency' (from source [2]) to 'isolation'."
+    "faithfulness": 2,
+    "reason": "The assistant misses the reference's specific point that isolation is 'one half of atomicity' and that the other half involves failed transactions, instead focusing on visibility and security."
   },
   {
     "id": "q19",
     "subject": "Operating Systems",
     "question": "What conditions must hold for a deadlock to occur?",
     "answerable": true,
-    "answer": "A deadlock can arise only when **all four** of the classic conditions are satisfied:\n\n- **Mutual exclusion** – each required resource (e.g., a mutex) can be held by only one thread at a time.  \n- **Hold‑and‑wait** – a thread that already holds one resource may request additional resources while retaining the ones it has.  \n- **No preemption** – resources cannot be forcibly taken away; a thread must release them voluntarily.  \n- **Circular wait** – there exists a cycle of threads, each waiting for a resource held by the next thread in the cycle.  \n\nThese four conditions together define the situation in which a deadlock occurs[1].",
+    "answer": "A deadlock can arise only when **all four** of the classic conditions are simultaneously satisfied:\n\n1. **Mutual exclusion** – each resource (e.g., a mutex) can be held by only one thread at a time.  \n2. **Hold‑and‑wait** – a thread that already holds one or more resources may request additional ones and wait for them.  \n3. **No preemption** – resources cannot be forcibly taken away; a thread must release them voluntarily.  \n4. **Circular wait** – there exists a circular chain of threads, each waiting for a resource held by the next thread in the chain.  \n\nThese four conditions together define the situation in which a deadlock occurs[1].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
@@ -334,14 +329,14 @@
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant correctly identifies all four conditions for deadlock as stated in the reference and source [1], with no factual errors or unsupported claims."
+    "reason": "The assistant correctly identifies all four conditions for deadlock as stated in the reference and source [1], with no unsupported claims."
   },
   {
     "id": "q20",
     "subject": "Operating Systems",
     "question": "What is the difference between a process and a thread?",
     "answerable": true,
-    "answer": "A **process** is a container that holds one or more threads and provides protection for them, giving each process its own virtual‑memory address space and other access rights so that threads in one process cannot accidentally interfere with the memory or resources of another process [1][3][2].  \n\nA **thread** is the fundamental unit of concurrency: a single sequence of programmed actions that the CPU can execute. Threads share the memory and resources of the process that contains them, but each thread has its own execution state (program counter, registers, stack) [1][5].  \n\n**Key distinctions**\n\n- **Purpose**  \n  - Process: created to protect and isolate a set of threads and their resources.  \n  - Thread: created to perform an independent sequence of instructions (concurrent work).  \n\n- **Isolation**  \n  - Memory of a process is protected from other processes; a thread cannot overwrite memory belonging to a different process [1][2].  \n  - Threads within the same process share the same virtual memory space and other access rights [3][5].  \n\n- **Containment**  \n  - A process may contain one or more threads [3].  \n  - A thread exists only inside a process; when the process ends, all its threads are terminated [1][5].  \n\n- **Creation API**  \n  - Operating systems provide APIs to create processes (e.g., `fork`, `CreateProcess`) for isolation.  \n  - Separate APIs exist to create threads within a process (e.g., `pthread_create`, `CreateThread`) to enable concurrent execution [2].  \n\nThus, a process is the protected execution environment, while a thread is the actual line of execution that runs inside that environment.",
+    "answer": "A **process** is a container that holds one or more threads and provides protection (its own virtual‑memory address space and resource rights) so that the threads inside it cannot interfere with threads in other processes[1][3].  \n\nA **thread** is the fundamental unit of execution – a single sequence of programmed actions that the CPU can run[1][5]. Threads share the process’s memory and resources, while the process isolates those resources from other processes[2][3].  \n\n**Key points**\n\n- **Scope**\n  - Process: encapsulates threads, memory, and other access rights.\n  - Thread: just the execution flow of instructions.\n- **Protection**\n  - Process boundaries prevent accidental memory overwrite between unrelated computations[1][2].\n  - Threads within the same process can freely access the same virtual memory[3].\n- **Creation**\n  - Starting a program always creates at least one process and one thread; additional threads can be created inside that process[1][5].  \n\nThus, a process provides isolation and resource ownership, while a thread provides the actual concurrent execution inside that isolated environment.",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
@@ -352,15 +347,15 @@
       5
     ],
     "correctness": 2,
-    "faithfulness": 1,
-    "reason": "The assistant claims that a thread has its own stack and registers, which is not explicitly stated in the provided sources, although the concept of storing execution state is mentioned."
+    "faithfulness": 2,
+    "reason": "The assistant's answer accurately reflects the reference answer's definitions of process and thread, and every specific claim is directly supported by the provided sources."
   },
   {
     "id": "q21",
     "subject": "Operating Systems",
     "question": "What is a semaphore and what operations does it support?",
     "answerable": true,
-    "answer": "A semaphore is a synchronization primitive that holds a non‑negative integer value and can only be manipulated by three defined operations [2].  \n\n* **Initialize** – when created the semaphore is set to any non‑negative integer chosen by the programmer [2].  \n* **Release (up, V)** – increments the semaphore’s value by 1 [2][3].  \n* **Acquire (down, P)** – decrements the semaphore’s value by 1; if the value is 0 the calling thread blocks until another thread performs a release that makes the value positive [3].  \n\nThese operations guarantee that the semaphore’s value never becomes negative and provide a way to coordinate access to shared resources or to count available resource units.",
+    "answer": "A semaphore is an unsigned integer variable that can hold only non‑negative values and is used for synchronization between threads or processes[2].  \n\nIt supports exactly three primitive operations:\n\n* **Initialize** – set the semaphore to any non‑negative integer chosen by the programmer at creation time[2].  \n* **Release (up, V)** – atomically increase the semaphore’s value by 1[2][3].  \n* **Acquire (down, P)** – atomically decrease the semaphore’s value by 1; if the value is 0 the calling thread blocks until another thread performs a release that makes the value positive[3].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
@@ -370,33 +365,32 @@
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant correctly defines a semaphore and its three operations (initialize, release/up, acquire/down) including the blocking behavior on zero, which aligns perfectly with the reference answer and is fully supported by sources [2] and [3]."
+    "reason": "The assistant correctly defines a semaphore and its three operations (initialize, release/up, acquire/down) including the blocking behavior, which aligns with both the reference answer and the provided sources."
   },
   {
     "id": "q22",
     "subject": "Operating Systems",
     "question": "What is priority inversion?",
     "answerable": true,
-    "answer": "Priority inversion is a scheduling anomaly that occurs when a high‑priority thread is forced to wait because a lower‑priority thread holds a mutex (or other blocking synchronization primitive) that the high‑priority thread needs, while one or more medium‑priority threads run instead. The medium‑priority thread preempts the low‑priority holder, so the high‑priority thread cannot proceed even though it has the highest priority among runnable threads[3]. This situation can persist for an arbitrarily long time if a succession of medium‑priority threads keep the low‑priority thread from releasing the mutex, effectively “inverting” the intended priority order[3].  \n\nKey points  \n\n- **Cause**: A low‑priority thread acquires a mutex; a high‑priority thread later needs the same mutex and blocks; a medium‑priority thread, being runnable, preempts the low‑priority thread, preventing the mutex from being released[3].  \n- **Effect**: The high‑priority thread waits while a lower‑priority thread (or a chain of medium‑priority threads) runs, violating the priority‑based scheduling policy[1][3].  \n- **Duration**: Without mitigation, the inversion can last arbitrarily long because any number of medium‑priority threads can keep the low‑priority holder from running[3].  \n- **Typical context**: Described for single‑processor systems where the scheduler decides which runnable thread runs, and synchronization actions (locking/unlocking) affect thread runnable states[2].  \n\nThe material also notes that solutions such as priority inheritance temporarily raise the low‑priority thread’s priority to the highest waiting priority, eliminating the inversion[4].",
+    "answer": "Priority inversion is a scheduling problem that occurs when a high‑priority thread is forced to wait because a lower‑priority thread holds a resource (such as a mutex) that the high‑priority thread needs, and a medium‑priority thread runs instead, preventing the low‑priority thread from releasing the resource. The result is that the intended priority order (high > medium > low) is temporarily violated, and the high‑priority thread can be blocked for an arbitrarily long time while medium‑priority work proceeds[2][3].  \n\n**Key points**\n\n- A high‑priority thread may be blocked by a low‑priority thread that owns a mutex.  \n- If a medium‑priority thread becomes runnable, it preempts the low‑priority thread, so the low‑priority thread cannot release the mutex, and the high‑priority thread remains blocked.  \n- This chain of blocking (high → low, low → medium) is the essence of priority inversion and can persist as long as medium‑priority work continues[3].  \n\nThe material also notes that simple priority‑based scheduling cannot prevent this; solutions such as priority inheritance are required to eliminate the inversion[4].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
-      1,
       2,
       3,
       4
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant accurately defines priority inversion and its solution using the provided sources, matching the reference answer's key points without introducing unsupported claims."
+    "reason": "The assistant correctly identifies the definition, mechanism (involving high, medium, and low priority threads), and the solution (priority inheritance) as described in the sources and reference."
   },
   {
     "id": "q23",
     "subject": "Operating Systems",
     "question": "What is thrashing?",
     "answerable": true,
-    "answer": "Thrashing is a condition in which the system spends almost all of its time moving pages between memory and disk (paging) and repeatedly switching processes, leaving very little time for actual computation. In a virtual‑memory system this occurs when the combined working‑set size of the active processes exceeds the number of available page frames, causing continuous page faults and severe degradation of throughput[1]. The same phenomenon appears in timesharing computers: as more jobs are admitted, the system eventually reaches a point where it “spends all of its time swapping memory pages,” and throughput drops sharply[3].",
+    "answer": "Thrashing is a condition in which the system spends almost all of its time moving pages between memory and disk (paging) and repeatedly switching processes, leaving very little time for actual computation. In a virtual‑memory system this occurs when the combined working‑set size of the active processes exceeds the number of available page frames, causing continuous page faults and severe loss of throughput[1]. The same phenomenon appears in timesharing computers: as more jobs are admitted, throughput initially rises but eventually the system begins to “thrash” – it swaps pages so frequently that overall throughput drops sharply[3].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
@@ -406,14 +400,14 @@
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant correctly defines thrashing and its cause (working sets exceeding page frames) and mentions the throughput impact, aligning with the reference and sources, although it omits the specific traditional fix (swapping) mentioned in the reference, the core definition is accurate and fully supported by the text."
+    "reason": "The assistant correctly defines thrashing and its cause (working sets exceeding page frames) and mentions the throughput drop, supported by sources [1] and [3], though it omits the specific traditional fix (swapping) mentioned in the reference."
   },
   {
     "id": "q24",
     "subject": "Operating Systems",
     "question": "What is a page fault and who handles it?",
     "answerable": true,
-    "answer": "A **page fault** occurs when a program accesses a virtual address that has no valid physical‑address translation in the page table (i.e., the entry is undefined or marked illegal). The Memory Management Unit (MMU) detects this illegal access and generates an interrupt, transferring control to the **operating system**, which then handles the fault (e.g., by loading the required page, updating the page table, or terminating the process).[1]",
+    "answer": "A **page fault** occurs when a program accesses a virtual address that has no valid translation in the page‑table (the entry is blank or marked illegal). The Memory Management Unit (MMU) detects this illegal access and generates an interrupt that transfers control to the operating system — the OS’s page‑fault handler then decides how to resolve the fault (e.g., by bringing the needed page into memory or terminating the process)[1].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
@@ -422,14 +416,14 @@
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant correctly identifies the page fault as an interrupt raised by the MMU for invalid translations and notes that the OS handles it, fully aligning with the reference and supported by Source [1]."
+    "reason": "The assistant correctly identifies the page fault as an interrupt raised by the MMU for invalid addresses and notes that the OS handles it, which aligns with the reference and is fully supported by Source [1]."
   },
   {
     "id": "q25",
     "subject": "Operating Systems",
     "question": "What is a race condition and how does mutual exclusion prevent it?",
     "answerable": true,
-    "answer": "A **race condition** occurs when two or more threads access shared data without proper coordination, so the final result depends on the unpredictable order in which the threads’ operations are interleaved. The uncontrolled interleaving of reads and writes can leave the data in an inconsistent state — these uncontrolled interactions are called *races* [2].\n\n**Mutual exclusion** solves this problem by allowing only one thread at a time to hold a lock (mutex) associated with the shared data structure. While a thread holds the lock it has exclusive access; any other thread that tries to acquire the same lock must wait until it is released. By ensuring that all accesses and updates to the shared resource occur while holding the corresponding mutex, the program eliminates the nondeterministic interleavings that cause races [1].",
+    "answer": "A race condition occurs when two or more threads access shared data without proper coordination, so the final result depends on the unpredictable interleaving of their operations. This can leave the data in an inconsistent state because the threads “race” to read or write the same locations [2].\n\nMutual exclusion solves the problem by allowing only one thread to hold a lock on the shared data structure at any time. The programmer creates a mutex (a mutual‑exclusion lock) for each shared object; a thread must lock the mutex before accessing the object and unlock it afterward. Because the lock can be owned by only one thread, the protected code executes atomically, eliminating the nondeterministic interleavings that cause races [1].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
@@ -439,14 +433,14 @@
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant correctly defines a race condition as an uncontrolled interaction dependent on timing and explains that mutual exclusion prevents it by ensuring exclusive access via locks, fully supported by sources [1] and [2]."
+    "reason": "The assistant correctly defines a race condition as an uncontrolled interaction dependent on timing and explains that mutual exclusion (via mutexes) ensures exclusive access, aligning perfectly with the reference and sources."
   },
   {
     "id": "q26",
     "subject": "Operating Systems",
     "question": "What is a context switch?",
     "answerable": true,
-    "answer": "A **context switch** is the operation that saves the execution state (the “context”) of the currently running thread and restores the saved state of another thread so that the processor can continue executing the new thread from the point where it left off. In practice the term is most often used for **thread switching**—changing from the execution context of one thread to that of another—though some authors also use it for switching between processes with different protection contexts [1].",
+    "answer": "A context switch is the operation that saves the execution state of the currently running thread (or process) and restores the saved state of another thread so that the processor can continue execution with the new thread. In practice the term is used for **thread switching**, i.e., moving from the execution context of one thread to that of another, although some authors also apply it to process‑level switches that involve changing protection contexts[1]. The only way a thread can run without a context switch is when the processor is idle; otherwise the scheduler must perform a context (thread) switch to dispatch another thread[1].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
@@ -455,14 +449,14 @@
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant correctly defines a context switch as switching execution contexts between threads and notes the alternative usage for processes, fully supported by Source [1]."
+    "reason": "The answer accurately reflects the reference definition and is fully supported by Source [1], which defines context switching as thread switching, notes the alternative usage for processes, and states that dispatching without a switch only occurs when the processor is idle."
   },
   {
     "id": "q27",
     "subject": "Computer Networks",
     "question": "Explain the TCP three-way handshake.",
     "answerable": true,
-    "answer": "The TCP three‑way handshake is the process by which a client (active opener) and a server (passive opener) agree on initial sequence numbers and move both ends into the **ESTABLISHED** state before any data is exchanged.\n\n* **Step 1 – SYN** – The client sends a segment with the SYN flag set and chooses its initial sequence number **x** (Flags = SYN, Seq = x). This puts the client in the **SYN_SENT** state[2].  \n* **Step 2 – SYN‑ACK** – The server, which is in **LISTEN** after a passive open, receives the SYN, chooses its own initial sequence number **y**, and replies with a segment that has both SYN and ACK flags set (Flags = SYN+ACK, Seq = y, Ack = x + 1). The server moves to **SYN_RCVD**[2].  \n* **Step 3 – ACK** – The client receives the SYN‑ACK, acknowledges the server’s sequence number by sending a segment with only the ACK flag (Flags = ACK, Ack = y + 1). After sending this ACK the client transitions to **ESTABLISHED**[2].  \n* **Server final transition** – When the server receives the client’s ACK, it also moves to **ESTABLISHED**, completing the handshake[3].\n\nThe acknowledgment fields always contain the “next expected sequence number,” so each side acknowledges the other’s initial sequence number plus one[2]. Retransmission timers are started for the first two segments; if a response is not received, the segment is resent (though the timer details are not shown in the diagram)[2]. If the client’s final ACK is lost, the client can still start sending data because it is already in **ESTABLISHED**; the server will transition to **ESTABLISHED** upon receiving the first data segment with a correct ACK field[5].",
+    "answer": "The TCP three‑way handshake is the sequence of three segments that a client (active opener) and a server (passive opener) exchange to agree on initial sequence numbers and move both ends into the **ESTABLISHED** state before any data is sent.\n\n- **Step 1 – SYN** – The client sends a segment with the SYN flag set and its chosen initial sequence number **x** (`Flags=SYN, SequenceNum=x`) to the server [2].\n- **Step 2 – SYN‑ACK** – The server, which is in the LISTEN state after a passive open, replies with a segment that both acknowledges the client’s SYN (`Ack=x+1`) and carries its own SYN (`Flags=SYN+ACK, SequenceNum=y`) [2]. This moves the server to the SYN_RCVD state [3].\n- **Step 3 – ACK** – The client acknowledges the server’s SYN (`Ack=y+1`) with a segment that has only the ACK flag set (`Flags=ACK`) [2]. After sending this, the client enters the ESTABLISHED state [3].\n\nWhen the server receives the client’s ACK, it also transitions to ESTABLISHED, completing the handshake [3].  \n\nIf the client’s final ACK is lost, the client is already in ESTABLISHED and can start sending data; the first data segment (which carries an ACK) will cause the server to move to ESTABLISHED as well [5].  \n\nThus the three‑way handshake synchronizes sequence numbers, confirms that both sides are ready, and establishes the bidirectional TCP connection.",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
@@ -473,52 +467,49 @@
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant accurately describes the three steps of the TCP handshake, the state transitions, and the purpose of agreeing on sequence numbers, with all details fully supported by the provided sources."
+    "reason": "The assistant accurately describes the three steps of the TCP handshake with correct sequence numbers and flags, and all claims are directly supported by the provided sources."
   },
   {
     "id": "q28",
     "subject": "Computer Networks",
     "question": "TCP vs UDP: what's the difference?",
     "answerable": true,
-    "answer": "TCP and UDP are the two transport‑layer protocols that sit above IP [4].  \n\n- **Service model** – TCP offers a **reliable, connection‑oriented byte‑stream** service; UDP provides an **unreliable, connectionless datagram** service (often called a message) [5][4].  \n- **Reliability** – TCP guarantees in‑order delivery, retransmits lost segments, and uses acknowledgments; UDP does not retransmit or reorder packets, so loss or duplication is visible to the application [5].  \n- **Connection state** – TCP establishes a connection with a three‑way handshake and maintains per‑connection state (e.g., sequence numbers, timers) for the lifetime of the flow; UDP has no connection setup and carries no per‑flow state [5][4].  \n- **Data framing** – TCP is a pure byte‑stream; the number of bytes written by the sender need not match the number read by the receiver, and record boundaries must be imposed by the application (or by optional TCP features) [3]. UDP preserves message boundaries: each send results in a single datagram that is received as a whole [4].  \n- **Flow control** – TCP includes a flow‑control mechanism (receiver‑advertised window) that limits how much data the sender may transmit at a time; UDP has no flow control [5].  \n- **Congestion control** – TCP implements a sophisticated congestion‑control algorithm that throttles sending rate to avoid overloading the network; UDP carries no congestion‑control logic [5].  \n- **Full‑duplex** – A TCP connection supports two independent byte streams (one in each direction); UDP is inherently half‑duplex per datagram, though applications can send and receive on the same socket [5].  \n- **Typical uses** – TCP is chosen when an application needs reliable, ordered delivery (e.g., web traffic, file transfer, email). UDP is chosen for latency‑sensitive or simple message‑oriented applications where occasional loss is acceptable (e.g., DNS, streaming, VoIP).  \n\nThese points capture the material’s comparison of TCP and UDP.",
+    "answer": "TCP and UDP are the two transport‑layer protocols that sit above IP. Their main differences are:\n\n- **Reliability** – TCP guarantees reliable, in‑order delivery of a byte stream; UDP provides no reliability guarantees and may drop, duplicate, or reorder packets[5].  \n- **Connection model** – TCP is connection‑oriented (a connection is set up before data transfer); UDP is connectionless, sending independent datagrams[4].  \n- **Data framing** – TCP presents a continuous byte‑stream to the application; UDP preserves message boundaries, delivering each datagram as a separate unit[4].  \n- **Flow‑control** – TCP includes per‑direction flow‑control so the receiver can limit the sender’s rate; UDP has no flow‑control mechanism[5].  \n- **Congestion control** – TCP implements a sophisticated congestion‑control algorithm to avoid overloading the network; UDP does not perform congestion control[5].  \n- **Duplexing** – TCP is full‑duplex, providing two independent byte streams (one each way) on a single connection; UDP is simplex per datagram, with no built‑in duplex semantics[5].  \n\nIn short, TCP is used when an application needs reliable, ordered, and flow‑controlled communication, while UDP is chosen for low‑overhead, message‑oriented traffic where occasional loss is acceptable.",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
-      3,
       4,
       5
     ],
     "correctness": 2,
     "faithfulness": 1,
-    "reason": "The assistant claims UDP is 'inherently half-duplex per datagram,' which is not supported by the sources and is technically inaccurate (UDP sockets are full-duplex), whereas the sources only state TCP is full-duplex."
+    "reason": "The claim that UDP is 'simplex per datagram' is not supported by the sources, which only describe it as an unreliable datagram service without specifying duplex semantics."
   },
   {
     "id": "q29",
     "subject": "Computer Networks",
     "question": "What is slow start in TCP?",
     "answerable": true,
-    "answer": "Slow start is the TCP mechanism that ramps up the congestion window ( CWND ) exponentially when a connection begins or when it must restart after a timeout.  \n\n- The sender initializes CWND to one packet. Each ACK received increments CWND by one packet, so after one RTT the sender can transmit two packets, after the next RTT four packets, and so on—doubling the number of packets in flight each round‑trip time [1][3].  \n- This exponential growth continues until a loss is detected (via triple‑duplicate ACKs or a timeout). At that point TCP performs multiplicative decrease (halving CWND) and records the halved value as the **congestion threshold**; slow start then resumes from CWND = 1 and grows until it reaches the threshold, after which additive increase takes over [4][5].  \n- Slow start is also used when the connection becomes idle and a timeout occurs: the sender receives a single cumulative ACK that re‑opens the advertised window, but rather than sending an entire window’s worth of data at once, it restarts with slow start to avoid a burst that could overflow router buffers [2][4].  \n\nIn summary, slow start quickly probes the available network capacity by doubling CWND each RTT, but it is bounded by the congestion threshold to prevent overwhelming the network.",
+    "answer": "Slow start is the TCP mechanism that ramps up the congestion window exponentially from a cold start or after a timeout.  \n\n- The sender initializes **CongestionWindow = 1 packet**. Each ACK received increments the window by one packet, so after one RTT the sender can transmit 2 packets, after the next RTT 4 packets, and so on—effectively doubling the number of packets in flight each round‑trip time[1].  \n- This exponential growth continues until a loss is detected (by duplicate ACKs or a timeout). When a loss occurs, TCP performs a multiplicative decrease, cutting the window roughly in half, and then re‑enters slow start to grow the window quickly up to the new **CongestionThreshold** (the halved value) before switching to additive increase[4].  \n- Slow start is also used when the connection becomes idle and a single cumulative ACK reopens the advertised window; the sender again starts from one packet and uses slow start to avoid dumping an entire window’s worth of data at once[2].  \n\nIn summary, slow start rapidly increases the sending rate by doubling the congestion window each RTT until a loss event forces a reduction, after which it restarts to reach the target window safely.",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
       1,
       2,
-      3,
-      4,
-      5
+      4
     ],
     "correctness": 2,
-    "faithfulness": 1,
-    "reason": "The assistant claims that slow start resumes from CWND=1 after a loss, but the sources state that it resumes from the halved CongestionWindow value (the threshold) in that specific scenario, not from 1."
+    "faithfulness": 2,
+    "reason": "The assistant's answer accurately reflects the reference answer's key points regarding exponential growth, the starting window size, and the transition to additive increase, and all specific claims are directly supported by the provided sources."
   },
   {
     "id": "q30",
     "subject": "Computer Networks",
     "question": "What is ARP used for?",
     "answerable": true,
-    "answer": "ARP (Address Resolution Protocol) is the mechanism the OS kernel uses to translate an IP address into the corresponding link‑layer (MAC) address on the local network. When the kernel needs to send a packet to an IP that is on the same subnet, it broadcasts an ARP request; the host that owns that IP replies with its 48‑bit hardware (MAC) address, which the requester caches for future use[1]. This translation is necessary because IP datagrams carry IP addresses, while the network interface hardware can only understand link‑level addresses such as Ethernet MACs[4].",
+    "answer": "ARP (Address Resolution Protocol) is used by the operating‑system kernel to translate an IP (network‑layer) address into the corresponding link‑layer hardware address (MAC address) so that a frame can be addressed correctly on the local Ethernet or Wi‑Fi network[1]. It does this by broadcasting a request for the MAC address of a given IP; the host that owns that IP replies with its MAC, and the requester caches the mapping for future use[1]. This translation is necessary because IP packets carry IP addresses, while the physical interface can only understand the 48‑bit MAC addresses used on the local link[4].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
@@ -528,14 +519,14 @@
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant's answer accurately covers all key points of the reference (broadcasting, MAC lookup, caching) and every factual claim is directly supported by sources [1] and [4]."
+    "reason": "The assistant's answer accurately covers all key points of the reference (broadcasting, caching, IP-to-MAC translation) and every claim is directly supported by sources [1] and [4]."
   },
   {
     "id": "q31",
     "subject": "Computer Networks",
     "question": "What are the layers of the OSI model?",
     "answerable": true,
-    "answer": "The OSI (Open Systems Interconnection) reference model defines **seven** stacked protocol layers:\n\n- **Layer 1 – Physical** – handles transmission of raw bits over a link[1]  \n- **Layer 2 – Data Link** – groups bits into frames and delivers them to the host[1]  \n- **Layer 3 – Network** – routes packets between nodes in a packet‑switched network[1]  \n- **Layer 4 – Transport** – provides process‑to‑process channels (messages) between end hosts[1]  \n- **Layer 5 – Session** – (not detailed in the material but part of the standard seven‑layer model)[5]  \n- **Layer 6 – Presentation** – (not detailed in the material but part of the standard seven‑layer model)[5]  \n- **Layer 7 – Application** – interfaces directly with user applications and protocols such as HTTP, SMTP, DNS, etc.[5]",
+    "answer": "The OSI reference model defines **seven stacked layers** that partition network functionality:\n\n1. **Physical layer** – handles transmission of raw bits over a link[1]  \n2. **Data‑link layer** – groups bits into frames and delivers frames to the host[1]  \n3. **Network layer** – routes packets between nodes; the data unit is called a packet[1]  \n4. **Transport layer** – provides process‑to‑process channels (messages) between end hosts[1]  \n5. **Session layer** – (not detailed in the excerpt but part of the seven‑layer model)[5]  \n6. **Presentation layer** – (not detailed in the excerpt but part of the seven‑layer model)[5]  \n7. **Application layer** – where user‑level protocols such as HTTP, SMTP, DNS, etc., operate[5]\n\nThese seven layers together form the OSI model used as a reference for network protocol design.",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
@@ -545,68 +536,101 @@
     ],
     "correctness": 1,
     "faithfulness": 2,
-    "reason": "The assistant correctly lists the seven layers but misses the reference's specific point that the Internet architecture does not use the session and presentation layers as separate layers."
+    "reason": "The assistant correctly lists the seven layers but misses the reference answer's specific point that the Internet architecture does not use the session and presentation layers as separate layers."
   },
   {
     "id": "q32",
     "subject": "Computer Networks",
     "question": "What does DNS do?",
     "answerable": true,
-    "answer": "DNS is the Internet‑wide service that translates human‑readable names into the numeric values that the network layer uses.\n\n- It provides a **resolution mechanism**: when an application supplies a host name (e.g., `www.gustavus.edu`), DNS returns the corresponding IP address so the transport protocol can address the packet [3].  \n- DNS implements a **hierarchical name space** stored in **name servers**; queries are sent to these servers to obtain the mapping from a domain name to a value (typically an IP address) [5][1].  \n- The system is a **general mapping facility**: although most often used for host‑to‑address mappings, DNS can associate any domain name with arbitrary values (resource records) [3][2].  \n- It operates as an **infrastructure application** that other applications rely on, allowing users to refer to remote hosts by name rather than by numeric address [4].",
+    "answer": "DNS is the Internet’s name‑service infrastructure that maps human‑readable domain names to the numeric values (typically IP addresses) that the network layer uses. It provides a hierarchical namespace, stores bindings in name servers, and supplies a resolution mechanism that applications query to obtain the corresponding address before opening a transport connection[1][3][4][5].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
       1,
-      2,
       3,
       4,
       5
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant's answer accurately covers all key points of the reference (mapping names to addresses, hierarchical/distributed nature, application dependency) and every specific claim is directly supported by the provided sources."
+    "reason": "The assistant's answer accurately covers the key points of the reference (mapping names to addresses, hierarchical/distributed nature, application dependency) and every specific claim is supported by the provided sources."
   },
   {
     "id": "q33",
     "subject": "Computer Networks",
     "question": "What is the congestion window in TCP and how does it relate to the advertised window?",
     "answerable": true,
-    "answer": "The **congestion window** ( `CongestionWindow` ) is a sender‑side state variable that limits the amount of unacknowledged data a TCP source may have in transit. It is adjusted by the sender according to perceived network congestion (additive increase/multiplicative decrease) rather than being advertised by the receiver [1].\n\nTCP combines this window with the receiver’s flow‑control limit (the **advertised window**) to compute the actual sending allowance:\n\n```\nMaxWindow = MIN(CongestionWindow, AdvertisedWindow)\nEffectiveWindow = MaxWindow – (LastByteSent – LastByteAcked)\n```\n\nThus, the **effective window** a sender can use at any moment is the smaller of the congestion window and the advertised window; the sender must not send more data than this value [1].",
+    "answer": "The congestion window (**CongestionWindow**) is a TCP state variable that limits the amount of un‑acknowledged data the sender may have in transit; it is the TCP side’s counterpart to the receiver‑side advertised (flow‑control) window. The effective sending limit at any moment is the smaller of the two windows:\n\n```\nMaxWindow = MIN(CongestionWindow, AdvertisedWindow)\nEffectiveWindow = MaxWindow – (LastByteSent – LastByteAcked)\n```\n\nThus, TCP can send only up to the **minimum** of the congestion window (which reflects the network’s perceived congestion) and the advertised window (which reflects the receiver’s buffer space) [1]. The congestion window is adjusted by TCP’s congestion‑control algorithm (AIMD, slow start, etc.) to increase when the network is under‑utilized and decrease when loss or other congestion signals occur, while the advertised window is set by the receiver and changes only with its buffer availability [4].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
-      1
+      1,
+      4
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant correctly identifies the congestion window as a sender-side limit and accurately describes the relationship with the advertised window using the minimum function, fully supported by Source [1]."
+    "reason": "The assistant accurately defines the congestion window and its relationship to the advertised window using the minimum function, fully supported by Source [1] and consistent with the reference answer."
   },
   {
     "id": "q34",
     "subject": "DBMS",
     "question": "What is normalization in DBMS and why do we do it?",
     "answerable": true,
-    "answer": "Normalization is the systematic process of analyzing a relational schema to measure and reduce redundancy in its tables. It uses functional‑dependency theory to identify how much duplicate data exists and then transforms the schema so that each piece of information is stored only once, eliminating update anomalies [1].  \n\n**Why we normalize**\n\n- **Characterize redundancy** – Normalization lets designers quantify the level of redundancy present in a relational design [1].  \n- **Remove redundancy** – By applying the normal‑form rules (1NF, 2NF, 3NF, BCNF), we restructure tables so that non‑key attributes depend only on candidate keys, eliminating duplicate storage and preventing insert, update, and delete anomalies [1][4].  \n- **Improve data integrity** – Fewer redundant copies mean fewer chances for inconsistent data, making the database more reliable.  \n- **Facilitate maintenance** – A well‑normalized schema is easier to modify and extend because changes affect only one place rather than multiple duplicated rows.  \n\nIn practice, designers verify the ER model by normalizing tables before creating the final relational structure [2]. This ensures the database meets the desired normal form and avoids the anomalies that arise from poorly designed, redundant tables.",
+    "answer": "Normalization is the process of analysing a relational table to determine how much redundant data it contains and then restructuring the schema to eliminate that redundancy [1]. It relies on functional‑dependency theory and moves a design through a series of normal forms (1NF, 2NF, 3NF, BCNF), each of which imposes stricter dependency rules and therefore reduces the chance of update anomalies [1][4].\n\n**Why we normalize**\n\n- **Characterize redundancy** – Normalization lets us measure the level of duplicate information in a schema [1].\n- **Remove redundancy** – By transforming the schema into higher normal forms we eliminate unnecessary copies of data, which minimizes storage waste and keeps the data consistent [1].\n- **Prevent update anomalies** – Higher normal forms guarantee fewer insert, delete, and update problems because non‑key attributes are not dependent on other non‑key attributes [1][4].\n- **Facilitate reliable design** – Normalizing tables before they are created ensures that the resulting entities satisfy the required normal form, avoiding later redesign effort and anomalies [4].\n\nIn short, normalization is a design technique that identifies and removes data redundancy, leading to a cleaner, more maintainable relational schema with fewer update anomalies.",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
       1,
-      2,
       4
     ],
     "correctness": 2,
-    "faithfulness": 1,
-    "reason": "The assistant claims that normalization ensures non-key attributes depend only on candidate keys, which is a specific definition of BCNF rather than the general goal of normalization described in the sources."
+    "faithfulness": 2,
+    "reason": "The assistant's answer accurately reflects the reference answer's key points regarding the definition and goals of normalization, and all specific claims are directly supported by the provided sources."
   },
   {
     "id": "q35",
     "subject": "DBMS",
     "question": "What is the difference between a primary key and a foreign key?",
     "answerable": true,
-    "answer": "A **primary key** uniquely identifies each row in its own table; it must contain a non‑null, unique value for every tuple and cannot be null [1]. It is the attribute (or set of attributes) the designer chooses as the main identifier for the entity set [1][2].\n\nA **foreign key** is an attribute (or set of attributes) in one table that references the primary key of another table; it can be null and must have the same data type as the referenced primary key [1][3]. The foreign key creates a relationship between the two tables, while the primary key defines the identity of rows within its own table [1][3].\n\n**Key differences**\n\n- **Purpose**:  \n  - Primary key → identifies rows within the same table.  \n  - Foreign key → links a row to a row in a different table.  \n\n- **Uniqueness**:  \n  - Primary key values must be unique across the table.  \n  - Foreign key values need not be unique; they may repeat to reference the same parent row.  \n\n- **Nullability**:  \n  - Primary key cannot be null.  \n  - Foreign key may be null (or contain nulls) [1][3].  \n\n- **Relationship role**:  \n  - Primary key is the target of a foreign‑key reference.  \n  - Foreign key is the source that points to the primary key of another entity [1][3].  \n\n- **Data type**:  \n  - Both must share the same data type when a foreign key references a primary key [1].  ",
+    "answer": "A **primary key** is a candidate key chosen by the designer to uniquely identify every tuple in a table; it must be unique and cannot be null, and it is shown in an ER diagram by underlining the attribute [1].  \n\nA **foreign key** is an attribute (or set of attributes) in a table that references the primary key of another table; it may be null and must have the same data type as the referenced primary key [1][3].  \n\n**Key differences**\n\n- **Purpose**:  \n  - Primary key → identifies rows within its own table.  \n  - Foreign key → creates a link to rows in a different (parent) table.  \n\n- **Uniqueness**:  \n  - Primary key values are unique across the table.  \n  - Foreign key values need not be unique; they can repeat to represent many‑to‑one relationships.  \n\n- **Nullability**:  \n  - Primary key cannot be null.  \n  - Foreign key can be null (representing an unknown or optional relationship).  \n\n- **Data‑type requirement**:  \n  - Both must share the same data type as the referenced key, but only the foreign key must match the parent’s primary key type [1][3].  \n\n- **Diagram notation**:  \n  - Primary key is underlined in the ER model.  \n  - Foreign key is indicated by a relationship line pointing to the referenced primary key.  \n\nThese distinctions define how tables are uniquely identified and related in a relational database.",
+    "model": "openai/gpt-oss-120b",
+    "refused_before_llm": false,
+    "refused": false,
+    "citations": [
+      1,
+      3
+    ],
+    "correctness": 2,
+    "faithfulness": 1,
+    "reason": "The assistant claims that foreign keys are indicated by a relationship line pointing to the referenced primary key in the ER model, a specific diagrammatic detail not explicitly stated in the provided sources (which only mention underlining for primary keys)."
+  },
+  {
+    "id": "q36",
+    "subject": "DBMS",
+    "question": "What conditions must a table meet to be in third normal form?",
+    "answerable": true,
+    "answer": "A table is in **Third Normal Form (3NF)** when it satisfies two conditions:\n\n- **It is already in Second Normal Form** – the relation must be in 1NF and every non‑key attribute must be fully dependent on the whole primary key, with no partial dependencies [3].\n- **All transitive dependencies are removed** – no non‑key attribute may be functionally dependent on another non‑key attribute; any such dependency must be placed in a separate table [3][4].\n\nThus, 3NF requires the table to be in 2NF **and** to have no transitive dependencies among its attributes.",
+    "model": "openai/gpt-oss-120b",
+    "refused_before_llm": false,
+    "refused": false,
+    "citations": [
+      3,
+      4
+    ],
+    "correctness": 2,
+    "faithfulness": 2,
+    "reason": "The assistant correctly identifies the two conditions for 3NF (being in 2NF and removing transitive dependencies) and accurately describes the 2NF requirement as stated in the sources."
+  },
+  {
+    "id": "q37",
+    "subject": "DBMS",
+    "question": "What is a functional dependency?",
+    "answerable": true,
+    "answer": "A functional dependency (FD) is a constraint between two sets of attributes in a relation where the value of one attribute (or set of attributes) **deterministically** determines the value of another attribute (or set of attributes) — the left‑hand side is called the **determinant** and the right‑hand side the **dependent** [1].  \n\n- Formally, for a relation R, attribute Y is functionally dependent on attribute X (written X → Y) if, for every valid instance of X, that value of X uniquely determines the value of Y [1].  \n- FD’s are a kind of attribute‑level constraint drawn from the semantics of the application domain and are used to understand relationships among data and to guide normalization [2].  \n- In the FD diagram, the determinant appears on the left side and the dependent on the right side [1][3].  \n\nThese definitions capture the essential meaning of a functional dependency as presented in the study material.",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
@@ -617,50 +641,14 @@
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant's answer accurately covers all key points from the reference (definition, uniqueness, nullability, data type) and every claim is directly supported by the provided sources, including the note that foreign keys need not be unique which is implied by the definition of referencing a primary key in a one-to-many context found in the sources."
-  },
-  {
-    "id": "q36",
-    "subject": "DBMS",
-    "question": "What conditions must a table meet to be in third normal form?",
-    "answerable": true,
-    "answer": "A table is in **Third Normal Form (3NF)** when it satisfies two conditions:\n\n- **It is already in Second Normal Form** – i.e., the relation is in 1NF and every non‑key attribute is fully dependent on the whole primary key, with no partial dependencies [3].\n- **All transitive dependencies are removed** – no non‑key attribute may be functionally dependent on another non‑key attribute; any such dependency must be placed in a separate table [3][4].",
-    "model": "openai/gpt-oss-120b",
-    "refused_before_llm": false,
-    "refused": false,
-    "citations": [
-      3,
-      4
-    ],
-    "correctness": 2,
-    "faithfulness": 2,
-    "reason": "The assistant correctly identifies the two conditions for 3NF (being in 2NF and removing transitive dependencies) and accurately supports all claims with the provided sources."
-  },
-  {
-    "id": "q37",
-    "subject": "DBMS",
-    "question": "What is a functional dependency?",
-    "answerable": true,
-    "answer": "A functional dependency (FD) is a constraint between two attributes (or sets of attributes) of a relation where the value of one attribute — the **determinant** — uniquely determines the value of another attribute — the **dependent**. Formally, for a relation R, attribute Y is functionally dependent on attribute X (written X → Y) if, for every valid instance of X, there is exactly one corresponding value of Y [1].  \n\nKey points  \n\n- The left‑hand side of the dependency (X) is called the **determinant**; the right‑hand side (Y) is the **dependent** [1][3].  \n- FDs describe how attributes are related within a single table and are used as a kind of constraint to guide good relational schema design [2].  \n- When the determinant is a primary key, the FD ensures that the primary key uniquely identifies the non‑key attributes (e.g., SIN → Name, Address, Birthdate) [1].  \n- Recognizing FDs is the first step toward normalization, helping to eliminate redundancy and update anomalies [2][4].",
-    "model": "openai/gpt-oss-120b",
-    "refused_before_llm": false,
-    "refused": false,
-    "citations": [
-      1,
-      2,
-      3,
-      4
-    ],
-    "correctness": 2,
-    "faithfulness": 2,
-    "reason": "The assistant's answer accurately reflects the reference definition and all specific claims (definitions of determinant/dependent, examples, and role in design/normalization) are directly supported by the provided sources."
+    "reason": "The assistant's answer accurately reflects the reference definition and all specific claims (such as the terms determinant/dependent and the formal definition) are directly supported by the provided sources."
   },
   {
     "id": "q38",
     "subject": "DBMS",
     "question": "What is the difference between DDL and DML in SQL?",
     "answerable": true,
-    "answer": "DDL (Data Definition Language) and DML (Data Manipulation Language) are two distinct groups of SQL statements that serve different purposes in a relational database.\n\n- **DDL** statements define and modify the structure of the database itself. They are used to create, alter, and drop database objects such as databases, tables, columns, indexes, and constraints. Examples include `CREATE DATABASE`, `CREATE TABLE`, `ALTER TABLE`, and `DROP TABLE` [2][1]. When a constraint is added with DDL, the existing data are checked for violations [1].\n\n- **DML** statements operate on the data stored within those structures. They are used to retrieve, insert, update, and delete rows in tables. The core DML commands are `SELECT`, `INSERT`, `UPDATE`, and `DELETE` [3].\n\n**Key differences**\n\n| Aspect | DDL | DML |\n|--------|-----|-----|\n| Purpose | Define/modify schema objects (databases, tables, constraints) | Manipulate the actual data rows in existing tables |\n| Typical commands | `CREATE`, `ALTER`, `DROP` (e.g., `CREATE TABLE`, `ALTER TABLE`, `DROP TABLE`) | `SELECT`, `INSERT`, `UPDATE`, `DELETE` |\n| Effect on data | May affect data indirectly (e.g., adding a constraint validates existing rows) but does not change row values | Directly adds, changes, or removes row values |\n| Transaction behavior | Often auto‑committed; changes are permanent once executed | Can be rolled back/committed within a transaction block |\n\nThus, DDL shapes the database’s structure, while DML works with the data inside that structure.",
+    "answer": "DDL (Data Definition Language) and DML (Data Manipulation Language) serve different purposes in SQL.\n\n- **DDL** is used to define and modify the structure of database objects. It includes statements such as **CREATE DATABASE**, **CREATE TABLE**, **ALTER TABLE**, and **DROP TABLE** that create, change, or remove schemas, tables, constraints, and other objects [2][1]. When a constraint is added with DDL, existing data are checked for violations [1].\n\n- **DML** is used to work with the data stored in those structures. It includes **SELECT**, **INSERT**, **UPDATE**, and **DELETE** statements that query, add, modify, or remove rows in tables [3].\n\n**Key differences**\n\n| Aspect | DDL | DML |\n|--------|-----|-----|\n| Purpose | Define/alter the database schema and objects | Manipulate the actual data within the tables |\n| Typical commands | `CREATE`, `ALTER`, `DROP` (e.g., `CREATE TABLE`, `ALTER TABLE`, `DROP TABLE`) | `SELECT`, `INSERT`, `UPDATE`, `DELETE` |\n| Effect on data | May affect metadata; constraints are validated against existing rows | Directly reads or changes row‑level data |\n| Transaction behavior | Often auto‑committed; changes are permanent once executed | Can be rolled back or committed as part of a transaction |\n\nThus, DDL shapes the *structure* of the database, while DML handles the *content* of that structure.",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
@@ -671,25 +659,24 @@
     ],
     "correctness": 2,
     "faithfulness": 1,
-    "reason": "The assistant correctly identifies the definitions and commands for DDL and DML based on the sources, but includes a claim about transaction behavior (auto-commit vs rollback) that is not supported by the provided text."
+    "reason": "The assistant includes a claim about transaction behavior (auto-commit vs rollback) that is not supported by the provided sources."
   },
   {
     "id": "q39",
     "subject": "DBMS",
     "question": "What is referential integrity?",
     "answerable": true,
-    "answer": "Referential integrity is a rule that requires every foreign‑key value to correspond to an existing primary‑key value in the related (parent) table, or to be NULL. It prevents orphan records—rows whose foreign‑key does not match any primary‑key in the referenced table—by ensuring that references between tables are always valid[1][3][4].",
+    "answer": "Referential integrity is a rule that requires every foreign‑key value to correspond to an existing primary‑key value in the related (parent) table, or to be NULL. It prevents “orphan” rows—records whose foreign‑key does not match any primary‑key in the referenced table[4]. In practice the DBMS enforces this constraint when tables are created, ensuring that a child row cannot reference a non‑existent parent row[3].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
-      1,
       3,
       4
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant's answer accurately reflects the definition of referential integrity found in the sources, covering the requirement for matching primary keys or null values and the prevention of orphan records."
+    "reason": "The assistant correctly defines referential integrity as requiring a foreign key to match a primary key or be null, and accurately cites the sources for the definition and the prevention of orphan records."
   },
   {
     "id": "u01",
