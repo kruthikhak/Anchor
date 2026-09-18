@@ -8,10 +8,15 @@ ENV PYTHONUNBUFFERED=1 \
 
 RUN useradd -m user
 USER user
+# pip installs into the user's home here, so its scripts (uvicorn) live in ~/.local/bin
+ENV PATH=/home/user/.local/bin:$PATH
 WORKDIR /home/user/app
 
 COPY --chown=user requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
+# the default torch wheel on Linux bundles CUDA (~2.5 GB) that a CPU Space can't use
+RUN pip install --no-cache-dir --upgrade pip \
+ && pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu \
+ && pip install --no-cache-dir -r requirements.txt
 
 # bake the embedder and reranker into the image so a cold start doesn't wait on a 1.5 GB download
 RUN python -c "from sentence_transformers import SentenceTransformer, CrossEncoder; \

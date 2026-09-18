@@ -9,3 +9,4 @@ data/raw/
 data/index/
 data/index_building/
 eval/cache/
+build/

@@ -37,8 +37,10 @@ def check(answer, sources):
     for sentence in sentences(answer):
         cited = [int(n) for n in CITATION.findall(sentence) if int(n) in passages]
         rows.append({"text": sentence, "cited": cited, "citedScore": None, "bestScore": None, "bestSource": None})
-        for number, passage in passages.items():
-            pairs.append((CITATION.sub("", sentence).strip(), passage))
+        # a cited sentence only needs checking against what it cites, which roughly halves the
+        # cross-encoder work, and on a two-core host that is the slow part
+        for number in cited or passages:
+            pairs.append((CITATION.sub("", sentence).strip(), passages[number]))
             owners.append((len(rows) - 1, number))
 
     if pairs:
