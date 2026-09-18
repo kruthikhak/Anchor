@@ -124,6 +124,12 @@ class SuggestTests(unittest.TestCase):
         with mock.patch.object(query, "chat_json", mock.Mock(side_effect=RuntimeError("no network"))):
             self.assertEqual(self.helper.suggest("dedlock")["kind"], "unavailable")
 
+    def test_a_lone_word_still_gets_its_lookalikes(self):
+        with mock.patch.object(query, "chat_json", lambda *args, **kwargs: {"kind": "unrelated", "topics": []}):
+            self.assertEqual(self.helper.suggest("deadline"), {"kind": "lookalike", "topics": ["Deadlock"]})
+            # a question has enough context for the model's judgement to stand
+            self.assertEqual(self.helper.suggest("when is the deadline"), {"kind": "unrelated", "topics": []})
+
     def test_lookalikes_come_from_real_words_the_books_never_use(self):
         self.assertEqual(self.helper.lookalikes("what is a deadline"), ["Deadlock"])
         self.assertEqual(self.helper.lookalikes("what is a deadlock"), [])  # a word the books use needs none

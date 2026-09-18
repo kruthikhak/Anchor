@@ -329,7 +329,8 @@ function showSuggestions(turn, data) {
     slot.innerHTML = `<span class="suggest-label">Nothing in these books is close to this. They cover data structures and algorithms, operating systems, databases and computer networks.</span>`;
     return;
   }
-  const label = data.kind === "typo" ? "Did you mean:" : "Closest topics in the library:";
+  const label = { typo: "Did you mean:", lookalike: "Nothing here covers that word. If you meant a similar-looking term:" }[data.kind]
+    || "Closest topics in the library:";
   // the topics come from the whole library, so asking about one searches all of it
   const record = turns.get(Number(turn.dataset.turn));
   const widen = record?.subject && record.subject !== "All" ? ' data-subject="All"' : "";
@@ -512,7 +513,10 @@ async function ask(question, { mode = state.mode, previous = null, shown = quest
 
 async function postJson(url, payload) {
   const response = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-  if (!response.ok) throw new Error(`the server returned ${response.status}`);
+  if (!response.ok) {
+    const detail = await response.json().then((body) => body.detail).catch(() => null);
+    throw new Error(typeof detail === "string" ? detail : `the server returned ${response.status}`);
+  }
   return response.json();
 }
 
@@ -540,7 +544,7 @@ async function practice(topic, { label = "", shown = topic } = {}) {
     }
   } catch (error) {
     status.hidden = true;
-    body.innerHTML = `<p class="muted">Couldn't write practice questions: ${escapeHtml(error.message)}. Try again in a moment.</p>`;
+    body.innerHTML = `<p class="muted">Couldn't write practice questions: ${escapeHtml(error.message)}.</p>`;
   }
   endTurn();
 }
@@ -612,7 +616,7 @@ async function quiz(topic, { shown = topic } = {}) {
     }
   } catch (error) {
     status.hidden = true;
-    body.innerHTML = `<p class="muted">Couldn't write a quiz: ${escapeHtml(error.message)}. Try again in a moment.</p>`;
+    body.innerHTML = `<p class="muted">Couldn't write a quiz: ${escapeHtml(error.message)}.</p>`;
   }
   endTurn();
 }

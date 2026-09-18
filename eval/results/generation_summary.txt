@@ -3,9 +3,9 @@ answer model openai/gpt-oss-120b, judge qwen/qwen3.8-27b, refusal threshold 0.01
 
 answerable questions
   answered instead of refusing   39/39 (100%)
-  fully correct (2/2)            33/39 (85%)
+  fully correct (2/2)            34/39 (87%)
   at least partly correct        39/39 (100%)
-  fully faithful to sources      34/39 (87%)
+  fully faithful to sources      36/39 (92%)
   cite at least one source       39/39 (100%)
 
 questions the books don't cover
@@ -17,10 +17,7 @@ worth a look:
   q06  Can I use Dijkstra's algorithm on a graph with negative edge weights?  ->  The answer correctly states that Dijkstra's algorithm cannot be used with negative weights and explains why, but it misses the reference's specific recommendation to use Bellman-Ford instead.
   q12  How does quicksort work?  ->  The assistant correctly describes the algorithm and expected time complexity but omits the worst-case O(n^2) time complexity mentioned in the reference answer.
   q14  Why do databases and file systems use B-trees instead of binary search trees?  ->  The assistant claims that B-trees support ordered operations that binary search trees 'cannot provide,' which is factually incorrect as BSTs also support ordered operations, although the sources do not explicitly state that BSTs lack this capability.
-  q15  What does ACID stand for?  ->  The assistant correctly identifies the acronym components but misses the reference's important note about the redundancy of the properties (specifically that isolation is another name for atomicity and consistency is a state property).
   q16  What is write-ahead logging?  ->  The assistant incorrectly states that the commit record is written after data pages are flushed, whereas the source explicitly states that entities must be written back before the commit entry is written, and the reference defines commit as occurring when the commit record is logged.
   q18  What does isolation mean in the context of database transactions?  ->  The assistant misses the reference's specific point that isolation is 'one half of atomicity' and that the other half involves failed transactions, instead focusing on visibility and security.
-  q28  TCP vs UDP: what's the difference?  ->  The claim that UDP is 'simplex per datagram' is not supported by the sources, which only describe it as an unreliable datagram service without specifying duplex semantics.
-  q31  What are the layers of the OSI model?  ->  The assistant correctly lists the seven layers but misses the reference answer's specific point that the Internet architecture does not use the session and presentation layers as separate layers.
+  q31  What are the layers of the OSI model?  ->  The assistant correctly identifies the first four layers but incorrectly claims the names of layers 5-7 are not in the sources, whereas Source [2] explicitly names the session and presentation layers.
   q35  What is the difference between a primary key and a foreign key?  ->  The assistant claims that foreign keys are indicated by a relationship line pointing to the referenced primary key in the ER model, a specific diagrammatic detail not explicitly stated in the provided sources (which only mention underlining for primary keys).
-  q38  What is the difference between DDL and DML in SQL?  ->  The assistant includes a claim about transaction behavior (auto-commit vs rollback) that is not supported by the provided sources.

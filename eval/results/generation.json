@@ -4,16 +4,17 @@
     "subject": "DSA",
     "question": "Which data structure does BFS use, and how long does it take on a graph?",
     "answerable": true,
-    "answer": "BFS is implemented with a **queue** (the algorithm repeatedly enqueues newly discovered vertices and dequeues them for processing) [1].  \n\nWhen the graph is stored with adjacency‑list representation, the whole BFS runs in **Θ(n + m)** time – O(n) for the queue operations on the n vertices plus O(m) for scanning each adjacency list once [1].",
+    "answer": "BFS is implemented with a **queue** that stores the vertices to be processed in order of their distance from the start node — new vertices are enqueued at the back and the vertex at the front is dequeued next [3].  \n\nWhen the graph is stored as adjacency lists, the whole algorithm runs in **\\(O(n+m)\\) time**, where \\(n\\) is the number of vertices and \\(m\\) the number of edges [2][3].  ",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
-      1
+      2,
+      3
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant correctly identifies the queue data structure and the O(n+m) time complexity, both of which are explicitly supported by Source [1]."
+    "reason": "The assistant correctly identifies the queue data structure and O(n+m) time complexity, both of which are explicitly supported by the provided sources."
   },
   {
     "id": "q02",
@@ -252,16 +253,16 @@
     "subject": "DBMS",
     "question": "What does ACID stand for?",
     "answerable": true,
-    "answer": "ACID is an acronym for **Atomicity, Consistency, Isolation, Durability**[1].",
+    "answer": "ACID is the acronym used to describe the essential properties of a transaction system:\n\n- **A – Atomicity** – a transaction is executed as a single, indivisible unit; it either commits completely or aborts with no visible effect.  \n- **C – Consistency** – the transaction preserves the invariants of the system, leaving the database in a valid state after it finishes.  \n- **I – Isolation** – concurrent transactions do not interfere with each other; each behaves as if it were the only transaction running (effectively another name for atomicity in the presence of concurrency).  \n- **D – Durability** – once a transaction has committed, its effects survive system failures and remain permanently stored.  \n\nThese four properties together form the “ACID test” for the quality of a transaction‑supporting system[1].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
       1
     ],
-    "correctness": 1,
+    "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant correctly identifies the acronym components but misses the reference's important note about the redundancy of the properties (specifically that isolation is another name for atomicity and consistency is a state property)."
+    "reason": "The assistant correctly identifies the four properties of ACID and accurately describes them based on the provided sources, including the nuance that isolation is another name for atomicity in the face of concurrency."
   },
   {
     "id": "q16",
@@ -456,99 +457,102 @@
     "subject": "Computer Networks",
     "question": "Explain the TCP three-way handshake.",
     "answerable": true,
-    "answer": "The TCP three‑way handshake is the sequence of three segments that a client (active opener) and a server (passive opener) exchange to agree on initial sequence numbers and move both ends into the **ESTABLISHED** state before any data is sent.\n\n- **Step 1 – SYN** – The client sends a segment with the SYN flag set and its chosen initial sequence number **x** (`Flags=SYN, SequenceNum=x`) to the server [2].\n- **Step 2 – SYN‑ACK** – The server, which is in the LISTEN state after a passive open, replies with a segment that both acknowledges the client’s SYN (`Ack=x+1`) and carries its own SYN (`Flags=SYN+ACK, SequenceNum=y`) [2]. This moves the server to the SYN_RCVD state [3].\n- **Step 3 – ACK** – The client acknowledges the server’s SYN (`Ack=y+1`) with a segment that has only the ACK flag set (`Flags=ACK`) [2]. After sending this, the client enters the ESTABLISHED state [3].\n\nWhen the server receives the client’s ACK, it also transitions to ESTABLISHED, completing the handshake [3].  \n\nIf the client’s final ACK is lost, the client is already in ESTABLISHED and can start sending data; the first data segment (which carries an ACK) will cause the server to move to ESTABLISHED as well [5].  \n\nThus the three‑way handshake synchronizes sequence numbers, confirms that both sides are ready, and establishes the bidirectional TCP connection.",
+    "answer": "The TCP three‑way handshake is the sequence of three segment exchanges that moves both ends from “no connection” to the **ESTABLISHED** state and also lets the two sides agree on their initial sequence numbers.\n\n1. **Client → Server : SYN**  \n   *The active opener sends a segment with the SYN flag set and its chosen initial sequence number **x**.*[3]\n\n2. **Server → Client : SYN‑ACK**  \n   *The passive opener receives the SYN, moves to **SYN_RCVD**, and replies with a segment that (a) acknowledges the client’s sequence (**ACK = x + 1**) and (b) carries its own SYN with a new initial sequence number **y**. Both SYN and ACK flags are set.*[3]\n\n3. **Client → Server : ACK**  \n   *The client receives the SYN‑ACK, moves to **ESTABLISHED**, and sends an ACK that acknowledges the server’s sequence (**ACK = y + 1**).*[3]\n\nWhen the server receives this final ACK it also transitions to **ESTABLISHED** and the bidirectional byte stream is ready for data transfer[2].  \n\nKey points from the material  \n\n- The handshake is **asymmetric** in the opening phase: one side performs a passive open (enters LISTEN) and the other an active open (sends SYN)[1].  \n- Each side’s ACK field actually indicates the “next expected sequence number,” implicitly confirming all earlier bytes[3].  \n- Timers are started for the first two segments; if a response is not received, the segment is retransmitted (not shown in the timeline)[3].  ",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
+      1,
       2,
-      3,
-      5
+      3
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant accurately describes the three steps of the TCP handshake with correct sequence numbers and flags, and all claims are directly supported by the provided sources."
+    "reason": "The assistant accurately describes the three steps of the handshake with correct sequence numbers and flags, and all state transitions and details are fully supported by the provided sources."
   },
   {
     "id": "q28",
     "subject": "Computer Networks",
     "question": "TCP vs UDP: what's the difference?",
     "answerable": true,
-    "answer": "TCP and UDP are the two transport‑layer protocols that sit above IP. Their main differences are:\n\n- **Reliability** – TCP guarantees reliable, in‑order delivery of a byte stream; UDP provides no reliability guarantees and may drop, duplicate, or reorder packets[5].  \n- **Connection model** – TCP is connection‑oriented (a connection is set up before data transfer); UDP is connectionless, sending independent datagrams[4].  \n- **Data framing** – TCP presents a continuous byte‑stream to the application; UDP preserves message boundaries, delivering each datagram as a separate unit[4].  \n- **Flow‑control** – TCP includes per‑direction flow‑control so the receiver can limit the sender’s rate; UDP has no flow‑control mechanism[5].  \n- **Congestion control** – TCP implements a sophisticated congestion‑control algorithm to avoid overloading the network; UDP does not perform congestion control[5].  \n- **Duplexing** – TCP is full‑duplex, providing two independent byte streams (one each way) on a single connection; UDP is simplex per datagram, with no built‑in duplex semantics[5].  \n\nIn short, TCP is used when an application needs reliable, ordered, and flow‑controlled communication, while UDP is chosen for low‑overhead, message‑oriented traffic where occasional loss is acceptable.",
-    "model": "openai/gpt-oss-120b",
-    "refused_before_llm": false,
-    "refused": false,
-    "citations": [
-      4,
-      5
-    ],
-    "correctness": 2,
-    "faithfulness": 1,
-    "reason": "The claim that UDP is 'simplex per datagram' is not supported by the sources, which only describe it as an unreliable datagram service without specifying duplex semantics."
-  },
-  {
-    "id": "q29",
-    "subject": "Computer Networks",
-    "question": "What is slow start in TCP?",
-    "answerable": true,
-    "answer": "Slow start is the TCP mechanism that ramps up the congestion window exponentially from a cold start or after a timeout.  \n\n- The sender initializes **CongestionWindow = 1 packet**. Each ACK received increments the window by one packet, so after one RTT the sender can transmit 2 packets, after the next RTT 4 packets, and so on—effectively doubling the number of packets in flight each round‑trip time[1].  \n- This exponential growth continues until a loss is detected (by duplicate ACKs or a timeout). When a loss occurs, TCP performs a multiplicative decrease, cutting the window roughly in half, and then re‑enters slow start to grow the window quickly up to the new **CongestionThreshold** (the halved value) before switching to additive increase[4].  \n- Slow start is also used when the connection becomes idle and a single cumulative ACK reopens the advertised window; the sender again starts from one packet and uses slow start to avoid dumping an entire window’s worth of data at once[2].  \n\nIn summary, slow start rapidly increases the sending rate by doubling the congestion window each RTT until a loss event forces a reduction, after which it restarts to reach the target window safely.",
+    "answer": "TCP and UDP are the two transport‑layer protocols that sit above IP, but they provide very different services.\n\n- **Reliability & ordering** – TCP guarantees that the byte stream arrives **reliably and in order**; the receiver never sees missing, duplicated or reordered bytes[1]. UDP gives **no reliability or ordering guarantees**; it simply attempts to deliver a datagram and may drop, duplicate, or reorder packets[2].  \n\n- **Connection model** – TCP is **connection‑oriented**: a connection is opened between a local and a remote port, data are streamed while the connection exists, and it is closed when finished[2]. UDP is **connectionless**; each datagram is sent independently without establishing a session[2].  \n\n- **Service type** – TCP provides a **reliable byte‑stream channel** (the application writes bytes, TCP delivers them as a continuous stream)[3]. UDP provides an **unreliable datagram channel** (each send is a separate message)[3].  \n\n- **Flow‑control & congestion‑control** – TCP includes a **flow‑control mechanism** that lets the receiver limit how much data the sender may transmit, and a **congestion‑control algorithm** that throttles sending to avoid overloading the network[1]. UDP has **no flow‑control or congestion‑control**; it relies on the application to pace traffic.  \n\n- **Multiplexing** – Both protocols use **port numbers** to allow many applications to share a single IP address, but TCP adds the above reliability features on top of this basic multiplexing[2].  \n\nIn short, **TCP = reliable, ordered, connection‑oriented byte stream with flow and congestion control**; **UDP = simple, connectionless datagram delivery with no reliability, ordering, or flow control**.",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
       1,
       2,
+      3
+    ],
+    "correctness": 2,
+    "faithfulness": 2,
+    "reason": "The assistant's answer accurately covers all key points from the reference (reliability, ordering, connection model, flow/congestion control, multiplexing) and every specific claim is directly supported by the provided sources."
+  },
+  {
+    "id": "q29",
+    "subject": "Computer Networks",
+    "question": "What is slow start in TCP?",
+    "answerable": true,
+    "answer": "Slow start is the TCP mechanism used to **ramp up the congestion window quickly from a cold start**.  \nWhen a connection begins (or after a timeout), TCP sets **CongestionWindow = 1 packet**. For each ACK received it adds one packet to the window, so the number of packets in flight **doubles each round‑trip time (RTT)** – an exponential growth until a loss occurs or a threshold is reached[1].  \n\nKey points  \n\n- **Purpose** – avoid sending an entire advertised window’s worth of data at once, which could overflow router buffers; instead it “slowly” (but exponentially) probes the available capacity[4].  \n- **Operation** – after a loss the window is cut in half (multiplicative decrease) and stored as **CongestionThreshold**; the window is reset to one packet and grows exponentially via slow start until it reaches this threshold, then switches to linear (additive increase) growth[2].  \n- **When used** – at the start of a new connection, after a timeout when no packets are in transit, or after a loss‑induced timeout to restart the flow without flooding the network[3].  \n\nThus, slow start is TCP’s exponential‑increase phase that quickly discovers the network’s capacity while preventing a burst of packets that could cause congestion.",
+    "model": "openai/gpt-oss-120b",
+    "refused_before_llm": false,
+    "refused": false,
+    "citations": [
+      1,
+      2,
+      3,
       4
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant's answer accurately reflects the reference answer's key points regarding exponential growth, the starting window size, and the transition to additive increase, and all specific claims are directly supported by the provided sources."
+    "reason": "The assistant's answer accurately covers all key points of the reference answer (mechanism, exponential growth, threshold switch) and every factual claim is directly supported by the provided sources."
   },
   {
     "id": "q30",
     "subject": "Computer Networks",
     "question": "What is ARP used for?",
     "answerable": true,
-    "answer": "ARP (Address Resolution Protocol) is used by the operating‑system kernel to translate an IP (network‑layer) address into the corresponding link‑layer hardware address (MAC address) so that a frame can be addressed correctly on the local Ethernet or Wi‑Fi network[1]. It does this by broadcasting a request for the MAC address of a given IP; the host that owns that IP replies with its MAC, and the requester caches the mapping for future use[1]. This translation is necessary because IP packets carry IP addresses, while the physical interface can only understand the 48‑bit MAC addresses used on the local link[4].",
+    "answer": "ARP (Address Resolution Protocol) is the mechanism that lets a host translate an IP address into the link‑layer (MAC) address required to send a frame on the local network.  \n\n- When the kernel needs to send a packet to an IP address that is on the same LAN, it looks up the corresponding 48‑bit hardware (MAC) address; if the mapping is not already cached, it broadcasts an ARP request and stores the reply in an ARP table (cache) for later reuse[1][4].  \n- This mapping is necessary because IP datagrams carry IP addresses, but the physical network interface can only understand its own link‑level address format (e.g., Ethernet MAC)[5].  \n- The ARP process is invoked after higher‑level name resolution (DNS) and IP routing have determined the next‑hop IP address; ARP then resolves that next‑hop IP to a physical address so the frame can be transmitted[3].  ",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
       1,
-      4
+      3,
+      4,
+      5
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant's answer accurately covers all key points of the reference (broadcasting, caching, IP-to-MAC translation) and every claim is directly supported by sources [1] and [4]."
+    "reason": "The assistant's answer accurately covers all key points of the reference (broadcasting, caching, timeout implied by reuse/caching context, translation purpose) and every specific claim is directly supported by the provided sources."
   },
   {
     "id": "q31",
     "subject": "Computer Networks",
     "question": "What are the layers of the OSI model?",
     "answerable": true,
-    "answer": "The OSI reference model defines **seven stacked layers** that partition network functionality:\n\n1. **Physical layer** – handles transmission of raw bits over a link[1]  \n2. **Data‑link layer** – groups bits into frames and delivers frames to the host[1]  \n3. **Network layer** – routes packets between nodes; the data unit is called a packet[1]  \n4. **Transport layer** – provides process‑to‑process channels (messages) between end hosts[1]  \n5. **Session layer** – (not detailed in the excerpt but part of the seven‑layer model)[5]  \n6. **Presentation layer** – (not detailed in the excerpt but part of the seven‑layer model)[5]  \n7. **Application layer** – where user‑level protocols such as HTTP, SMTP, DNS, etc., operate[5]\n\nThese seven layers together form the OSI model used as a reference for network protocol design.",
+    "answer": "The OSI (Open Systems Interconnection) model partitions network functionality into seven stacked layers:\n\n1. **Physical layer** – handles transmission of raw bits over a link[1]  \n2. **Data‑link layer** – groups bits into frames and delivers frames to the host[1]  \n3. **Network layer** – routes packets between nodes[1]  \n4. **Transport layer** – provides process‑to‑process channels (messages) between end hosts[1]  \n5. **Session layer** – (not described in the given excerpts)  \n6. **Presentation layer** – (not described in the given excerpts)  \n7. **Application layer** – (not described in the given excerpts)  \n\nThe material explicitly mentions the first four layers and refers to “higher layers” without naming the remaining three. Therefore, the exact names of layers 5–7 (Session, Presentation, Application) are not provided in the supplied sources.",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
-      1,
-      5
+      1
     ],
     "correctness": 1,
     "faithfulness": 2,
-    "reason": "The assistant correctly lists the seven layers but misses the reference answer's specific point that the Internet architecture does not use the session and presentation layers as separate layers."
+    "reason": "The assistant correctly identifies the first four layers but incorrectly claims the names of layers 5-7 are not in the sources, whereas Source [2] explicitly names the session and presentation layers."
   },
   {
     "id": "q32",
     "subject": "Computer Networks",
     "question": "What does DNS do?",
     "answerable": true,
-    "answer": "DNS is the Internet’s name‑service infrastructure that maps human‑readable domain names to the numeric values (typically IP addresses) that the network layer uses. It provides a hierarchical namespace, stores bindings in name servers, and supplies a resolution mechanism that applications query to obtain the corresponding address before opening a transport connection[1][3][4][5].",
+    "answer": "DNS is the Internet’s hierarchical naming service that translates human‑readable domain names into the numeric IP addresses (or other values) that the network layer needs.  \n\n- An application presents a host name (e.g., `www.example.com`) to the DNS resolver, which queries name servers to obtain the corresponding address and then uses that address to open a transport connection [4].  \n- DNS implements a hierarchical name space (processed right‑to‑left with periods as separators) rather than a flat table, allowing the large, distributed “subtables” in name servers to be queried instead of a single static file [5][4].  \n- The service is used by virtually all other applications (web browsers, email clients, etc.) so users can refer to remote hosts by name instead of numeric addresses [3][2].  \n\nIn short, DNS maps domain names to values—most commonly IP addresses—so that humans can use meaningful names while the network operates with numeric addresses.",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
-      1,
+      2,
       3,
       4,
       5
@@ -562,34 +566,32 @@
     "subject": "Computer Networks",
     "question": "What is the congestion window in TCP and how does it relate to the advertised window?",
     "answerable": true,
-    "answer": "The congestion window (**CongestionWindow**) is a TCP state variable that limits the amount of un‑acknowledged data the sender may have in transit; it is the TCP side’s counterpart to the receiver‑side advertised (flow‑control) window. The effective sending limit at any moment is the smaller of the two windows:\n\n```\nMaxWindow = MIN(CongestionWindow, AdvertisedWindow)\nEffectiveWindow = MaxWindow – (LastByteSent – LastByteAcked)\n```\n\nThus, TCP can send only up to the **minimum** of the congestion window (which reflects the network’s perceived congestion) and the advertised window (which reflects the receiver’s buffer space) [1]. The congestion window is adjusted by TCP’s congestion‑control algorithm (AIMD, slow start, etc.) to increase when the network is under‑utilized and decrease when loss or other congestion signals occur, while the advertised window is set by the receiver and changes only with its buffer availability [4].",
+    "answer": "The **congestion window (CW)** is a sender‑side state variable that limits the amount of unacknowledged data the TCP source may have in transit. It reflects the sender’s estimate of the network’s available capacity and is adjusted up or down (additive increase/multiplicative decrease) in response to congestion signals [1].\n\nTCP combines this network‑level limit with the receiver’s flow‑control limit (the **advertised window**) by taking the smaller of the two:\n\n```\nMaxWindow = MIN(CongestionWindow, AdvertisedWindow)\nEffectiveWindow = MaxWindow – (LastByteSent – LastByteAcked)\n```\n\nThus, the **advertised window** (sent by the receiver) tells the sender how much buffer space the receiver can hold, while the **congestion window** tells the sender how much the network can tolerate. The sender may transmit only up to the **effective window**, which is bounded by whichever limit is tighter at the moment [1].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
-      1,
-      4
+      1
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant accurately defines the congestion window and its relationship to the advertised window using the minimum function, fully supported by Source [1] and consistent with the reference answer."
+    "reason": "The assistant accurately defines the congestion window and its relationship to the advertised window using the minimum function, fully supported by Source [1]."
   },
   {
     "id": "q34",
     "subject": "DBMS",
     "question": "What is normalization in DBMS and why do we do it?",
     "answerable": true,
-    "answer": "Normalization is the process of analysing a relational table to determine how much redundant data it contains and then restructuring the schema to eliminate that redundancy [1]. It relies on functional‑dependency theory and moves a design through a series of normal forms (1NF, 2NF, 3NF, BCNF), each of which imposes stricter dependency rules and therefore reduces the chance of update anomalies [1][4].\n\n**Why we normalize**\n\n- **Characterize redundancy** – Normalization lets us measure the level of duplicate information in a schema [1].\n- **Remove redundancy** – By transforming the schema into higher normal forms we eliminate unnecessary copies of data, which minimizes storage waste and keeps the data consistent [1].\n- **Prevent update anomalies** – Higher normal forms guarantee fewer insert, delete, and update problems because non‑key attributes are not dependent on other non‑key attributes [1][4].\n- **Facilitate reliable design** – Normalizing tables before they are created ensures that the resulting entities satisfy the required normal form, avoiding later redesign effort and anomalies [4].\n\nIn short, normalization is a design technique that identifies and removes data redundancy, leading to a cleaner, more maintainable relational schema with fewer update anomalies.",
+    "answer": "Normalization is the process of analysing a relational schema to determine how much redundant data it contains and then restructuring the tables so that that redundancy is removed [1].  \n\n**Why we do it**\n\n- It lets us **characterize the level of redundancy** in a schema, giving a clear picture of where duplicate data exist [1].  \n- By applying the normal‑form rules (1NF, 2NF, 3NF, BCNF) we obtain **mechanisms for transforming schemas** that eliminate unnecessary duplication [1].  \n- Higher normal forms guarantee **fewer update anomalies** (insert, delete, and update problems), because less redundant data means changes need to be made in only one place [1].  \n- Consequently, a normalized design leads to **more consistent, reliable, and maintainable databases**, which is why normalization is an essential step in the overall DBMS design process [1].",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
     "citations": [
-      1,
-      4
+      1
     ],
     "correctness": 2,
     "faithfulness": 2,
-    "reason": "The assistant's answer accurately reflects the reference answer's key points regarding the definition and goals of normalization, and all specific claims are directly supported by the provided sources."
+    "reason": "The assistant correctly identifies normalization as the process of determining and removing redundancy, aligning with the reference, and all specific claims about goals, normal forms, and update anomalies are directly supported by Source [1]."
   },
   {
     "id": "q35",
@@ -648,7 +650,7 @@
     "subject": "DBMS",
     "question": "What is the difference between DDL and DML in SQL?",
     "answerable": true,
-    "answer": "DDL (Data Definition Language) and DML (Data Manipulation Language) serve different purposes in SQL.\n\n- **DDL** is used to define and modify the structure of database objects. It includes statements such as **CREATE DATABASE**, **CREATE TABLE**, **ALTER TABLE**, and **DROP TABLE** that create, change, or remove schemas, tables, constraints, and other objects [2][1]. When a constraint is added with DDL, existing data are checked for violations [1].\n\n- **DML** is used to work with the data stored in those structures. It includes **SELECT**, **INSERT**, **UPDATE**, and **DELETE** statements that query, add, modify, or remove rows in tables [3].\n\n**Key differences**\n\n| Aspect | DDL | DML |\n|--------|-----|-----|\n| Purpose | Define/alter the database schema and objects | Manipulate the actual data within the tables |\n| Typical commands | `CREATE`, `ALTER`, `DROP` (e.g., `CREATE TABLE`, `ALTER TABLE`, `DROP TABLE`) | `SELECT`, `INSERT`, `UPDATE`, `DELETE` |\n| Effect on data | May affect metadata; constraints are validated against existing rows | Directly reads or changes row‑level data |\n| Transaction behavior | Often auto‑committed; changes are permanent once executed | Can be rolled back or committed as part of a transaction |\n\nThus, DDL shapes the *structure* of the database, while DML handles the *content* of that structure.",
+    "answer": "DDL (Data Definition Language) and DML (Data Manipulation Language) serve opposite roles in SQL.\n\n- **DDL** defines the structure of the database. It includes statements that create, alter, or drop schema objects such as databases, tables, indexes, and constraints. Examples are `CREATE DATABASE`, `CREATE TABLE`, `ALTER TABLE`, and `DROP TABLE` [1][2]. These commands change the metadata of the database but do not affect the rows of data stored in the tables.\n\n- **DML** works with the data *inside* those structures. It includes statements that retrieve, insert, update, or delete rows. The core DML commands are `SELECT`, `INSERT`, `UPDATE`, and `DELETE` [3]. These commands manipulate the actual records in the tables without altering the schema itself.",
     "model": "openai/gpt-oss-120b",
     "refused_before_llm": false,
     "refused": false,
@@ -658,8 +660,8 @@
       3
     ],
     "correctness": 2,
-    "faithfulness": 1,
-    "reason": "The assistant includes a claim about transaction behavior (auto-commit vs rollback) that is not supported by the provided sources."
+    "faithfulness": 2,
+    "reason": "The assistant correctly identifies the roles of DDL and DML and lists the specific commands for each, all of which are explicitly supported by the provided sources."
   },
   {
     "id": "q39",

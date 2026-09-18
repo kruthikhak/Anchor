@@ -3,18 +3,20 @@ a sentence counts as backed when a passage scores at least 0.05 against it.
 Sentences that cite a source are checked against that source; the rest against every
 retrieved passage, because an uncited sentence is often the next step of a credited point.
 
-  sentences                  255
-  carry a citation           137 (54%)
-  cited and backed by it     130 (95% of cited)
-  backed by no passage       20 (8%)
+  sentences                  267
+  carry a citation           136 (51%)
+  cited and backed by it     128 (94% of cited)
+  backed by no passage       23 (9%)
 
 sentences nothing supports:
   q14  [cites [5], best 0.000]  Fewer levels translate directly into fewer disk accesses per search, insert, or delete [5].
   q14  [no citation, best 0.000]  Such multi‑dimensional indexing would be inefficient with a BST.
   q09  [cites [3], best 0.001]  Check feasibility: a placement is allowed only if the column x, the main diagonal x + y, and the anti‑diagonal x ‑ y + n‑1 are all free; oth
+  q31  [no citation, best 0.001]  Therefore, the exact names of layers 5–7 (Session, Presentation, Application) are not provided in the supplied sources.
   q09  [cites [1, 5], best 0.003]  The algorithm explores all possible sequences of column choices (the decision tree) and discards any partial placement that violates the con
   q17  [no citation, best 0.005]  Growing → shrinking phases prevent premature unlocks.
   q04  [no citation, best 0.006]  The pointers delimit a window (a sub‑array or a candidate pair).
+  q31  [no citation, best 0.009]  Presentation layer – (not described in the given excerpts)
   q14  [no citation, best 0.010]  Shallow height – With a large branching factor the height of a B‑tree is logarithmic in the number of entries but with a much smaller consta
   q39  [cites [3], best 0.014]  In practice the DBMS enforces this constraint when tables are created, ensuring that a child row cannot reference a non‑existent parent row[
   q10  [no citation, best 0.014]  Use‑case intuition: stack behaves like a pile of plates (you take the last one placed); queue behaves like a line at a checkout (first perso
@@ -22,5 +24,3 @@ sentences nothing supports:
   q14  [no citation, best 0.018]  This means each I/O brings many keys into memory, whereas a BST node holds only one key and would require many more block reads to traverse 
   q08  [no citation, best 0.020]  Push `x` to the back of the deque.
   q08  [no citation, best 0.020]  Use a monotonic deque (a double‑ended queue) that always stores the elements of the current window in increasing order:
-  q08  [cites [1], best 0.025]  Pop from the back while the last element in the deque is larger than `x`; those larger elements can never become the minimum of any future w
-  q04  [no citation, best 0.029]  moves is bounded by the length of the array.

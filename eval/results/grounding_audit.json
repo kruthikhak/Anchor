@@ -115,10 +115,10 @@
     {
       "id": "q15",
       "question": "What does ACID stand for?",
-      "total": 1,
+      "total": 6,
       "attributed": 1,
       "citedBacked": 1,
-      "supported": 1
+      "supported": 6
     },
     {
       "id": "q16",
@@ -219,58 +219,58 @@
     {
       "id": "q28",
       "question": "TCP vs UDP: what's the difference?",
-      "total": 9,
-      "attributed": 6,
-      "citedBacked": 6,
-      "supported": 8
+      "total": 11,
+      "attributed": 8,
+      "citedBacked": 8,
+      "supported": 11
     },
     {
       "id": "q29",
       "question": "What is slow start in TCP?",
       "total": 7,
-      "attributed": 3,
-      "citedBacked": 3,
+      "attributed": 4,
+      "citedBacked": 4,
       "supported": 7
     },
     {
       "id": "q30",
       "question": "What is ARP used for?",
-      "total": 3,
+      "total": 4,
       "attributed": 3,
       "citedBacked": 3,
-      "supported": 3
+      "supported": 4
     },
     {
       "id": "q31",
       "question": "What are the layers of the OSI model?",
       "total": 9,
-      "attributed": 7,
-      "citedBacked": 7,
-      "supported": 9
+      "attributed": 3,
+      "citedBacked": 3,
+      "supported": 5
     },
     {
       "id": "q32",
       "question": "What does DNS do?",
-      "total": 2,
-      "attributed": 1,
-      "citedBacked": 1,
-      "supported": 2
+      "total": 5,
+      "attributed": 3,
+      "citedBacked": 3,
+      "supported": 5
     },
     {
       "id": "q33",
       "question": "What is the congestion window in TCP and how does it relate to the advertised window?",
-      "total": 4,
+      "total": 5,
       "attributed": 2,
-      "citedBacked": 2,
-      "supported": 3
+      "citedBacked": 1,
+      "supported": 4
     },
     {
       "id": "q34",
       "question": "What is normalization in DBMS and why do we do it?",
-      "total": 7,
-      "attributed": 6,
-      "citedBacked": 6,
-      "supported": 7
+      "total": 5,
+      "attributed": 5,
+      "citedBacked": 5,
+      "supported": 5
     },
     {
       "id": "q35",
@@ -299,10 +299,10 @@
     {
       "id": "q38",
       "question": "What is the difference between DDL and DML in SQL?",
-      "total": 7,
-      "attributed": 3,
-      "citedBacked": 3,
-      "supported": 7
+      "total": 9,
+      "attributed": 2,
+      "citedBacked": 2,
+      "supported": 9
     },
     {
       "id": "q39",
@@ -337,6 +337,12 @@
       "text": "Check feasibility: a placement is allowed only if the column\u202fx, the main diagonal\u202fx\u202f+\u202fy, and the anti\u2011diagonal\u202fx\u202f\u2011\u202fy\u202f+\u202fn\u20111 are all free; otherwise skip that choice\u202f[3]."
     },
     {
+      "id": "q31",
+      "score": 0.0012238216586411,
+      "cited": [],
+      "text": "Therefore, the exact names of layers\u202f5\u20137 (Session, Presentation, Application) are not provided in the supplied sources."
+    },
+    {
       "id": "q09",
       "score": 0.0029792007990181446,
       "cited": [
@@ -356,6 +362,12 @@
       "score": 0.00619730819016695,
       "cited": [],
       "text": "The pointers delimit a window (a sub\u2011array or a candidate pair)."
+    },
+    {
+      "id": "q31",
+      "score": 0.00891097541898489,
+      "cited": [],
+      "text": "Presentation layer \u2013 (not described in the given excerpts)"
     },
     {
       "id": "q14",
@@ -418,10 +430,16 @@
       "text": "moves is bounded by the length of the array."
     },
     {
-      "id": "q28",
-      "score": 0.031007220968604088,
+      "id": "q31",
+      "score": 0.032360244542360306,
       "cited": [],
-      "text": "Their main differences are:"
+      "text": "The material explicitly mentions the first four layers and refers to \u201chigher layers\u201d without naming the remaining three."
+    },
+    {
+      "id": "q31",
+      "score": 0.03304608166217804,
+      "cited": [],
+      "text": "Session layer \u2013 (not described in the given excerpts)"
     },
     {
       "id": "q03",
@@ -439,9 +457,11 @@
     },
     {
       "id": "q33",
-      "score": 0.042036272585392,
-      "cited": [],
-      "text": "The effective sending limit at any moment is the smaller of the two windows:"
+      "score": 0.04881620407104492,
+      "cited": [
+        1
+      ],
+      "text": "The sender may transmit only up to the effective window, which is bounded by whichever limit is tighter at the moment\u202f[1]."
     },
     {
       "id": "q04",

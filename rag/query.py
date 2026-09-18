@@ -181,25 +181,42 @@ class QueryHelper:
         # somewhere to point (Synchronization and Deadlocks).
         return list(dict.fromkeys(self.lookalikes(query) + by_spelling + by_meaning + self.chapters))
 
-    def lookalikes(self, query):
-        """Titles with a word that starts like an ordinary English word the books never use."""
+    def lookalike_matches(self, query):
+        """(word typed, title word, title) for every title word that starts like a word in the query."""
         # A half-remembered term often comes out as a real word with the same first letters:
         # "mutation" for mutex or mutual exclusion. A word that isn't English, like "sharding", has
         # already been through the spelling check, so what's left of those are real terms.
-        closeness = {}
+        matches = []
         for word in (w for w in self.unused_words(query) if w in self.english):
             for title in self.titles:
-                for title_word in WORD.findall(title.lower()):
+                for title_word in dict.fromkeys(WORD.findall(title.lower())):
                     if len(title_word) >= 5 and title_word[:3] == word[:3]:
-                        closeness[title] = max(closeness.get(title, 0), fuzz.ratio(word, title_word))
-        return sorted(closeness, key=closeness.get, reverse=True)[:8]
+                        matches.append((word, title_word, title, fuzz.ratio(word, title_word)))
+        return sorted(matches, key=lambda m: -m[3])
 
-    def suggest(self, query):
-        """Which of the books' own section titles to offer when the library can't answer."""
+    def lookalikes(self, query):
+        """Titles with a word that starts like an ordinary English word the books never use."""
+        return list(dict.fromkeys(title for _, _, title, _ in self.lookalike_matches(query)))[:8]
+
+    def lookalike_line(self, query):
+        # spelled out word by word, so the model judges "mutation" against "mutex" rather than
+        # having to spot the likeness in a long list of titles
+        pairs = {}
+        for word, title_word, _, _ in self.lookalike_matches(query):
+            pairs.setdefault(word, [])
+            if title_word not in pairs[word]:
+                pairs[word].append(title_word)
+        return "; ".join(f'"{w}" looks like ' + ", ".join(f'"{t}"' for t in found[:5]) for w, found in pairs.items()) or "none"
+
+    def suggest(self, query, typed=None):
+        """Which of the books' own section titles to offer when the library can't answer.
+
+        `typed` is what the student wrote, when a follow-up was rewritten into `query`."""
         candidates = self.candidate_topics(query)
         request = (f"Question: {query}\n"
                    f"Words the textbooks never use: {', '.join(self.unused_words(query)) or 'none'}\n"
-                   f"Titles with a word that starts like one of those: {'; '.join(self.lookalikes(query)) or 'none'}\n\n"
+                   f"Look-alikes: {self.lookalike_line(query)}\n"
+                   f"Titles with those look-alike words: {'; '.join(self.lookalikes(query)) or 'none'}\n\n"
                    "Section titles:\n" + "\n".join(candidates))
         try:
             # the larger model: this only runs on a refusal, and the small one was too quick to say "unrelated"
@@ -211,12 +228,16 @@ class QueryHelper:
             )
         except Exception:
             data = None
-        if not isinstance(data, dict):
-            # a failed call says nothing about the question, so don't claim that nothing is close
-            return {"kind": "unavailable", "topics": []}
-
-        picked = data.get("topics")
+        picked = data.get("topics") if isinstance(data, dict) else []
         picked = [picked] if isinstance(picked, str) else picked if isinstance(picked, list) else []
         topics = [t for t in picked if t in candidates][:3]
-        kind = data.get("kind") if data.get("kind") in ("typo", "related") and topics else "unrelated"
-        return {"kind": kind, "topics": topics if kind != "unrelated" else []}
+        if isinstance(data, dict) and data.get("kind") in ("typo", "related") and topics:
+            return {"kind": data["kind"], "topics": topics}
+
+        # A lone word gives the model nothing to judge by, and a single word typed into a study app
+        # is nearly always a term being reached for, so titles that look like it are still offered.
+        lookalikes = self.lookalikes(query)[:3]
+        if len(WORD.findall((typed or query).lower())) == 1 and lookalikes:
+            return {"kind": "lookalike", "topics": lookalikes}
+        # a failed call says nothing about the question, so don't claim that nothing is close
+        return {"kind": "unrelated" if isinstance(data, dict) else "unavailable", "topics": []}

@@ -9,7 +9,7 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
-from openai import RateLimitError
+from openai import BadRequestError, RateLimitError
 from pydantic import BaseModel
 
 from rag import config, prompts
@@ -104,6 +104,13 @@ def alternatives_json(question, alternatives):
             for term, meaning, subject in alternatives]
 
 
+def model_trouble(error):
+    # what a student sees when the practice or quiz model can't deliver
+    if isinstance(error, RateLimitError):
+        return HTTPException(503, "all three models are out of free-tier tokens for now, which can take a while to reset")
+    return HTTPException(503, "the free models couldn't finish writing it just now, so try again in a few minutes")
+
+
 def sse(event, payload):
     return f"event: {event}\ndata: {json.dumps(payload)}\n\n"
 
@@ -146,7 +153,7 @@ def answer_events(request):
     refused = is_refusal(answer)
     if refused:
         # a refusal shouldn't be a dead end: offer the books' own topics that come closest
-        yield sse("suggest", assistant.retriever.helper.suggest(prepared.search_query))
+        yield sse("suggest", assistant.retriever.helper.suggest(prepared.search_query, typed=request.question))
 
     yield sse("done", {
         "answer": answer,
@@ -178,10 +185,11 @@ def practice(request: PracticeRequest):
     prepared = assistant.prepare(request.topic, docs=docs_for(request.subject), subject=request.subject)
     if not prepared.grounded:
         return {"questions": [], "sources": []}
-    return {
-        "questions": practice_questions(request.topic, prepared.sources),
-        "sources": [source_json(s.number, s.hit, s.text) for s in prepared.sources],
-    }
+    try:
+        questions = practice_questions(request.topic, prepared.sources)
+    except (RateLimitError, BadRequestError, ValueError) as error:
+        raise model_trouble(error)
+    return {"questions": questions, "sources": [source_json(s.number, s.hit, s.text) for s in prepared.sources]}
 
 
 @app.post("/api/quiz")
@@ -192,11 +200,11 @@ def quiz(request: PracticeRequest):
     if not prepared.grounded:
         return {"questions": [], "sources": []}
     marks = quiz_marks(prepared.sources, assistant.retriever.chunks)
-    return {
-        "marks": marks,
-        "questions": quiz_questions(request.topic, prepared.sources, marks),
-        "sources": [source_json(s.number, s.hit, s.text) for s in prepared.sources],
-    }
+    try:
+        questions = quiz_questions(request.topic, prepared.sources, marks)
+    except (RateLimitError, BadRequestError, ValueError) as error:
+        raise model_trouble(error)
+    return {"marks": marks, "questions": questions, "sources": [source_json(s.number, s.hit, s.text) for s in prepared.sources]}
 
 
 @app.post("/api/grounding")
