@@ -20,9 +20,12 @@ def sentences(answer):
         line = EMPHASIS.sub("", LIST_MARK.sub("", line.strip()))
         if not line or line.startswith("#") or line.startswith("|"):
             continue
+        if line.lower().startswith("analogy"):
+            continue  # an everyday comparison the student asked for, openly not from the books
         if len(line.split()) < 8 and not line.endswith((".", "!", "?")):
             continue  # a bold label or a heading, not a claim to check
-        out.extend(s.strip() for s in SENTENCE_SPLIT.split(line) if len(s.strip()) > 25)
+        # questions in quiz and socratic replies ask, they don't claim anything
+        out.extend(s.strip() for s in SENTENCE_SPLIT.split(line) if len(s.strip()) > 25 and not s.strip().endswith("?"))
     return out
 
 

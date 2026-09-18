@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -24,6 +25,10 @@ _threshold_file = ROOT / "eval" / "results" / "refusal_threshold.json"
 REFUSAL_THRESHOLD = json.loads(_threshold_file.read_text())["threshold"] if _threshold_file.exists() else 0.0
 
 GROQ_BASE_URL = "https://api.groq.com/openai/v1"
-ANSWER_MODEL = "openai/gpt-oss-120b"
+# can be pointed at the smaller model while developing, the free tier allows 200k tokens a day on this one
+ANSWER_MODEL = os.environ.get("ANSWER_MODEL", "openai/gpt-oss-120b")
 FALLBACK_MODEL = "openai/gpt-oss-20b"
 REWRITE_MODEL = "openai/gpt-oss-20b"
+# only used when both gpt-oss models are out of free-tier tokens; it's also the evaluation's judge,
+# but the evaluation calls its models directly and never falls back
+LAST_RESORT_MODEL = "qwen/qwen3.8-27b"

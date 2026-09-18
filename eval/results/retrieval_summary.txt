@@ -5,19 +5,20 @@ config                                  hit@1  hit@3  hit@5  MRR@10  ms/query
 A  dense only                            0.56   0.87   0.87   0.717        18
 B  BM25 only                             0.64   0.90   0.90   0.756         1
 C  hybrid (BM25 + dense, RRF)            0.69   0.90   0.90   0.793        13
-D  C + section headers                   0.59   0.87   0.92   0.731        14
-E  C + reranker (bge-reranker-base)      0.82   0.95   0.95   0.876       844
-F  D + reranker (bge-reranker-base)      0.74   0.92   0.92   0.833      1139
-G  F with a small reranker (MiniLM-L6)   0.64   0.92   0.92   0.774       313
+D  C + section headers                   0.59   0.87   0.92   0.731        13
+E  C + reranker (bge-reranker-base)      0.82   0.95   0.95   0.876       725
+F  D + reranker (bge-reranker-base)      0.74   0.92   0.92   0.833       832
+G  F with a small reranker (MiniLM-L6)   0.64   0.92   0.92   0.774       218
+H  E + acronyms and spelling             0.85   0.95   0.95   0.897       806
 
 evidence inside the LLM context (config E, top 5): 0.95
 same, with the next chunk attached to the top 2:   0.95
 
 misses (rank of the evidence chunk per config, - means not in the top 10):
-  q14  A=-  B=-  C=-  D=-  E=-  F=7  G=6  Why do databases and file systems use B-trees instead of binary search trees?
-  q18  A=-  B=-  C=-  D=-  E=-  F=-  G=-  What does isolation mean in the context of database transactions?
-  q19  A=-  B=1  C=-  D=4  E=1  F=1  G=3  What conditions must hold for a deadlock to occur?
-  q23  A=8  B=1  C=1  D=1  E=1  F=1  G=1  What is thrashing?
-  q24  A=6  B=-  C=9  D=-  E=1  F=-  G=-  What is a page fault and who handles it?
-  q25  A=3  B=1  C=2  D=4  E=1  F=2  G=3  What is a race condition and how does mutual exclusion prevent it?
-  q34  A=1  B=7  C=2  D=1  E=1  F=1  G=1  What is normalization in DBMS and why do we do it?
+  q14  A=-  B=-  C=-  D=-  E=-  F=7  G=6  H=-  Why do databases and file systems use B-trees instead of binary search trees?
+  q18  A=-  B=-  C=-  D=-  E=-  F=-  G=-  H=-  What does isolation mean in the context of database transactions?
+  q19  A=-  B=1  C=-  D=4  E=1  F=1  G=3  H=1  What conditions must hold for a deadlock to occur?
+  q23  A=8  B=1  C=1  D=1  E=1  F=1  G=1  H=1  What is thrashing?
+  q24  A=6  B=-  C=9  D=-  E=1  F=-  G=-  H=1  What is a page fault and who handles it?
+  q25  A=3  B=1  C=2  D=4  E=1  F=2  G=3  H=1  What is a race condition and how does mutual exclusion prevent it?
+  q34  A=1  B=7  C=2  D=1  E=1  F=1  G=1  H=1  What is normalization in DBMS and why do we do it?

@@ -6,7 +6,7 @@
       "hit@3": 0.8717948717948718,
       "hit@5": 0.8717948717948718,
       "mrr@10": 0.7168803418803419,
-      "ms_per_query": 18.170624999584106
+      "ms_per_query": 18.054874999506865
     },
     "B": {
       "name": "BM25 only",
@@ -14,7 +14,7 @@
       "hit@3": 0.8974358974358975,
       "hit@5": 0.8974358974358975,
       "mrr@10": 0.7557997557997558,
-      "ms_per_query": 1.164541999969515
+      "ms_per_query": 1.250958001037361
     },
     "C": {
       "name": "hybrid (BM25 + dense, RRF)",
@@ -22,7 +22,7 @@
       "hit@3": 0.8974358974358975,
       "hit@5": 0.8974358974358975,
       "mrr@10": 0.7934472934472934,
-      "ms_per_query": 12.72774999961257
+      "ms_per_query": 12.785667000571266
     },
     "D": {
       "name": "C + section headers",
@@ -30,7 +30,7 @@
       "hit@3": 0.8717948717948718,
       "hit@5": 0.9230769230769231,
       "mrr@10": 0.7307692307692307,
-      "ms_per_query": 13.660124999660184
+      "ms_per_query": 13.013292002142407
     },
     "E": {
       "name": "C + reranker (bge-reranker-base)",
@@ -38,7 +38,7 @@
       "hit@3": 0.9487179487179487,
       "hit@5": 0.9487179487179487,
       "mrr@10": 0.876068376068376,
-      "ms_per_query": 844.3199579996872
+      "ms_per_query": 725.0104580016341
     },
     "F": {
       "name": "D + reranker (bge-reranker-base)",
@@ -46,7 +46,7 @@
       "hit@3": 0.9230769230769231,
       "hit@5": 0.9230769230769231,
       "mrr@10": 0.8327228327228327,
-      "ms_per_query": 1138.7464999997974
+      "ms_per_query": 832.4107500011451
     },
     "G": {
       "name": "F with a small reranker (MiniLM-L6)",
@@ -54,7 +54,15 @@
       "hit@3": 0.9230769230769231,
       "hit@5": 0.9230769230769231,
       "mrr@10": 0.7735042735042735,
-      "ms_per_query": 313.3988750005301
+      "ms_per_query": 217.5288329999603
+    },
+    "H": {
+      "name": "E + acronyms and spelling",
+      "hit@1": 0.8461538461538461,
+      "hit@3": 0.9487179487179487,
+      "hit@5": 0.9487179487179487,
+      "mrr@10": 0.8974358974358975,
+      "ms_per_query": 806.0994590014161
     },
     "context_recall_expand_0": 0.9487179487179487,
     "context_recall_expand_2": 0.9487179487179487
@@ -68,7 +76,8 @@
       "D": 1,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 2
     },
     "q02": {
       "question": "How does chaining handle collisions in a hash table?",
@@ -78,7 +87,8 @@
       "D": 1,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q03": {
       "question": "Why is union-find with union by rank and path compression considered almost constant time?",
@@ -88,7 +98,8 @@
       "D": 1,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q04": {
       "question": "Explain the two pointers approach for array problems.",
@@ -98,7 +109,8 @@
       "D": 1,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q05": {
       "question": "When is it impossible to topologically sort a directed graph?",
@@ -108,7 +120,8 @@
       "D": 1,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q06": {
       "question": "Can I use Dijkstra's algorithm on a graph with negative edge weights?",
@@ -118,7 +131,8 @@
       "D": 2,
       "E": 1,
       "F": 1,
-      "G": 2
+      "G": 2,
+      "H": 1
     },
     "q07": {
       "question": "What is memoization and how does it speed up a recursive Fibonacci function?",
@@ -128,7 +142,8 @@
       "D": 1,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q08": {
       "question": "How do you find the minimum of every fixed-size window in an array efficiently?",
@@ -138,7 +153,8 @@
       "D": 1,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q09": {
       "question": "What is backtracking? Explain with the N-Queens problem.",
@@ -148,7 +164,8 @@
       "D": 1,
       "E": 1,
       "F": 2,
-      "G": 2
+      "G": 2,
+      "H": 1
     },
     "q10": {
       "question": "What's the difference between a stack and a queue?",
@@ -158,7 +175,8 @@
       "D": 2,
       "E": 2,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 2
     },
     "q11": {
       "question": "How does Kruskal's algorithm build a minimum spanning tree, and what is its time complexity?",
@@ -168,7 +186,8 @@
       "D": 2,
       "E": 1,
       "F": 2,
-      "G": 2
+      "G": 2,
+      "H": 1
     },
     "q12": {
       "question": "How does quicksort work?",
@@ -178,7 +197,8 @@
       "D": 1,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q13": {
       "question": "What is amortized analysis and why is it needed?",
@@ -188,7 +208,8 @@
       "D": 1,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q14": {
       "question": "Why do databases and file systems use B-trees instead of binary search trees?",
@@ -198,7 +219,8 @@
       "D": null,
       "E": null,
       "F": 7,
-      "G": 6
+      "G": 6,
+      "H": null
     },
     "q15": {
       "question": "What does ACID stand for?",
@@ -208,7 +230,8 @@
       "D": 1,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q16": {
       "question": "What is write-ahead logging?",
@@ -218,7 +241,8 @@
       "D": 2,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q17": {
       "question": "How does two-phase locking make concurrent transactions serializable?",
@@ -228,7 +252,8 @@
       "D": 1,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q18": {
       "question": "What does isolation mean in the context of database transactions?",
@@ -238,7 +263,8 @@
       "D": null,
       "E": null,
       "F": null,
-      "G": null
+      "G": null,
+      "H": null
     },
     "q19": {
       "question": "What conditions must hold for a deadlock to occur?",
@@ -248,7 +274,8 @@
       "D": 4,
       "E": 1,
       "F": 1,
-      "G": 3
+      "G": 3,
+      "H": 1
     },
     "q20": {
       "question": "What is the difference between a process and a thread?",
@@ -258,7 +285,8 @@
       "D": 1,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q21": {
       "question": "What is a semaphore and what operations does it support?",
@@ -268,7 +296,8 @@
       "D": 2,
       "E": 2,
       "F": 2,
-      "G": 2
+      "G": 2,
+      "H": 2
     },
     "q22": {
       "question": "What is priority inversion?",
@@ -278,7 +307,8 @@
       "D": 3,
       "E": 1,
       "F": 1,
-      "G": 2
+      "G": 2,
+      "H": 1
     },
     "q23": {
       "question": "What is thrashing?",
@@ -288,7 +318,8 @@
       "D": 1,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q24": {
       "question": "What is a page fault and who handles it?",
@@ -298,7 +329,8 @@
       "D": null,
       "E": 1,
       "F": null,
-      "G": null
+      "G": null,
+      "H": 1
     },
     "q25": {
       "question": "What is a race condition and how does mutual exclusion prevent it?",
@@ -308,7 +340,8 @@
       "D": 4,
       "E": 1,
       "F": 2,
-      "G": 3
+      "G": 3,
+      "H": 1
     },
     "q26": {
       "question": "What is a context switch?",
@@ -318,7 +351,8 @@
       "D": 1,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q27": {
       "question": "Explain the TCP three-way handshake.",
@@ -328,7 +362,8 @@
       "D": 1,
       "E": 1,
       "F": 1,
-      "G": 2
+      "G": 2,
+      "H": 1
     },
     "q28": {
       "question": "TCP vs UDP: what's the difference?",
@@ -338,7 +373,8 @@
       "D": 2,
       "E": 3,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q29": {
       "question": "What is slow start in TCP?",
@@ -348,7 +384,8 @@
       "D": 1,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q30": {
       "question": "What is ARP used for?",
@@ -358,7 +395,8 @@
       "D": 3,
       "E": 1,
       "F": 2,
-      "G": 2
+      "G": 2,
+      "H": 1
     },
     "q31": {
       "question": "What are the layers of the OSI model?",
@@ -368,7 +406,8 @@
       "D": 1,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q32": {
       "question": "What does DNS do?",
@@ -378,7 +417,8 @@
       "D": 2,
       "E": 3,
       "F": 1,
-      "G": 2
+      "G": 2,
+      "H": 2
     },
     "q33": {
       "question": "What is the congestion window in TCP and how does it relate to the advertised window?",
@@ -388,7 +428,8 @@
       "D": 1,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q34": {
       "question": "What is normalization in DBMS and why do we do it?",
@@ -398,7 +439,8 @@
       "D": 1,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q35": {
       "question": "What is the difference between a primary key and a foreign key?",
@@ -408,7 +450,8 @@
       "D": 1,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q36": {
       "question": "What conditions must a table meet to be in third normal form?",
@@ -418,7 +461,8 @@
       "D": 2,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q37": {
       "question": "What is a functional dependency?",
@@ -428,7 +472,8 @@
       "D": 1,
       "E": 1,
       "F": 1,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q38": {
       "question": "What is the difference between DDL and DML in SQL?",
@@ -438,7 +483,8 @@
       "D": 1,
       "E": 2,
       "F": 2,
-      "G": 1
+      "G": 1,
+      "H": 1
     },
     "q39": {
       "question": "What is referential integrity?",
@@ -448,7 +494,8 @@
       "D": 3,
       "E": 1,
       "F": 3,
-      "G": 3
+      "G": 3,
+      "H": 1
     }
   }
 }

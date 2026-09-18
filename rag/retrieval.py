@@ -8,6 +8,7 @@ from rank_bm25 import BM25Okapi
 from . import config
 from .chunking import Chunk
 from .index import bm25_tokens, embedder, load_chunks, reranker
+from .query import QueryHelper
 
 # k from the original RRF paper, stops the top one or two ranks from drowning out the rest
 RRF_K = 60
@@ -39,6 +40,7 @@ class Retriever:
         self.dense = faiss.read_index(str(config.INDEX_DIR / f"dense_{variant}.faiss"))
         self.bm25 = BM25Okapi([bm25_tokens(self.passage(c)) for c in self.chunks])
         self.positions = {(c.doc_id, c.position): i for i, c in enumerate(self.chunks)}
+        self.helper = QueryHelper(self.chunks)  # spelling, acronyms and topic suggestions
 
     def passage(self, chunk):
         return chunk.context_text if self.contextual else chunk.text

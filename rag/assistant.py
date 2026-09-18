@@ -29,6 +29,9 @@ class Prepared:
     grounded: bool = True  # False when nothing retrieved was relevant enough to answer from
     closest: list = field(default_factory=list)
     model: str = ""  # which model actually replied, since a rate limit can push us to the smaller one
+    corrections: list = field(default_factory=list)  # spelling fixed before searching
+    expansions: list = field(default_factory=list)  # acronyms spelled out before searching
+    clarify: dict = None  # an ambiguous acronym the student needs to pick a meaning for
 
 
 def join_overlapping(first, second):
@@ -41,6 +44,11 @@ def join_overlapping(first, second):
 
 def tidy_citations(answer):
     return OSS_CITATION.sub(r"[\1]", answer)
+
+
+def is_refusal(answer):
+    words = lambda text: re.sub(r"[^a-z0-9]+", " ", text.lower()).strip()
+    return words(answer).startswith(words(prompts.NOT_FOUND))
 
 
 def cited_numbers(answer, n_sources):
@@ -73,14 +81,20 @@ class Assistant:
         )
         return (response.choices[0].message.content or "").strip() or question
 
-    def prepare(self, question, history=None, docs=None):
-        query = self.rewrite(question, history)
+    def prepare(self, question, history=None, docs=None, subject=None):
+        rewritten = self.rewrite(question, history)
+        understood = self.retriever.helper.understand(rewritten, subject)
+        if understood.clarify:
+            return Prepared(question, rewritten, grounded=False, clarify=understood.clarify)
+
+        query = understood.query
         hits = self.retriever.search(query, method=self.method, rerank=self.rerank, k=self.k, docs=docs)
+        notes = {"corrections": understood.corrections, "expansions": understood.expansions}
 
         # the score check needs reranker scores, so it's skipped when reranking is switched off
         if not hits or (self.rerank and hits[0].rerank_score < self.min_score):
-            return Prepared(question, query, grounded=False, closest=hits[:3])
-        return Prepared(question, query, self.build_sources(hits))
+            return Prepared(question, query, grounded=False, closest=hits[:3], **notes)
+        return Prepared(question, query, self.build_sources(hits), **notes)
 
     def build_sources(self, hits):
         sources = []
@@ -98,17 +112,19 @@ class Assistant:
         return sources
 
     @staticmethod
-    def messages(prepared, mode="explain"):
+    def messages(prepared, mode="explain", previous=None):
+        request = prompts.answer_request(prepared.search_query, prepared.sources, previous,
+                                         said=prepared.question, style=prompts.MODES.get(mode))
         return [
             {"role": "system", "content": prompts.system_prompt(mode)},
-            {"role": "user", "content": prompts.answer_request(prepared.search_query, prepared.sources)},
+            {"role": "user", "content": request},
         ]
 
-    def stream(self, prepared, mode="explain"):
+    def stream(self, prepared, mode="explain", previous=None):
         if not prepared.grounded:
             yield prompts.NOT_FOUND
             return
-        for event in chat(self.messages(prepared, mode), stream=True, **GENERATION):
+        for event in chat(self.messages(prepared, mode, previous), stream=True, **GENERATION):
             prepared.model = event.model
             if event.choices and event.choices[0].delta.content:
                 yield event.choices[0].delta.content

@@ -28,6 +28,8 @@ CONFIGS = [
     ("E", "C + reranker (bge-reranker-base)", dict(contextual=False, method="hybrid", rerank=True, rerank_model=config.RERANK_MODEL)),
     ("F", "D + reranker (bge-reranker-base)", dict(contextual=True, method="hybrid", rerank=True, rerank_model=config.RERANK_MODEL)),
     ("G", "F with a small reranker (MiniLM-L6)", dict(contextual=True, method="hybrid", rerank=True, rerank_model=SMALL_RERANKER)),
+    # what the app runs: E, after acronyms are spelled out and typos fixed
+    ("H", "E + acronyms and spelling", dict(contextual=False, method="hybrid", rerank=True, rerank_model=config.RERANK_MODEL, understand=True)),
 ]
 
 
@@ -78,7 +80,8 @@ def main():
         ranks, latencies = [], []
         for q in questions:
             start = time.perf_counter()
-            hits = retriever.search(q["question"], method=cfg["method"], rerank=cfg["rerank"], k=10,
+            query = retriever.helper.understand(q["question"]).query if cfg.get("understand") else q["question"]
+            hits = retriever.search(query, method=cfg["method"], rerank=cfg["rerank"], k=10,
                                     rerank_model=cfg.get("rerank_model", config.RERANK_MODEL))
             latencies.append(time.perf_counter() - start)
             rank = rank_of_evidence([h.chunk.text for h in hits], q["quotes"])
