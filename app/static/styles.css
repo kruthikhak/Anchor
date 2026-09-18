@@ -406,4 +406,8 @@ mark { background: var(--highlight); color: inherit; border-radius: 3px; padding
   .thread, .composer, .cards, .eval { padding-left: 16px; padding-right: 16px; }
   .drawer { width: 100%; }
   .welcome h1 { font-size: 24px; }
+  .topbar { flex-wrap: wrap; padding: 12px 16px; }
+  .modes { flex-wrap: wrap; }
+  .asked { max-width: 90%; }
+  .source-pill { max-width: 100%; }
 }

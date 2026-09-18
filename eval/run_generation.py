@@ -48,12 +48,16 @@ faithfulness, checking every factual claim in the assistant's answer against the
 Reply with JSON only: {{"correctness": 0, "faithfulness": 0, "reason": "one short sentence"}}"""
 
 
-def seconds(value):
-    """Groq reports its reset times like '577ms', '12.5s' or '1m30s'."""
+# the free tier allows 200k tokens a day on the answer model, and says how long to wait when that runs out
+RETRY_AFTER = re.compile(r"try again in ([\dhms.]+)")
+
+
+def seconds(value, cap=90):
+    """Groq reports its waits like '577ms', '12.5s' or '17m41.856s'."""
     total = 0.0
     for amount, unit in re.findall(r"([\d.]+)(ms|m|s|h)", value):
         total += float(amount) * {"ms": 0.001, "s": 1, "m": 60, "h": 3600}[unit]
-    return min(total, 90)
+    return min(total, cap)
 
 
 class CachedLLM:
@@ -73,8 +77,11 @@ class CachedLLM:
             try:
                 raw = client().chat.completions.with_raw_response.create(**request)
                 break
-            except RateLimitError:
-                time.sleep(60)  # the free tier budget is per minute, so waiting less just fails again
+            except RateLimitError as error:
+                asked_for = RETRY_AFTER.search(str(error))
+                wait = seconds(asked_for.group(1), cap=1500) + 5 if asked_for else 60
+                print(f"  rate limited, waiting {wait / 60:.1f} min")
+                time.sleep(wait)
         else:
             raise RuntimeError(f"still rate limited on {request['model']}")
 

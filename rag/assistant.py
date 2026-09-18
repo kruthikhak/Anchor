@@ -28,6 +28,7 @@ class Prepared:
     sources: list = field(default_factory=list)
     grounded: bool = True  # False when nothing retrieved was relevant enough to answer from
     closest: list = field(default_factory=list)
+    model: str = ""  # which model actually replied, since a rate limit can push us to the smaller one
 
 
 def join_overlapping(first, second):
@@ -108,6 +109,7 @@ class Assistant:
             yield prompts.NOT_FOUND
             return
         for event in chat(self.messages(prepared, mode), stream=True, **GENERATION):
+            prepared.model = event.model
             if event.choices and event.choices[0].delta.content:
                 yield event.choices[0].delta.content
 

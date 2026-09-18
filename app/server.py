@@ -111,6 +111,8 @@ def ask(request: AskRequest):
             "answer": answer,
             "citations": cited_numbers(answer, len(prepared.sources)),
             "totalMs": round((time.perf_counter() - start) * 1000),
+            "model": prepared.model,
+            "fellBack": bool(prepared.model) and prepared.model != config.ANSWER_MODEL,
         })
 
     return StreamingResponse(events(), media_type="text/event-stream")
