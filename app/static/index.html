@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/static/styles.css?v=9">
+<link rel="stylesheet" href="/static/styles.css?v=16">
 </head>
 <body>
 <div class="app">
@@ -23,8 +23,9 @@
 
     <nav class="nav" id="nav">
       <button class="nav-item is-active" data-view="ask">Ask</button>
+      <button class="nav-item" data-view="topics">Topics</button>
       <button class="nav-item" data-view="library">Library</button>
-      <button class="nav-item" data-view="progress">My progress</button>
+      <button class="nav-item" data-view="progress">My learning</button>
       <button class="nav-item" data-view="evaluation">How it's measured</button>
     </nav>
 
@@ -66,6 +67,7 @@
           <h1>Ask the shelf, not the internet.</h1>
           <p>Answers come only from nine openly licensed textbooks on data structures, algorithms, operating systems, databases and networks. Every claim carries the page it came from, and questions the books don't cover get an honest "not in the library".</p>
           <div class="starters" id="starters"></div>
+          <div class="welcome-topics" id="welcome-topics"></div>
         </div>
       </div>
 
@@ -75,13 +77,24 @@
       </form>
     </section>
 
+    <section class="view" id="view-topics" hidden>
+      <header class="topbar">
+        <h2>Topics</h2>
+        <form class="topic-search" id="topic-search" role="search">
+          <input id="topic-query" autocomplete="off" placeholder="Find a topic, e.g. deadlock or B-tree" aria-label="Find a topic">
+          <button type="submit">Search the books</button>
+        </form>
+      </header>
+      <div class="topics-page" id="topics"></div>
+    </section>
+
     <section class="view" id="view-library" hidden>
       <header class="topbar"><h2>The library</h2><span class="muted" id="library-count"></span></header>
       <div class="cards" id="library"></div>
     </section>
 
     <section class="view" id="view-progress" hidden>
-      <header class="topbar"><h2>My progress</h2><button class="ghost" id="clear-progress">Clear my data</button></header>
+      <header class="topbar"><h2>My learning</h2><button class="ghost" id="clear-progress">Clear my data</button></header>
       <div class="eval" id="progress"></div>
     </section>
 
@@ -103,6 +116,6 @@
   <div class="mark-tools" id="mark-tools" hidden></div>
 
 </div>
-<script src="/static/app.js?v=9"></script>
+<script src="/static/app.js?v=16"></script>
 </body>
 </html>

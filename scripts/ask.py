@@ -23,6 +23,10 @@ def show_sources(prepared):
 def ask(assistant, question, history, retrieve_only):
     start = time.time()
     prepared = assistant.prepare(question, history)
+    if prepared.clarify:
+        options = " or ".join(prepared.clarify["options"])
+        print(f"{prepared.clarify['term']} could mean {options}. Ask again with the one you mean spelled out.")
+        return ""
     if prepared.search_query != question:
         print(f"searching for: {prepared.search_query}")
     print(f"retrieval took {time.time() - start:.2f}s\n")

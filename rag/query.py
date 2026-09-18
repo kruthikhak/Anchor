@@ -62,6 +62,7 @@ class Understood:
     corrections: list = field(default_factory=list)  # (what they typed, what the books spell)
     expansions: list = field(default_factory=list)  # (acronym, meaning)
     clarify: dict = None  # set when an acronym has two meanings and nothing says which
+    alternatives: list = field(default_factory=list)  # (acronym, meaning, subject) the subject ruled out
 
 
 def clean_title(title):
@@ -143,21 +144,31 @@ class QueryHelper:
     def understand(self, question, subject=None):
         text, corrections = self.fix_spelling(question)
 
-        expansions, clarify = [], None
+        expansions, clarify, alternatives = [], None, []
         for token in dict.fromkeys(t.lower() for t in TOKEN.findall(text)):
             meanings = ACRONYMS.get(token)
             if not meanings or any(m.lower() in text.lower() for m, _ in meanings):
                 continue  # not one we know, or the question already spells it out
             if len(meanings) > 1 and subject not in (None, "", "All"):
-                meanings = [m for m in meanings if m[1] == subject] or meanings
+                chosen = [m for m in meanings if m[1] == subject]
+                if chosen:
+                    # still offered, in case the subject wasn't what they had in mind
+                    alternatives += [(token.upper(), m, s) for m, s in meanings if (m, s) not in chosen]
+                    meanings = chosen
             if len(meanings) > 1:
                 clarify = {"term": token.upper(), "options": [m for m, _ in meanings]}
                 continue
             meaning = meanings[0][0]
             expansions.append((token.upper(), meaning))
-            text = re.sub(rf"\b{re.escape(token)}\b", f"{token.upper()} ({meaning})", text, count=1, flags=re.I)
+            # "OSI model" becomes "OSI (open systems interconnection) model", not "... model) model",
+            # which read oddly enough to make the model refuse once
+            shown = meaning
+            after = re.search(rf"\b{re.escape(token)}\s+(\w+)", text, flags=re.I)
+            if after and meaning.lower().endswith(" " + after.group(1).lower()):
+                shown = meaning[: -len(after.group(1))].strip()
+            text = re.sub(rf"\b{re.escape(token)}\b", f"{token.upper()} ({shown})", text, count=1, flags=re.I)
 
-        return Understood(text, corrections, expansions, clarify)
+        return Understood(text, corrections, expansions, clarify, alternatives)
 
     def candidate_topics(self, query):
         if self._title_vectors is None:

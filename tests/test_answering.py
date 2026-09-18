@@ -1,9 +1,9 @@
 import unittest
 
-from app.server import source_number
 from rag import prompts
 from rag.assistant import cited_numbers, is_refusal, tidy_citations
 from rag.grounding import sentences
+from rag.practice import source_number
 
 
 class RefusalTests(unittest.TestCase):

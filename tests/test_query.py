@@ -49,6 +49,11 @@ class UnderstandTests(unittest.TestCase):
         self.assertIn("Data Structures and Algorithms", self.helper.understand("what is DSA", "DSA").query)
         self.assertIn("Digital Signature Algorithm", self.helper.understand("what is dsa", "Computer Networks").query)
 
+    def test_the_meaning_the_subject_ruled_out_is_still_offered(self):
+        understood = self.helper.understand("what is DSA", "DSA")
+        self.assertEqual(understood.alternatives, [("DSA", "Digital Signature Algorithm", "Computer Networks")])
+        self.assertEqual(self.helper.understand("TCP vs UDP", "DSA").alternatives, [])  # one meaning, nothing to offer
+
     def test_subject_that_matches_neither_meaning_still_asks(self):
         self.assertIsNotNone(self.helper.understand("what is an FD", "DSA").clarify)
 
@@ -61,6 +66,13 @@ class UnderstandTests(unittest.TestCase):
         understood = self.helper.understand("TCP vs UDP")
         self.assertEqual([a for a, _ in understood.expansions], ["TCP", "UDP"])
         self.assertIn("transmission control protocol", understood.query)
+
+    def test_expansion_does_not_repeat_the_word_after_it(self):
+        self.assertEqual(self.helper.understand("the layers of the OSI model").query,
+                         "the layers of the OSI (open systems interconnection) model")
+        self.assertEqual(self.helper.understand("is TCP protocol reliable").query,
+                         "is TCP (transmission control) protocol reliable")
+        self.assertEqual(self.helper.understand("what is OSI").query, "what is OSI (open systems interconnection model)")
 
     def test_typo_is_fixed_when_the_books_use_the_fix(self):
         self.fixes = {"dedlock": "deadlock"}

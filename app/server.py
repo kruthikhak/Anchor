@@ -3,9 +3,10 @@ import logging
 import time
 from collections import Counter
 from contextlib import asynccontextmanager
+from itertools import zip_longest
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from openai import RateLimitError
@@ -15,7 +16,8 @@ from rag import config, prompts
 from rag.assistant import Assistant, cited_numbers, is_refusal, tidy_citations
 from rag.grounding import check, summarise
 from rag.index import STOPWORDS, TOKEN
-from rag.llm import chat_json
+from rag.practice import practice_questions, quiz_marks, quiz_questions
+from rag.topics import page_range, table_of_contents, topic_passages
 
 log = logging.getLogger("anchor")
 STATIC = Path(__file__).resolve().parent / "static"
@@ -23,13 +25,15 @@ RESULTS = config.ROOT / "eval" / "results"
 SOURCES = json.loads(config.CORPUS_FILE.read_text())
 
 assistant = None
+contents = []
 
 
 @asynccontextmanager
 async def lifespan(app):
-    global assistant
+    global assistant, contents
     assistant = Assistant()
     assistant.retriever.search("warm up")  # load the models now, not during the first question
+    contents = table_of_contents(assistant.retriever.chunks, SOURCES)
     yield
 
 
@@ -46,7 +50,7 @@ class AskRequest(BaseModel):
 
 class PracticeRequest(BaseModel):
     topic: str
-    subject: str | None = None
+    subject: str | None = None  # used by the quiz too
 
 
 class GroundingRequest(BaseModel):
@@ -65,36 +69,43 @@ def highlight_terms(query):
     return sorted({w for w in TOKEN.findall(query.lower()) if len(w) > 3 and w not in STOPWORDS})
 
 
-def source_json(number, hit, text):
-    chunk = hit.chunk
+def passage_json(number, chunk, hit=None, text=None):
     return {
         "number": number,
         "book": chunk.doc_title,
         "docId": chunk.doc_id,
         "section": chunk.section,
         "page": chunk.page_label or str(chunk.page_start),
-        "text": text,
+        "text": text or chunk.text,
         "scores": {
-            "rerank": hit.rerank_score,
-            "dense": hit.ranks.get("dense"),
-            "bm25": hit.ranks.get("bm25"),
+            "rerank": hit.rerank_score if hit else None,
+            "dense": hit.ranks.get("dense") if hit else None,
+            "bm25": hit.ranks.get("bm25") if hit else None,
         },
     }
 
 
+def source_json(number, hit, text):
+    return passage_json(number, hit.chunk, hit, text)
+
+
+def clarify_json(question, clarify):
+    # each option spells the meaning out, so asking it again can't be ambiguous
+    question = question.strip().rstrip("?")
+    return {
+        "term": clarify["term"],
+        "options": [{"meaning": m, "question": f"{question} (meaning {m})?"} for m in clarify["options"]],
+    }
+
+
+def alternatives_json(question, alternatives):
+    question = question.strip().rstrip("?")
+    return [{"term": term, "meaning": meaning, "subject": subject, "question": f"{question} (meaning {meaning})?"}
+            for term, meaning, subject in alternatives]
+
+
 def sse(event, payload):
     return f"event: {event}\ndata: {json.dumps(payload)}\n\n"
-
-
-def source_number(value, count):
-    # the model sometimes writes the source as "2" or [2] instead of 2
-    if isinstance(value, list):
-        value = value[0] if value else None
-    try:
-        number = int(value)
-    except (TypeError, ValueError):
-        return None
-    return number if 1 <= number <= count else None
 
 
 def answer_events(request):
@@ -103,13 +114,7 @@ def answer_events(request):
     elapsed = lambda: round((time.perf_counter() - start) * 1000)
 
     if prepared.clarify:
-        # each option spells the meaning out, so asking it again can't be ambiguous
-        term = prepared.clarify["term"]
-        question = request.question.strip().rstrip("?")
-        yield sse("clarify", {
-            "term": term,
-            "options": [{"meaning": m, "question": f"{question} (meaning {m})?"} for m in prepared.clarify["options"]],
-        })
+        yield sse("clarify", clarify_json(request.question, prepared.clarify))
         yield sse("done", {"answer": "", "refused": False, "clarify": True, "totalMs": elapsed()})
         return
 
@@ -126,6 +131,7 @@ def answer_events(request):
         "sources": sources,
         "corrections": prepared.corrections,
         "expansions": prepared.expansions,
+        "alternatives": alternatives_json(request.question, prepared.alternatives),
         "retrievalMs": elapsed(),
     })
 
@@ -172,28 +178,23 @@ def practice(request: PracticeRequest):
     prepared = assistant.prepare(request.topic, docs=docs_for(request.subject), subject=request.subject)
     if not prepared.grounded:
         return {"questions": [], "sources": []}
-
-    reply = chat_json(
-        [
-            {"role": "system", "content": prompts.PRACTICE_SYSTEM},
-            {"role": "user", "content": prompts.answer_request(request.topic, prepared.sources)},
-        ],
-        temperature=0.4,
-        reasoning_effort="low",
-        max_completion_tokens=2000,
-    )
-    questions = reply.get("questions", []) if isinstance(reply, dict) else []
-    if not isinstance(questions, list):
-        questions = []
-
-    # a question that can't point at one of the sources wasn't written from them, so it's dropped
-    kept = []
-    for q in questions:
-        number = source_number(q.get("source"), len(prepared.sources)) if isinstance(q, dict) else None
-        if number and isinstance(q.get("question"), str):
-            kept.append({"question": q["question"], "answer": str(q.get("answer", "")), "source": number})
     return {
-        "questions": kept,
+        "questions": practice_questions(request.topic, prepared.sources),
+        "sources": [source_json(s.number, s.hit, s.text) for s in prepared.sources],
+    }
+
+
+@app.post("/api/quiz")
+def quiz(request: PracticeRequest):
+    prepared = assistant.prepare(request.topic, docs=docs_for(request.subject), subject=request.subject)
+    if prepared.clarify:
+        return {"clarify": clarify_json(request.topic, prepared.clarify), "questions": [], "sources": []}
+    if not prepared.grounded:
+        return {"questions": [], "sources": []}
+    marks = quiz_marks(prepared.sources, assistant.retriever.chunks)
+    return {
+        "marks": marks,
+        "questions": quiz_questions(request.topic, prepared.sources, marks),
         "sources": [source_json(s.number, s.hit, s.text) for s in prepared.sources],
     }
 
@@ -203,6 +204,50 @@ def grounding(request: GroundingRequest):
     # the same cross-encoder that ranked the passages now scores each sentence against what it cites
     rows = check(request.answer, request.sources)
     return {"sentences": rows, **summarise(rows)}
+
+
+@app.get("/api/topics")
+def topics():
+    return {"books": contents}
+
+
+@app.get("/api/topic")
+def topic(book: str, path: str):
+    found, shown = topic_passages(assistant.retriever.chunks, book, path)
+    if not found:
+        raise HTTPException(404, "no such topic")
+    return {
+        "bookId": book,
+        "book": found[0].doc_title,
+        "path": path,
+        "pages": page_range(found),
+        "total": len(found),
+        "passages": [{**passage_json(n, chunk), "skip": skip} for n, (chunk, skip) in enumerate(shown, start=1)],
+    }
+
+
+@app.get("/api/search")
+def search(q: str, subject: str | None = None):
+    """Passages for someone who'd rather read the books than ask. No LLM writes anything here."""
+    understood = assistant.retriever.helper.understand(q, subject)
+    # a search box can't ask which meaning of an acronym was meant, so both are searched and interleaved
+    if understood.clarify:
+        queries = [f"{understood.query} ({meaning})" for meaning in understood.clarify["options"]]
+    else:
+        queries = [understood.query]
+    rankings = [assistant.retriever.search(query, k=8, docs=docs_for(subject)) for query in queries]
+    relevant, seen = [], set()
+    for hits in zip_longest(*rankings):
+        for hit in hits:
+            if hit and hit.chunk.id not in seen and hit.rerank_score >= config.REFUSAL_THRESHOLD:
+                seen.add(hit.chunk.id)
+                relevant.append(hit)
+    return {
+        "query": " / ".join(queries),
+        "corrections": understood.corrections,
+        "terms": sorted({t for query in queries for t in highlight_terms(query)}),
+        "passages": [source_json(n, h, h.chunk.text) for n, h in enumerate(relevant[:8], start=1)],
+    }
 
 
 @app.get("/api/library")

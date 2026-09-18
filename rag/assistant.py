@@ -1,6 +1,8 @@
 import re
 from dataclasses import dataclass, field
 
+from openai import RateLimitError
+
 from . import config, prompts
 from .llm import chat
 from .retrieval import Hit, Retriever
@@ -32,6 +34,7 @@ class Prepared:
     corrections: list = field(default_factory=list)  # spelling fixed before searching
     expansions: list = field(default_factory=list)  # acronyms spelled out before searching
     clarify: dict = None  # an ambiguous acronym the student needs to pick a meaning for
+    alternatives: list = field(default_factory=list)  # other meanings of an acronym the subject decided
 
 
 def join_overlapping(first, second):
@@ -70,15 +73,18 @@ class Assistant:
     def rewrite(self, question, history):
         if not history:
             return question
-        response = chat(
-            [
-                {"role": "system", "content": prompts.REWRITE_SYSTEM},
-                {"role": "user", "content": prompts.rewrite_request(question, history)},
-            ],
-            model=config.REWRITE_MODEL,
-            reasoning_effort="low",
-            max_completion_tokens=400,
-        )
+        try:
+            response = chat(
+                [
+                    {"role": "system", "content": prompts.REWRITE_SYSTEM},
+                    {"role": "user", "content": prompts.rewrite_request(question, history)},
+                ],
+                model=config.REWRITE_MODEL,
+                reasoning_effort="low",
+                max_completion_tokens=400,
+            )
+        except RateLimitError:
+            return question  # a follow-up searched as typed beats no answer at all
         return (response.choices[0].message.content or "").strip() or question
 
     def prepare(self, question, history=None, docs=None, subject=None):
@@ -89,7 +95,8 @@ class Assistant:
 
         query = understood.query
         hits = self.retriever.search(query, method=self.method, rerank=self.rerank, k=self.k, docs=docs)
-        notes = {"corrections": understood.corrections, "expansions": understood.expansions}
+        notes = {"corrections": understood.corrections, "expansions": understood.expansions,
+                 "alternatives": understood.alternatives}
 
         # the score check needs reranker scores, so it's skipped when reranking is switched off
         if not hits or (self.rerank and hits[0].rerank_score < self.min_score):

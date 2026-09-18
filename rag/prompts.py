@@ -20,8 +20,7 @@ REWRITE_SYSTEM = """Rewrite the student's latest question so it makes sense on i
 
 # each mode decides how the reply is written, never where the facts come from
 MODES = {
-    "simple": "Write for someone meeting this topic for the first time: short sentences, plain words, and jargon only where a source defines it. Simpler wording, never new facts.",
-    "quiz": "Do not explain the topic and do not summarise it. Your whole reply is a quiz: exactly three numbered questions, worded the way an interviewer would ask them (never 'according to the material'), that test whether the student understands what the sources say. Then a line '### Answers' followed by a one or two sentence answer to each question, each with its citation.",
+    "simple": "Write for someone meeting this topic for the first time: short sentences, plain words, and jargon only where a source defines it. Simpler wording, never new facts. Keep it short, about 120 words at most: a few sentences or up to five bullet points, and no headings.",
     "socratic": "Teach by asking, not telling. Never give the definition or the answer outright. Write at most three short lines: one hint drawn from the sources with its citation, pointing at a clue rather than the conclusion, then one guiding question that moves the student one step closer. Your reply must end with that question. If the student's own words are an attempt at an answer, first say in one sentence what they got right and what is still missing, with a citation. If your previous reply is shown, never ask its question again, ask the next one. Once the student has worked out the whole idea, confirm it in one or two cited sentences and end with a question that takes it one step further.",
     # the three ways to try again after "I'm still confused"; each sees the reply that didn't land
     "analogy": "The student did not follow your previous reply, shown after the sources, so do not repeat its sentences. Open with one short everyday analogy in a paragraph that starts with 'Analogy:'. That paragraph is the only part allowed to go beyond the sources, and it must not state any technical fact. Then explain the idea itself again in plain words, citing the sources.",
@@ -51,16 +50,38 @@ def system_prompt(mode="explain"):
     if mode not in MODES:
         return ANSWER_SYSTEM
     # Swapping rather than appending, since with two style instructions the model followed the
-    # first. "Answer the question" also goes, because the socratic and quiz modes shouldn't.
+    # first. "Answer the question" also goes, because socratic mode shouldn't.
     return ANSWER_SYSTEM.replace(EXPLAIN_STYLE, MODES[mode]).replace("Answer the question using only", "Reply using only")
 
 
 PRACTICE_SYSTEM = """You write practice questions for engineering students preparing for placement interviews.
 
-Using only the numbered sources, write between three and five short questions about the topic, each answerable from those sources alone. Order them from easier to harder. Word them the way an interviewer would ask them, never as "according to the text" or "what does the passage say".
+Using only the numbered sources, write between three and five short questions about the topic, each answerable from those sources alone. Ask only about the topic itself and leave out any source that is about something else. Order them from easier to harder. Word them the way an interviewer would ask them, never as "according to the text" or "what does the passage say". For each one, also write an explanation for a student who got it wrong: two or three sentences that walk through why the answer is what it is, using only the sources but written the way a tutor would say it, without mentioning the sources or their numbers.
 
 Reply with JSON only, in this shape:
-{"questions": [{"question": "...", "answer": "one or two sentences", "source": 1}]}"""
+{"questions": [{"question": "...", "answer": "one or two sentences", "explanation": "...", "source": 1}]}"""
+
+QUIZ_SYSTEM = """You write quizzes for engineering students preparing for placement interviews.
+
+Using only the numbered sources, write the questions asked for about the topic. Word them the way an interviewer would ask them, never as "according to the text". Each question must be answerable from one source alone, which you name, and together they should cover different points rather than ask the same thing twice. Ask only about the topic itself and leave out any source that is about something else.
+
+- Multiple choice: four options with exactly one correct. The wrong options should sound plausible but be clearly wrong according to the sources.
+- Fill in the blank: one sentence about the topic with a single key term replaced by ____, where the term is a word or short phrase the sources use.
+- Short answer: a question answered in one or two sentences.
+
+Give every question an explanation for a student who got it wrong: one or two sentences on why the answer is right, using only the sources but written the way a tutor would say it, without mentioning the sources or their numbers.
+
+Reply with JSON only, in this shape:
+{"questions": [
+  {"type": "mcq", "question": "...", "options": ["...", "...", "...", "..."], "answer": 0, "explanation": "...", "source": 1},
+  {"type": "blank", "question": "... ____ ...", "answer": "...", "explanation": "...", "source": 2},
+  {"type": "short", "question": "...", "answer": "...", "explanation": "...", "source": 3}
+]}
+where "answer" for multiple choice is the position of the correct option, counting from 0."""
+
+
+def quiz_instruction(mcq, blank, short):
+    return f"Write exactly {mcq + blank + short} questions: {mcq} multiple choice, {blank} fill in the blank and {short} short answer."
 
 
 def answer_request(question, sources, previous=None, said=None, style=None):

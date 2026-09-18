@@ -36,6 +36,7 @@
     "title": "Open Data Structures (pseudocode edition)",
     "authors": "Pat Morin",
     "subjects": ["DSA", "DBMS"],
+    "subject_chapters": {"DBMS": ["External Memory Searching"]},
     "url": "https://opendatastructures.org/ods-python.pdf",
     "license": "CC BY 2.5"
   },
@@ -52,6 +53,7 @@
     "title": "Operating Systems and Middleware (rev 1.3.1)",
     "authors": "Max Hailperin",
     "subjects": ["Operating Systems", "DBMS"],
+    "subject_chapters": {"DBMS": ["Atomic Transactions"]},
     "url": "https://www.cs.utexas.edu/~ans/classes/cs439/osm-rev1.3.1.pdf",
     "license": "CC BY-SA 3.0"
   },
