@@ -1,5 +1,7 @@
 import unittest
+from unittest import mock
 
+from rag import query
 from rag.chunking import Chunk
 from rag.query import QueryHelper, clean_title
 
@@ -84,6 +86,37 @@ class UnderstandTests(unittest.TestCase):
     def test_ordinary_english_is_never_sent_for_spelling(self):
         self.assertEqual(self.helper.unknown_words("what happens when the queue is empty"), [])
         self.assertEqual(self.helper.unknown_words("explain dedlock"), ["dedlock"])
+
+
+class SuggestTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.helper = QueryHelper(CHUNKS)
+        cls.helper.candidate_topics = lambda query: ["Deadlock", "Breadth-First Search"]
+
+    def suggest(self, reply):
+        with mock.patch.object(query, "chat_json", lambda *args, **kwargs: reply):
+            return self.helper.suggest("dedlock")
+
+    def test_only_titles_from_the_list_are_offered(self):
+        self.assertEqual(self.suggest({"kind": "typo", "topics": ["Deadlock", "Made Up Title"]}),
+                         {"kind": "typo", "topics": ["Deadlock"]})
+        self.assertEqual(self.suggest({"kind": "typo", "topics": "Deadlock"}), {"kind": "typo", "topics": ["Deadlock"]})
+
+    def test_nothing_usable_means_unrelated(self):
+        for reply in ({"kind": "typo", "topics": []}, {"kind": "guess", "topics": ["Deadlock"]}, {"topics": 3}, {}):
+            self.assertEqual(self.suggest(reply), {"kind": "unrelated", "topics": []})
+
+    def test_a_failed_call_is_not_reported_as_unrelated(self):
+        self.assertEqual(self.suggest(["not", "an", "object"])["kind"], "unavailable")
+        with mock.patch.object(query, "chat_json", mock.Mock(side_effect=RuntimeError("no network"))):
+            self.assertEqual(self.helper.suggest("dedlock")["kind"], "unavailable")
+
+    def test_lookalikes_come_from_real_words_the_books_never_use(self):
+        self.assertEqual(self.helper.lookalikes("what is a deadline"), ["Deadlock"])
+        self.assertEqual(self.helper.lookalikes("what is a deadlock"), [])  # a word the books use needs none
+        # words that aren't English are typos or real terms, and the spelling check has seen them already
+        self.assertEqual(self.helper.lookalikes("what is a dedlock"), [])
 
 
 if __name__ == "__main__":

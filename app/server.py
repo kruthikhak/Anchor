@@ -263,4 +263,5 @@ app.mount("/static", StaticFiles(directory=STATIC), name="static")
 
 @app.get("/")
 def index():
-    return FileResponse(STATIC / "index.html")
+    # checked with the server on every visit, so a new version's ?v= links always reach the browser
+    return FileResponse(STATIC / "index.html", headers={"Cache-Control": "no-cache"})

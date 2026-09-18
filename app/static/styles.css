@@ -496,3 +496,4 @@ mark.mine.has-note { border-bottom: 2px dotted rgba(28, 39, 51, 0.45); }
 .topic:hover { border-color: var(--accent); color: var(--accent-dark); }
 .topic.weak { border-color: #e0b874; background: #fdf3e0; color: #7a5312; }
 .empty { color: var(--ink-muted); font-size: 13.5px; margin: 0; }
+.row-key { display: inline-block; width: 1.4em; font: 500 12px var(--mono); color: var(--ink-muted); }

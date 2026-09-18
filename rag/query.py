@@ -165,36 +165,47 @@ class QueryHelper:
         vector = embedder().encode([query], prompt=config.QUERY_INSTRUCTION, normalize_embeddings=True)[0]
         by_meaning = [self.titles[i] for i in np.argsort(-(self._title_vectors @ vector))[:12]]
         by_spelling = [t for t, _, _ in process.extract(query, self.titles, scorer=fuzz.WRatio, limit=6)]
-
-        # a half-remembered word often keeps its first letters: "mutation" for mutex or mutual exclusion
-        unused = self.unused_words(query)
-        by_sound = [t for t in self.titles
-                    if any(tw[:3] == w[:3] for w in unused for tw in WORD.findall(t.lower()) if len(tw) >= 5)]
-        # Sound-alikes first, since a list read top-down favours what comes early. The chapters go
+        # Look-alikes first, since a list read top-down favours what comes early. The chapters go
         # last so that an idea no title shares words with, like the banker's algorithm, still has
         # somewhere to point (Synchronization and Deadlocks).
-        return list(dict.fromkeys(by_sound[:8] + by_spelling + by_meaning + self.chapters))
+        return list(dict.fromkeys(self.lookalikes(query) + by_spelling + by_meaning + self.chapters))
+
+    def lookalikes(self, query):
+        """Titles with a word that starts like an ordinary English word the books never use."""
+        # A half-remembered term often comes out as a real word with the same first letters:
+        # "mutation" for mutex or mutual exclusion. A word that isn't English, like "sharding", has
+        # already been through the spelling check, so what's left of those are real terms.
+        closeness = {}
+        for word in (w for w in self.unused_words(query) if w in self.english):
+            for title in self.titles:
+                for title_word in WORD.findall(title.lower()):
+                    if len(title_word) >= 5 and title_word[:3] == word[:3]:
+                        closeness[title] = max(closeness.get(title, 0), fuzz.ratio(word, title_word))
+        return sorted(closeness, key=closeness.get, reverse=True)[:8]
 
     def suggest(self, query):
         """Which of the books' own section titles to offer when the library can't answer."""
         candidates = self.candidate_topics(query)
+        request = (f"Question: {query}\n"
+                   f"Words the textbooks never use: {', '.join(self.unused_words(query)) or 'none'}\n"
+                   f"Titles with a word that starts like one of those: {'; '.join(self.lookalikes(query)) or 'none'}\n\n"
+                   "Section titles:\n" + "\n".join(candidates))
         try:
             # the larger model: this only runs on a refusal, and the small one was too quick to say "unrelated"
             data = chat_json(
-                [
-                    {"role": "system", "content": prompts.SUGGEST_SYSTEM},
-                    {"role": "user", "content": f"Question: {query}\n"
-                                                f"Words the textbooks never use: {', '.join(self.unused_words(query)) or 'none'}\n\n"
-                                                "Section titles:\n" + "\n".join(candidates)},
-                ],
+                [{"role": "system", "content": prompts.SUGGEST_SYSTEM}, {"role": "user", "content": request}],
                 reasoning_effort="low",
                 temperature=0,
                 max_completion_tokens=1200,
             )
         except Exception:
+            data = None
+        if not isinstance(data, dict):
             # a failed call says nothing about the question, so don't claim that nothing is close
             return {"kind": "unavailable", "topics": []}
 
-        topics = [t for t in data.get("topics", []) if t in candidates][:3]
+        picked = data.get("topics")
+        picked = [picked] if isinstance(picked, str) else picked if isinstance(picked, list) else []
+        topics = [t for t in picked if t in candidates][:3]
         kind = data.get("kind") if data.get("kind") in ("typo", "related") and topics else "unrelated"
         return {"kind": kind, "topics": topics if kind != "unrelated" else []}

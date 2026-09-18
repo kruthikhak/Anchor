@@ -35,12 +35,12 @@ For each listed word, decide whether it is a misspelling of a computer science t
 
 Reply with JSON only: {"words": {"<word exactly as listed>": "<correct spelling>"}}"""
 
-SUGGEST_SYSTEM = """A student preparing for computer science placement interviews asked something the textbooks in this library don't answer. You get their question, the words in it that the textbooks never use, and a list of section titles from those books. Point them at what they most likely wanted: a dead end helps nobody, while a suggestion they don't need costs them only a glance.
+SUGGEST_SYSTEM = """A student preparing for computer science placement interviews asked something the textbooks in this library don't answer. You get their question, the words in it that the textbooks never use, the titles with a word that starts like one of those, and a list of section titles from the books. Point them at what they most likely wanted: a dead end helps nobody, while a suggestion they don't need costs them only a glance.
 
 Decide which case fits:
-- "typo": one of the words the textbooks never use looks or sounds like a word in a title, so they may have misspelled, misheard or half-remembered it. Real English words count: "cash" for cache, "threshing" for thrashing. A bare "what is X" doesn't place X in another field, so still offer the look-alike titles.
+- "typo": they probably misheard or half-remembered a word from one of the look-alike titles, the way "threshing" can stand for thrashing or "cash" for cache. When look-alike titles are listed, choose this unless the question is plainly about another field.
 - "related": no title looks alike, but one covers an idea close to what they asked, which they would want to read instead.
-- "unrelated": the rest of the question is plainly about another field, like cooking, sport or web frameworks, and no title would help.
+- "unrelated": the question is plainly about another field, like cooking, sport, politics or web frameworks, and no title would help.
 
 Pick up to three titles, copied exactly from the list, best first. For "unrelated", pick none.
 

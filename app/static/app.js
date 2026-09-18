@@ -738,7 +738,7 @@ async function loadEvaluation() {
         <thead><tr><th>Setup</th><th class="num">top 1</th><th class="num">top 3</th><th class="num">top 5</th><th class="num">MRR</th><th class="num">ms</th></tr></thead>
         <tbody>${rows.map(([key, row]) => `
           <tr class="${key === best[0] ? "best" : ""}">
-            <td>${escapeHtml(row.name)}</td>
+            <td><span class="row-key">${escapeHtml(key)}</span>${escapeHtml(row.name)}</td>
             <td class="num">${row["hit@1"].toFixed(2)}</td>
             <td class="num">${row["hit@3"].toFixed(2)}</td>
             <td class="num">${row["hit@5"].toFixed(2)}</td>
