@@ -6,9 +6,13 @@ the study material" when the books don't cover the question.
 
 Built for the Lunorsoft AI Developer assignment, Option 1 (RAG).
 
-- Ask page: grounded answers that stream in, with clickable citations that open the exact passage
-- Library page: the nine books, their subjects and licences
-- Evaluation page: how well the thing actually works, measured, including what it still gets wrong
+- **Ask**: grounded answers that stream in, with clickable citations that open the exact passage,
+  four study modes, three other ways in when an answer doesn't land, and practice questions you
+  grade yourself. Select text in any passage to highlight it in your own colour or add a note.
+- **Library**: the nine books, their subjects and licences
+- **My progress**: what you've studied, grouped by book, how your practice went, the topics worth
+  another look, and every highlight and note. It lives in your browser and is never sent anywhere.
+- **How it's measured**: how well the thing actually works, including what it still gets wrong
 
 ## Why it is built this way
 
@@ -27,15 +31,15 @@ questions, each with a number attached:
 9 PDFs ──▶ extract ──▶ chunk ──▶ ┌ dense index (FAISS)  ┐
           (PyMuPDF)   (~380 tok) └ keyword index (BM25) ┘
                                        │
-                              fuse both rankings (RRF)
-                                       │
+question ──▶ fix typos, spell out ──▶ search both, fuse the rankings (RRF)
+             acronyms                  │
                        rerank candidates (cross-encoder)
                                        │
                     ┌──────────────────┴───────────────────┐
               score too low                          top 5 passages
                     │                                      │
-            refuse, show the                     answer with citations
-            closest passages                     (gpt-oss-120b via Groq)
+            refuse, offer the                    answer with citations
+            closest topics                       (gpt-oss-120b via Groq)
                                                            │
                                             check each sentence against
                                             the passage it cites
@@ -60,10 +64,36 @@ each retriever nominates its own top candidates for reranking. Cutting the pool 
 instead drops a chunk that only one retriever found, even when it was that retriever's first
 result, in favour of chunks both ranked as mediocre.
 
+**Understanding the question** ([rag/query.py](rag/query.py)) happens before the search.
+
+- *Typos.* A word the books never use and that isn't ordinary English either goes to a small model,
+  which decides whether it is a slip ("dedlock") or a real term the books just don't cover
+  ("sharding"). A correction only counts if the books use that spelling, so "sharding" is never
+  quietly turned into "sharing", and the answer says what it searched for instead.
+- *Acronyms.* About thirty placement acronyms are spelled out before searching, because the
+  reranker is poor at them: "What does ACID stand for?" scores 0.09 as typed and 0.97 once
+  "atomicity, consistency, isolation, durability" is added. When an acronym means two things in these
+  books, DSA being data structures and algorithms or the Digital Signature Algorithm in the networks
+  book, the chosen subject settles it, and without one the app asks.
+- *Refusals that aren't dead ends.* When a question is refused, a model picks up to three of the
+  books' own section titles to offer instead: a "did you mean" for a misheard term (mutation →
+  Mutexes and Monitors) or the closest topic for an idea the books skip (the banker's algorithm →
+  Synchronization and Deadlocks). For a question about something else entirely it offers nothing.
+
 **Answering** ([rag/assistant.py](rag/assistant.py), [rag/prompts.py](rag/prompts.py)) passes the
 top passages to gpt-oss-120b with instructions to use nothing else and cite as it goes. Four study
-modes change how the reply is written (explain, simple, quiz, socratic); none of them relax the
-grounding rules.
+modes change how the reply is written, and none of them relax the grounding rules:
+
+- *Explain* and *Simple* teach the topic, the second in plainer words.
+- *Quiz me* asks three interview-style questions, then gives a cited answer key.
+- *Socratic* never hands the answer over. It gives one cited hint and a question, reads the reply,
+  says what was right and what is missing, and asks the next question.
+
+"I'm still confused" offers three other ways in, an analogy, a worked example or numbered steps, and
+each one sees the reply that didn't land so it doesn't repeat it. Quick practice writes three to
+five questions from the same passages, and a question that can't point at one of them is dropped.
+You reveal the answer, grade yourself, and topics where you missed at least half of your last five
+answers show up under My progress.
 
 **Refusing** is two layers. A question whose best passage reranks below a calibrated threshold never
 reaches the LLM. Anything above it goes to the model, which refuses on its own when the passages
@@ -82,14 +112,18 @@ Reproduce with `python eval/run_retrieval.py` and `python eval/run_generation.py
 | dense only | 0.56 | 0.87 | 0.87 | 0.717 | 18 |
 | BM25 only | 0.64 | 0.90 | 0.90 | 0.756 | 1 |
 | hybrid (BM25 + dense, RRF) | 0.69 | 0.90 | 0.90 | 0.793 | 13 |
-| hybrid + section headers | 0.59 | 0.87 | 0.92 | 0.731 | 14 |
-| **hybrid + reranker** (what the app runs) | **0.82** | **0.95** | **0.95** | **0.876** | 844 |
-| hybrid + headers + reranker | 0.74 | 0.92 | 0.92 | 0.833 | 1139 |
-| hybrid + headers + small reranker (MiniLM-L6) | 0.64 | 0.92 | 0.92 | 0.774 | 313 |
+| hybrid + section headers | 0.59 | 0.87 | 0.92 | 0.731 | 13 |
+| hybrid + reranker | 0.82 | 0.95 | 0.95 | 0.876 | 725 |
+| hybrid + headers + reranker | 0.74 | 0.92 | 0.92 | 0.833 | 832 |
+| hybrid + headers + small reranker (MiniLM-L6) | 0.64 | 0.92 | 0.92 | 0.774 | 218 |
+| **hybrid + reranker, acronyms spelled out** (what the app runs) | **0.85** | **0.95** | **0.95** | **0.897** | 806 |
 
 The reranker is the single biggest win and the single biggest cost: it takes retrieval from 0.56 to
 0.82 at rank one, and it is roughly fifty times slower than the searches feeding it. A candidate
 pool of 20 scores the same as 30 and reranks about 40% faster on CPU, so the app uses 20.
+
+Spelling acronyms out first moved three questions' evidence up (TCP vs UDP from third to first) and
+one down (BFS from first to second), a net gain at rank one.
 
 ### Two ideas that did not work
 
@@ -158,13 +192,20 @@ same count under every answer and can highlight the weak sentences in place.
 ## What it still gets wrong
 
 - A few answers add small details the passages don't state, such as calling UDP "simplex per
-  datagram". The evaluation page lists every one the judge flagged, and the grounding audit above
-  finds the same cases without asking an LLM.
+  datagram". The How it's measured page lists every one the judge flagged, and the grounding audit
+  above finds the same cases without asking an LLM.
 - The write-ahead logging answer gets the order of commit and data writes wrong in every run so far.
 - Two questions retrieve the wrong passages: why file systems prefer B-trees, and what isolation
   means for transactions.
-- The reranker is poorly calibrated for acronym questions. "What does ACID stand for?" scores 0.09
-  even though a passage spells the acronym out, which is why the refusal threshold has to sit low.
+- The reranker is poorly calibrated for acronyms. Spelling out the ones in the table fixes those,
+  but an acronym missing from it still scores low, which is why the refusal threshold has to sit low.
+- Typo fixing leaves real words alone, so "trashing" for thrashing isn't corrected.
+- The topics offered after a refusal are a model's pick and can miss: garbage collection is offered
+  heap sort, which shares a word with the heap but nothing else.
+- Progress, highlights and notes are kept in the browser, so they don't follow you to another device.
+- Groq's free tier allows 200k tokens a day per model. When gpt-oss-120b runs out, answers come from
+  gpt-oss-20b and then qwen3.8-27b, and each answer says which model wrote it. The evaluation
+  measured gpt-oss-120b only.
 
 ## The library
 
@@ -192,6 +233,9 @@ cp .env.example .env                  # add a Groq API key
 uvicorn app.server:app --port 8000
 ```
 
+While developing, `ANSWER_MODEL=openai/gpt-oss-20b uvicorn app.server:app` saves the larger
+model's daily allowance.
+
 Ask from the terminal instead of the browser:
 
 ```bash
@@ -208,13 +252,22 @@ python eval/run_generation.py         # answer quality, judged
 python eval/audit_grounding.py        # sentence-level grounding
 ```
 
+Check the logic that needs neither a model nor the API (spelling and acronym handling, citations,
+refusals, the model fallback order):
+
+```bash
+python -m unittest discover tests
+```
+
 ## Layout
 
 ```
-rag/          ingestion, chunking, indexing, retrieval, prompts, answering, grounding check
-app/          FastAPI server and a small front end with no framework and no CDN
+rag/          ingestion, chunking, indexing, retrieval, question understanding, prompts,
+              answering, grounding check
+app/          FastAPI server and a small front end in plain JavaScript, no framework or build step
 scripts/      download the corpus, build the index, ask from the terminal
 eval/         test questions, the four measurement scripts, and their results
+tests/        unit tests, none of which call the API
 data/         corpus.json lists every book; PDFs and the index are built, not committed
 deploy/       Dockerfile and notes for a Hugging Face Space
 ```
@@ -225,11 +278,15 @@ The brief allows AI tools provided their use is disclosed, so: this project was 
 Code (Anthropic) as a pair programmer. I chose the problem, the corpus and the evaluation design,
 decided every tradeoff recorded above, hand-checked the test questions against the books, and ran
 and reviewed everything in this repository. Claude Code wrote much of the implementation to that
-direction, and found two of the bugs listed above while I was testing.
+direction, and found two of the bugs listed above while I was testing. The web front end was built
+with its help, from a design direction and feature list I set.
 
-The application itself uses `openai/gpt-oss-120b` through Groq to write answers,
-`BAAI/bge-base-en-v1.5` for embeddings and `BAAI/bge-reranker-base` for reranking. The evaluation
-judge is `qwen/qwen3.8-27b`.
+The application itself uses `openai/gpt-oss-120b` through Groq to write answers and pick topic
+suggestions, `openai/gpt-oss-20b` to rewrite follow-up questions and check spelling,
+`BAAI/bge-base-en-v1.5` for embeddings and `BAAI/bge-reranker-base` for reranking. When a model's
+free-tier allowance runs out it falls back to the other gpt-oss model and then `qwen/qwen3.8-27b`.
+The evaluation judge is `qwen/qwen3.8-27b`; the evaluation calls its models directly and never
+falls back.
 
 ## Licence
 

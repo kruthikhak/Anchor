@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/static/styles.css">
+<link rel="stylesheet" href="/static/styles.css?v=8">
 </head>
 <body>
 <div class="app">
@@ -24,7 +24,8 @@
     <nav class="nav" id="nav">
       <button class="nav-item is-active" data-view="ask">Ask</button>
       <button class="nav-item" data-view="library">Library</button>
-      <button class="nav-item" data-view="evaluation">Evaluation</button>
+      <button class="nav-item" data-view="progress">My progress</button>
+      <button class="nav-item" data-view="evaluation">How it's measured</button>
     </nav>
 
     <div class="side-block">
@@ -38,8 +39,9 @@
     </div>
 
     <div class="side-foot">
-      <p class="side-label">Highlight</p>
+      <p class="side-label">My highlighter</p>
       <div class="swatches" id="swatches"></div>
+      <p class="side-hint">Select text in any source to highlight it or add a note.</p>
     </div>
   </aside>
 
@@ -47,11 +49,14 @@
 
     <section class="view" id="view-ask">
       <header class="topbar">
-        <div class="modes" id="modes">
-          <button class="mode is-active" data-mode="explain">Explain</button>
-          <button class="mode" data-mode="simple">Simple</button>
-          <button class="mode" data-mode="quiz">Quiz me</button>
-          <button class="mode" data-mode="socratic">Socratic</button>
+        <div class="mode-group">
+          <div class="modes" id="modes">
+            <button class="mode is-active" data-mode="explain">Explain</button>
+            <button class="mode" data-mode="simple">Simple</button>
+            <button class="mode" data-mode="quiz">Quiz me</button>
+            <button class="mode" data-mode="socratic">Socratic</button>
+          </div>
+          <p class="mode-hint" id="mode-hint"></p>
         </div>
         <button class="ghost" id="new-thread">New thread</button>
       </header>
@@ -75,8 +80,13 @@
       <div class="cards" id="library"></div>
     </section>
 
+    <section class="view" id="view-progress" hidden>
+      <header class="topbar"><h2>My progress</h2><button class="ghost" id="clear-progress">Clear my data</button></header>
+      <div class="eval" id="progress"></div>
+    </section>
+
     <section class="view" id="view-evaluation" hidden>
-      <header class="topbar"><h2>How well it works</h2><span class="muted" id="eval-models"></span></header>
+      <header class="topbar"><h2>How it's measured</h2><span class="muted" id="eval-models"></span></header>
       <div class="eval" id="evaluation"></div>
     </section>
 
@@ -90,7 +100,9 @@
     <div class="drawer-body" id="drawer-body"></div>
   </aside>
 
+  <div class="mark-tools" id="mark-tools" hidden></div>
+
 </div>
-<script src="/static/app.js"></script>
+<script src="/static/app.js?v=8"></script>
 </body>
 </html>
