@@ -9,7 +9,7 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
-from openai import BadRequestError, RateLimitError
+from openai import APIError, RateLimitError
 from pydantic import BaseModel
 
 from rag import config, prompts
@@ -116,6 +116,9 @@ def sse(event, payload):
 
 
 def answer_events(request):
+    if not request.question.strip():
+        yield sse("error", {"message": "there was no question to answer"})
+        return
     start = time.perf_counter()
     prepared = assistant.prepare(request.question, request.history, docs_for(request.subject), request.subject)
     elapsed = lambda: round((time.perf_counter() - start) * 1000)
@@ -180,20 +183,27 @@ def ask(request: AskRequest):
     return StreamingResponse(events(), media_type="text/event-stream")
 
 
+def require_topic(topic):
+    if not topic.strip():
+        raise HTTPException(422, "there was no topic to write questions about")
+
+
 @app.post("/api/practice")
 def practice(request: PracticeRequest):
+    require_topic(request.topic)
     prepared = assistant.prepare(request.topic, docs=docs_for(request.subject), subject=request.subject)
     if not prepared.grounded:
         return {"questions": [], "sources": []}
     try:
         questions = practice_questions(request.topic, prepared.sources)
-    except (RateLimitError, BadRequestError, ValueError) as error:
+    except (APIError, ValueError) as error:
         raise model_trouble(error)
     return {"questions": questions, "sources": [source_json(s.number, s.hit, s.text) for s in prepared.sources]}
 
 
 @app.post("/api/quiz")
 def quiz(request: PracticeRequest):
+    require_topic(request.topic)
     prepared = assistant.prepare(request.topic, docs=docs_for(request.subject), subject=request.subject)
     if prepared.clarify:
         return {"clarify": clarify_json(request.topic, prepared.clarify), "questions": [], "sources": []}
@@ -202,7 +212,7 @@ def quiz(request: PracticeRequest):
     marks = quiz_marks(prepared.sources, assistant.retriever.chunks)
     try:
         questions = quiz_questions(request.topic, prepared.sources, marks)
-    except (RateLimitError, BadRequestError, ValueError) as error:
+    except (APIError, ValueError) as error:
         raise model_trouble(error)
     return {"marks": marks, "questions": questions, "sources": [source_json(s.number, s.hit, s.text) for s in prepared.sources]}
 
@@ -220,8 +230,8 @@ def topics():
 
 
 @app.get("/api/topic")
-def topic(book: str, path: str):
-    found, shown = topic_passages(assistant.retriever.chunks, book, path)
+def topic(book: str, path: str, start: int = 0):
+    found, shown = topic_passages(assistant.retriever.chunks, book, path, max(start, 0))
     if not found:
         raise HTTPException(404, "no such topic")
     return {
@@ -230,13 +240,16 @@ def topic(book: str, path: str):
         "path": path,
         "pages": page_range(found),
         "total": len(found),
-        "passages": [{**passage_json(n, chunk), "skip": skip} for n, (chunk, skip) in enumerate(shown, start=1)],
+        "start": max(start, 0),
+        "passages": [{**passage_json(n, chunk), "skip": skip} for n, (chunk, skip) in enumerate(shown, start=max(start, 0) + 1)],
     }
 
 
 @app.get("/api/search")
 def search(q: str, subject: str | None = None):
     """Passages for someone who'd rather read the books than ask. No LLM writes anything here."""
+    if not q.strip():
+        return {"query": "", "corrections": [], "terms": [], "passages": []}
     understood = assistant.retriever.helper.understand(q, subject)
     # a search box can't ask which meaning of an acronym was meant, so both are searched and interleaved
     if understood.clarify:

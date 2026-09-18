@@ -598,6 +598,7 @@ input.blank.wrong { border-color: #c27a7a; background: #faeaea; }
 .reader-passage { display: flex; gap: 12px; align-items: flex-start; }
 .reader-passage .passage { flex: 1; min-width: 0; }
 .page-label { font: 400 11.5px var(--mono); color: var(--ink-muted); padding-top: 16px; min-width: 3.4em; text-align: right; }
+.more-passages { align-self: center; }
 /* the start of a passage that repeats the end of the one above it */
 .repeat { display: none; }
 

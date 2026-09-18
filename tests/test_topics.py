@@ -41,6 +41,13 @@ class PassageTests(unittest.TestCase):
         # the line break after the repeat is skipped with it
         self.assertEqual(overlap("First part " + shared, shared + "\n  New part."), len(shared) + 3)
 
+    def test_a_later_page_still_hides_what_the_page_before_ended_with(self):
+        shared = "and this sentence is carried over into the next chunk."
+        chunks = [chunk(0, "Sorting > Mergesort", "Opening " + shared), chunk(1, "Sorting > Mergesort", shared + " Closing.")]
+        found, shown = topic_passages(chunks, "book", "Sorting > Mergesort", start=1)
+        self.assertEqual(len(found), 2)
+        self.assertEqual([skip for _, skip in shown], [len(shared) + 1])
+
     def test_a_section_includes_its_subsections_but_not_its_neighbours(self):
         chunks = [chunk(0, "Sorting > Mergesort", "a" * 30), chunk(1, "Sorting > Mergesort > Analysis", "b" * 30),
                   chunk(2, "Sorting > Mergesorts", "c" * 30), chunk(3, "Sorting > Quicksort", "d" * 30)]

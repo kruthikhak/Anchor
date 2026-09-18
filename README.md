@@ -272,8 +272,9 @@ python eval/run_generation.py         # answer quality, judged
 python eval/audit_grounding.py        # sentence-level grounding
 ```
 
-Check the logic that needs neither a model nor the API (spelling and acronym handling, citations,
-refusals, the model fallback order):
+Check everything without spending any API budget: the logic (spelling and acronyms, citations,
+refusals, quiz checks, the model fallback order) and every endpoint end to end on the real index,
+with a stand-in answering for the models. The endpoint tests need the index built first.
 
 ```bash
 python -m unittest discover tests
@@ -287,7 +288,7 @@ rag/          ingestion, chunking, indexing, retrieval, question understanding, 
 app/          FastAPI server and a small front end in plain JavaScript, no framework or build step
 scripts/      download the corpus, build the index, ask from the terminal
 eval/         test questions, the four measurement scripts, and their results
-tests/        unit tests, none of which call the API
+tests/        unit and endpoint tests, none of which call the API
 data/         corpus.json lists every book; PDFs and the index are built, not committed
 deploy/       Dockerfile and notes for a Hugging Face Space
 ```

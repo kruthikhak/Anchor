@@ -2,7 +2,7 @@ from collections import defaultdict
 
 from .query import clean_title
 
-TOPIC_PASSAGES = 60  # enough for the longest section; a whole chapter is browsed section by section
+TOPIC_PASSAGES = 60  # at a time; a longer section or chapter loads the rest as the reader asks
 
 
 def page(chunk):
@@ -78,12 +78,13 @@ def overlap(previous, current):
     return 0
 
 
-def topic_passages(chunks, book_id, path):
-    """Every chunk under a chapter or section, in reading order."""
+def topic_passages(chunks, book_id, path, start=0):
+    """The chunks under a chapter or section in reading order, a page's worth from `start`."""
     found = sorted((c for c in chunks if c.doc_id == book_id and (c.section == path or c.section.startswith(path + " > "))),
                    key=lambda c: c.position)
-    shown = found[:TOPIC_PASSAGES]
+    shown = found[start:start + TOPIC_PASSAGES]
     # neighbouring chunks share a few sentences so nothing is lost at a boundary; when they're read
-    # one after another, the repeated start of each is hidden
-    skips = [0] + [overlap(a.text, b.text) if b.position == a.position + 1 else 0 for a, b in zip(shown, shown[1:])]
+    # one after another, the repeated start of each is hidden, including across two pages' worth
+    before = [found[start - 1]] if 0 < start <= len(found) else [None]
+    skips = [overlap(a.text, b.text) if a and b.position == a.position + 1 else 0 for a, b in zip(before + shown, shown)]
     return found, list(zip(shown, skips))

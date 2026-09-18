@@ -936,8 +936,16 @@ function handleSelection(event) {
 
 /* ---- topics ---- */
 
+async function getJson(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`the server returned ${response.status}`);
+  return response.json();
+}
+
+const unreachable = (what, error) => `<p class="muted">Couldn't load ${what}: ${escapeHtml(error.message)}. Is the server still running?</p>`;
+
 async function loadContents() {
-  if (!contents) contents = (await (await fetch("/api/topics")).json()).books;
+  if (!contents) contents = (await getJson("/api/topics")).books;
   return contents;
 }
 
@@ -953,7 +961,12 @@ const topicName = (title, chapter) => (chapter && VAGUE.has(title.toLowerCase())
 
 async function loadTopics() {
   $("topics").innerHTML = `<p class="muted">Loading the tables of contents…</p>`;
-  await loadContents();
+  try {
+    await loadContents();
+  } catch (error) {
+    $("topics").innerHTML = unreachable("the tables of contents", error);
+    return;
+  }
   const query = $("topic-query").value.trim();
   $("topics").innerHTML = query ? topicMatches(query) : topicIndex();
 }
@@ -1007,9 +1020,7 @@ async function searchBooks(query) {
   const box = $("search-results");
   box.innerHTML = `<p class="muted">Searching the books…</p>`;
   try {
-    const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&subject=${encodeURIComponent(state.subject)}`);
-    if (!response.ok) throw new Error(`the server returned ${response.status}`);
-    const data = await response.json();
+    const data = await getJson(`/api/search?q=${encodeURIComponent(query)}&subject=${encodeURIComponent(state.subject)}`);
     const fixed = data.corrections.map(([typed, meant]) => `Showing results for <b>${escapeHtml(meant)}</b> (you typed ${escapeHtml(typed)}). `).join("");
     box.innerHTML = data.passages.length
       ? `<h3 class="results-title">Passages about “${escapeHtml(query)}”</h3>${fixed ? `<p class="note-line">${fixed}</p>` : ""}
@@ -1036,13 +1047,11 @@ function passageCard(source, terms) {
 async function openTopic(bookId, path) {
   showView("topics", { load: false });
   $("topics").innerHTML = `<p class="muted">Opening…</p>`;
-  await loadContents();
-  const book = contents.find((b) => b.id === bookId);
-  const chapter = book?.chapters.find((c) => c.path === path);
   try {
-    const response = await fetch(`/api/topic?book=${encodeURIComponent(bookId)}&path=${encodeURIComponent(path)}`);
-    if (!response.ok) throw new Error(`the server returned ${response.status}`);
-    drawTopic(await response.json(), book, chapter);
+    await loadContents();
+    const book = contents.find((b) => b.id === bookId);
+    const chapter = book?.chapters.find((c) => c.path === path);
+    drawTopic(await getJson(`/api/topic?book=${encodeURIComponent(bookId)}&path=${encodeURIComponent(path)}`), book, chapter);
   } catch (error) {
     $("topics").innerHTML = `<p class="muted">Couldn't open this topic: ${escapeHtml(error.message)}.</p>`;
   }
@@ -1058,7 +1067,7 @@ function drawTopic(data, book, chapter) {
     <div class="reader-head">
       <button class="link back" data-back-to-topics>← All topics</button>
       <h2>${escapeHtml(title)}</h2>
-      <p class="muted">${escapeHtml(data.book)}${parent ? ` · ${escapeHtml(parent)}` : ""} · pages ${escapeHtml(data.pages)} · ${data.total} passages${data.total > data.passages.length ? `, the first ${data.passages.length} shown` : ""}</p>
+      <p class="muted">${escapeHtml(data.book)}${parent ? ` · ${escapeHtml(parent)}` : ""} · pages ${escapeHtml(data.pages)} · ${data.total} passages</p>
       <div class="topic-actions">
         <button class="chip" data-ask="${escapeHtml(`Explain ${name}`)}" data-mode="explain">Ask Anchor about this</button>
         <button class="chip" data-practice="${escapeHtml(name)}">Practice</button>
@@ -1067,11 +1076,33 @@ function drawTopic(data, book, chapter) {
       ${chapter?.sections.length ? `<div class="topic-row">${chapter.sections.map((s) => `<button class="topic" data-topic-book="${escapeHtml(book.id)}" data-topic-path="${escapeHtml(s.path)}">${escapeHtml(s.title)}</button>`).join("")}</div>` : ""}
       <p class="drawer-legend">Select any text to highlight it in your colour or add a note.</p>
     </div>
-    ${data.passages.map((p) => `
+    ${readerPassages(data)}`;
+}
+
+function readerPassages(data) {
+  const next = data.start + data.passages.length;
+  return data.passages.map((p) => `
       <div class="reader-passage">
         <span class="page-label">p.${escapeHtml(p.page)}</span>
         ${passageMarkup(p, [], p.skip)}
-      </div>`).join("")}`;
+      </div>`).join("") +
+    (next < data.total
+      ? `<button class="chip more-passages" data-more-book="${escapeHtml(data.bookId)}" data-more-path="${escapeHtml(data.path)}" data-more-start="${next}">Show the next ${Math.min(data.total - next, data.passages.length)} passages</button>`
+      : "");
+}
+
+async function morePassages(button) {
+  button.disabled = true;
+  button.textContent = "Loading…";
+  try {
+    const { moreBook, morePath, moreStart } = button.dataset;
+    const data = await getJson(`/api/topic?book=${encodeURIComponent(moreBook)}&path=${encodeURIComponent(morePath)}&start=${moreStart}`);
+    button.insertAdjacentHTML("afterend", readerPassages(data));
+    button.remove();
+  } catch (error) {
+    button.disabled = false;
+    button.textContent = `Couldn't load more (${error.message}), try again`;
+  }
 }
 
 /* ---- landing page ---- */
@@ -1093,7 +1124,12 @@ async function drawWelcomeTopics() {
     return;
   }
   const subject = state.subject;
-  await loadContents();
+  try {
+    await loadContents();
+  } catch {
+    box.innerHTML = ""; // the starter questions still work without the topics
+    return;
+  }
   if (subject !== state.subject || !$("welcome-topics")) return; // the subject changed while loading
   const everything = booksFor(subject).flatMap((book) => chaptersFor(book, subject)
     .flatMap((chapter) => [chapter, ...chapter.sections].map((item) => ({ book, item }))));
@@ -1121,7 +1157,13 @@ function drawRecent() {
 }
 
 async function loadLibrary() {
-  const data = await (await fetch("/api/library")).json();
+  let data;
+  try {
+    data = await getJson("/api/library");
+  } catch (error) {
+    $("library").innerHTML = unreachable("the library", error);
+    return;
+  }
   $("library-count").textContent = `${data.books.length} books · ${data.chunks.toLocaleString()} passages indexed`;
   $("library").innerHTML = data.books.map((book) => `
     <article class="card">
@@ -1234,7 +1276,13 @@ function loadProgress() {
 }
 
 async function loadEvaluation() {
-  const data = await (await fetch("/api/evaluation")).json();
+  let data;
+  try {
+    data = await getJson("/api/evaluation");
+  } catch (error) {
+    $("evaluation").innerHTML = unreachable("the measurements", error);
+    return;
+  }
   const rows = Object.entries(data.retrieval).filter(([key]) => key.length === 1);
   const best = rows.reduce((a, b) => (b[1]["mrr@10"] > a[1]["mrr@10"] ? b : a));
   const pct = (x) => `${Math.round(x * 100)}%`;
@@ -1355,7 +1403,12 @@ function setup() {
   };
   $("topic-search").onsubmit = async (event) => {
     event.preventDefault();
-    await loadContents();
+    try {
+      await loadContents();
+    } catch (error) {
+      $("topics").innerHTML = unreachable("the tables of contents", error);
+      return;
+    }
     searchBooks($("topic-query").value.trim());
   };
 
@@ -1415,6 +1468,9 @@ function setup() {
     if (topic) return openTopic(topic.dataset.topicBook, topic.dataset.topicPath);
 
     if (target.closest("[data-back-to-topics]")) return loadTopics();
+
+    const more = target.closest("[data-more-start]");
+    if (more) return morePassages(more);
 
     const picked = target.closest("[data-subject-pick]");
     if (picked) return setSubject(picked.dataset.subjectPick);
