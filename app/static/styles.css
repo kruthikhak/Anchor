@@ -68,7 +68,7 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.01em; }
   font-weight: 600; color: #fff;
 }
 .brand strong { display: block; font-size: 15px; color: #fff; }
-.brand small { font-size: 11px; color: #9fb3c6; }
+.brand small { display: block; margin-top: 2px; font-size: 11px; line-height: 1.35; color: #9fb3c6; text-wrap: balance; }
 
 .nav { display: flex; flex-direction: column; gap: 2px; }
 .nav-item {
@@ -422,7 +422,8 @@ mark.mine.has-note { border-bottom: 2px dotted rgba(28, 39, 51, 0.45); }
 }
 
 /* study modes, suggestions, practice, highlights, progress */
-.mode-group { display: flex; flex-direction: column; gap: 6px; }
+/* flex-start, or the mode buttons' box stretches to the width of a longer hint */
+.mode-group { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
 .mode-hint { margin: 0; font-size: 12.5px; color: var(--ink-soft); }
 .side-hint { margin: 8px 0 0; font-size: 11.5px; line-height: 1.45; color: #8ba1b6; }
 

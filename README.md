@@ -280,6 +280,20 @@ with a stand-in answering for the models. The endpoint tests need the index buil
 python -m unittest discover tests
 ```
 
+On a Hugging Face Space: Docker Spaces are paid now, so the demo uses a free Gradio Space (2 vCPUs,
+16 GB), which only runs a Python file. `deploy/serve.py` starts the FastAPI app from it and Gradio
+itself goes unused. The two models are downloaded while the Space builds, so a cold start doesn't
+wait on them.
+
+```bash
+python deploy/make_space.py           # the app, the built index and the Space settings, in build/space
+hf auth login
+hf upload USER/SPACE build/space . --repo-type space --delete "*"
+```
+
+Then add the Groq key as a secret named `GROQ_API_KEY` under the Space's Settings, Variables and
+secrets.
+
 ## Layout
 
 ```
@@ -290,7 +304,7 @@ scripts/      download the corpus, build the index, ask from the terminal
 eval/         test questions, the four measurement scripts, and their results
 tests/        unit and endpoint tests, none of which call the API
 data/         corpus.json lists every book; PDFs and the index are built, not committed
-deploy/       Dockerfile and notes for a Hugging Face Space
+deploy/       the Hugging Face Space's entry point, pinned requirements and settings
 ```
 
 ## AI tools used

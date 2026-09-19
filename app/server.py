@@ -180,7 +180,8 @@ def ask(request: AskRequest):
             log.exception("answer failed")
             yield sse("error", {"message": f"the answer failed ({type(error).__name__})"})
 
-    return StreamingResponse(events(), media_type="text/event-stream")
+    # tells a proxy in front of the app (a Space has one) to pass tokens on as they come, not hold them back
+    return StreamingResponse(events(), media_type="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
 
 def require_topic(topic):

@@ -4,7 +4,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "build" / "space"
 
-FILES = ["requirements.txt", "data/corpus.json"]
+FILES = ["data/corpus.json"]
 FOLDERS = ["rag", "app", "data/index", "eval/results"]
 
 
@@ -16,8 +16,9 @@ def main():
         shutil.rmtree(OUT)
     OUT.mkdir(parents=True)
 
-    # a Space expects its Dockerfile and its README (with the settings header) at the top level
-    shutil.copy(ROOT / "deploy" / "Dockerfile", OUT / "Dockerfile")
+    # a Space expects its entry point, requirements and README (with the settings header) at the top level
+    shutil.copy(ROOT / "deploy" / "serve.py", OUT / "serve.py")
+    shutil.copy(ROOT / "deploy" / "space-requirements.txt", OUT / "requirements.txt")
     shutil.copy(ROOT / "deploy" / "space-readme.md", OUT / "README.md")
 
     for name in FILES:
