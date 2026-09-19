@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 .DS_Store
 .env
+.claude/
 
 # PDFs come from scripts/download_corpus.py and the index from scripts/build_index.py
 data/raw/
