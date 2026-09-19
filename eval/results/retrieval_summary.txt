@@ -1,4 +1,4 @@
-Retrieval on 39 hand-checked questions, 3036 chunks from 9 documents
+Retrieval on 39 test questions, 3036 chunks from 9 documents
 latency measured on this machine (mps)
 
 config                                  hit@1  hit@3  hit@5  MRR@10  ms/query

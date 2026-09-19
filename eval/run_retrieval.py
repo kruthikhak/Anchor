@@ -105,7 +105,7 @@ def main():
 
     n_docs = len({c.doc_id for c in retrievers[False].chunks})
     lines = [
-        f"Retrieval on {len(questions)} hand-checked questions, {len(corpus)} chunks from {n_docs} documents",
+        f"Retrieval on {len(questions)} test questions, {len(corpus)} chunks from {n_docs} documents",
         f"latency measured on this machine ({device()})",
         "",
     ]

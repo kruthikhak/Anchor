@@ -1,5 +1,5 @@
 const SUBJECTS = ["All", "DSA", "Operating Systems", "DBMS", "Computer Networks"];
-// example questions from the evaluation's hand-checked set, so every one is known to be answerable
+// example questions from the evaluation set, so every one is known to be answerable
 const STARTERS = {
   All: [
     "What conditions must hold for a deadlock to occur?",
@@ -1299,7 +1299,7 @@ async function loadEvaluation() {
 
     <section class="panel">
       <h3>What each retrieval step is worth</h3>
-      <p>Measured on ${data.answers.answerable} hand-checked questions, each with quotes from the books. The highlighted row is what this app runs.</p>
+      <p>Measured on ${data.answers.answerable} test questions, each with quotes from the books as the answer key. The highlighted row is what this app runs.</p>
       <table>
         <thead><tr><th>Setup</th><th class="num">top 1</th><th class="num">top 3</th><th class="num">top 5</th><th class="num">MRR</th><th class="num">ms</th></tr></thead>
         <tbody>${rows.map(([key, row]) => `
