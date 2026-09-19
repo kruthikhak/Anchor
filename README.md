@@ -318,22 +318,18 @@ scripts/      download the corpus, build the index, ask from the terminal
 eval/         test questions, the four measurement scripts, and their results
 tests/        unit and endpoint tests, none of which call the API
 data/         corpus.json lists every book; PDFs and the index are built, not committed
-deploy/       the Hugging Face Space's entry point, pinned requirements and settings
+deploy/       the Hugging Face Space's entry point, pinned requirements, and settings
 docs/         screenshots and deployment notes
 ```
 
 ## AI tools used
 
-The brief allows AI tools as long as they're disclosed. Claude Code (Anthropic) was my development
-assistant throughout: it wrote much of the code for both the RAG pipeline and the web app, to my
-direction. I chose the problem and the corpus, agreed the architecture and the evaluation approach,
-reviewed and tested what was built, found the issues that were fixed along the way, and made the
-final product decisions.
+Claude Code (Anthropic) was used as a development assistant during implementation. I designed the problem framing, corpus, system architecture, retrieval and evaluation approach, reviewed and tested the implementation, identified issues, and made the final engineering and product decisions. The web application was implemented mostly with Claude Code under my direction.
 
 The application itself uses `openai/gpt-oss-120b` through Groq to write answers and pick topic
 suggestions, `openai/gpt-oss-20b` to rewrite follow-up questions and check spelling,
 `BAAI/bge-base-en-v1.5` for embeddings and `BAAI/bge-reranker-base` for reranking. When a model's
-free-tier allowance runs out it falls back to the other gpt-oss model and then `qwen/qwen3.8-27b`.
+free-tier allowance runs out, it falls back to the other gpt-oss model and then `qwen/qwen3.8-27b`.
 The evaluation judge is `qwen/qwen3.8-27b`; the evaluation calls its models directly and never
 falls back.
 
