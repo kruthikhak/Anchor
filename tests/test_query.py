@@ -62,6 +62,16 @@ class UnderstandTests(unittest.TestCase):
         self.assertIsNone(understood.clarify)
         self.assertEqual(understood.expansions, [])
 
+    def test_dsa_the_subject_is_searched_as_its_words(self):
+        # the books never write DSA for data structures and algorithms, so the acronym is swapped out
+        self.assertEqual(self.helper.understand("what is DSA", "DSA").query, "what is Data Structures and Algorithms")
+        self.assertEqual(self.helper.understand("what is DSA (meaning Data Structures and Algorithms)?").query,
+                         "what is Data Structures and Algorithms?")
+        # the other meaning, and acronyms the books do use, keep the acronym beside the meaning
+        self.assertIn("DSA (Digital Signature Algorithm)", self.helper.understand("what is DSA", "Computer Networks").query)
+        self.assertIn("what is DSA (meaning Digital Signature Algorithm)?", self.helper.understand("what is DSA (meaning Digital Signature Algorithm)?").query)
+        self.assertIn("MVCC (multiversion concurrency control)", self.helper.understand("what is MVCC").query)
+
     def test_every_known_acronym_is_spelled_out(self):
         understood = self.helper.understand("TCP vs UDP")
         self.assertEqual([a for a, _ in understood.expansions], ["TCP", "UDP"])

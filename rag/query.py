@@ -51,6 +51,12 @@ ACRONYMS = {
     "cidr": [("classless interdomain routing", "Computer Networks")],
 }
 
+# DSA as data structures and algorithms is the syllabus's name for a subject, which none of the books
+# use. Kept beside its meaning it drags the search down: "what is DSA" found the passage on data
+# structures at 0.71 and was refused every time, while the words alone score 0.99 and get answered.
+# Other acronyms stay, since the books use them and most score best with them kept (MVCC 0.99 against 0.36).
+SUBJECT_NAMES = {("dsa", "Data Structures and Algorithms")}
+
 # section titles too vague to offer as a topic on their own
 VAGUE_TITLES = {"introduction", "summary", "overview", "perspective", "key terms", "the pattern", "applications",
                 "analysis", "implementation", "example", "examples", "variants", "notes", "discussion"}
@@ -147,8 +153,14 @@ class QueryHelper:
         expansions, clarify, alternatives = [], None, []
         for token in dict.fromkeys(t.lower() for t in TOKEN.findall(text)):
             meanings = ACRONYMS.get(token)
-            if not meanings or any(m.lower() in text.lower() for m, _ in meanings):
-                continue  # not one we know, or the question already spells it out
+            if not meanings:
+                continue
+            spelled = [m for m, _ in meanings if m.lower() in text.lower()]
+            if spelled:
+                # already spelled out, often as the meaning picked from the choices offered
+                if (token, spelled[0]) in SUBJECT_NAMES:
+                    text = re.sub(rf"\b{re.escape(token)}\s*\((?:meaning\s+)?{re.escape(spelled[0])}\)", spelled[0], text, count=1, flags=re.I)
+                continue
             if len(meanings) > 1 and subject not in (None, "", "All"):
                 chosen = [m for m in meanings if m[1] == subject]
                 if chosen:
@@ -160,6 +172,9 @@ class QueryHelper:
                 continue
             meaning = meanings[0][0]
             expansions.append((token.upper(), meaning))
+            if (token, meaning) in SUBJECT_NAMES:
+                text = re.sub(rf"\b{re.escape(token)}\b", meaning, text, count=1, flags=re.I)
+                continue
             # "OSI model" becomes "OSI (open systems interconnection) model", not "... model) model",
             # which read oddly enough to make the model refuse once
             shown = meaning
