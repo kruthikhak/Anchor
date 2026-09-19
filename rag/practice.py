@@ -1,14 +1,18 @@
 import random
 import re
+from collections import Counter
 
 from . import prompts
 from .llm import chat_json
 
 BLANK = re.compile(r"_{2,}")  # models write the gap as __ or as a long run of underscores
+# exam-paper wording the prompt rules out but models still slip into now and then
+BOOKISH = re.compile(r"\s*,?\s*\b(?:according to|as (?:described|stated|explained) in|based on) the (?:text|passages?|sources?|book|reading|material|excerpt)\b(?!['’])\s*,?", re.I)
 LETTERS = "ABCDE"
 
 # how a quiz is made up: a short topic gets five marks, a long one ten
 QUIZ_MIX = {5: {"mcq": 3, "blank": 1, "short": 1}, 10: {"mcq": 6, "blank": 2, "short": 2}}
+SPARE = 1  # asked for on top of each kind, so a question that fails the checks doesn't leave the quiz short
 LONG_SECTION = 10  # passages in the book's section, where the deadlock section has 15 and ACID's 4
 
 
@@ -27,6 +31,13 @@ def text(value):
     return value.strip() if isinstance(value, str) else ""
 
 
+def question_text(value):
+    """The question without an "according to the text", which reads oddly in an interview-style quiz."""
+    tidied = re.sub(r"\s+([?.!])", r"\1", BOOKISH.sub(" ", text(value))).strip()
+    tidied = re.sub(r"\s{2,}", " ", tidied)
+    return tidied[:1].upper() + tidied[1:]
+
+
 def practice_questions(topic, sources):
     """Three to five recall questions, each with its answer and a short explanation."""
     reply = chat_json(
@@ -43,8 +54,8 @@ def practice_questions(topic, sources):
     # a question that can't point at one of the sources wasn't written from them, so it's dropped
     for q in questions if isinstance(questions, list) else []:
         number = source_number(q.get("source"), len(sources)) if isinstance(q, dict) else None
-        if number and text(q.get("question")) and text(q.get("answer")):
-            kept.append({"question": text(q["question"]), "answer": text(q["answer"]),
+        if number and question_text(q.get("question")) and text(q.get("answer")):
+            kept.append({"question": question_text(q["question"]), "answer": text(q["answer"]),
                          "explanation": text(q.get("explanation")), "source": number})
     return kept
 
@@ -59,23 +70,30 @@ def quiz_marks(sources, chunks):
 
 def quiz_questions(topic, sources, marks):
     mix = QUIZ_MIX[marks]
-    request = prompts.answer_request(topic, sources) + "\n\n" + prompts.quiz_instruction(**mix)
+    asked = {kind: count + SPARE for kind, count in mix.items()}
+    request = prompts.answer_request(topic, sources) + "\n\n" + prompts.quiz_instruction(**asked)
     reply = chat_json(
         [{"role": "system", "content": prompts.QUIZ_SYSTEM}, {"role": "user", "content": request}],
         temperature=0.4,
         reasoning_effort="low",
-        max_completion_tokens=3500,
+        max_completion_tokens=4500,
     )
     questions = reply.get("questions") if isinstance(reply, dict) else None
     checked = (check_question(q, len(sources)) for q in (questions if isinstance(questions, list) else []))
-    return [q for q in checked if q][:marks]
+    kept, counts = [], Counter()
+    for q in checked:
+        # the first ones of each kind that hold up, the spares only when one didn't
+        if q and counts[q["type"]] < mix[q["type"]]:
+            counts[q["type"]] += 1
+            kept.append(q)
+    return kept
 
 
 def check_question(q, count):
     """The question as the page needs it, or None when it doesn't hold up."""
     if not isinstance(q, dict):
         return None
-    number, question = source_number(q.get("source"), count), text(q.get("question"))
+    number, question = source_number(q.get("source"), count), question_text(q.get("question"))
     if not number or not question:
         return None
     base = {"question": question, "explanation": text(q.get("explanation")), "source": number}

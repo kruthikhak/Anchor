@@ -1,5 +1,7 @@
 import unittest
+from unittest import mock
 
+from rag import practice
 from rag.practice import check_question
 
 
@@ -46,6 +48,26 @@ class QuizQuestionTests(unittest.TestCase):
     def test_unknown_types_and_shapes_are_dropped(self):
         for broken in ({"type": "essay", "question": "Discuss.", "answer": "...", "source": 1}, "a string", None, []):
             self.assertIsNone(check_question(broken, 5))
+
+    def test_according_to_the_text_is_taken_out(self):
+        self.assertEqual(check_question(mcq(question="Which is not needed for deadlock, according to the text?"), 5)["question"],
+                         "Which is not needed for deadlock?")
+        blank = {"type": "blank", "question": "According to the passage, a ____ needs four conditions.", "answer": "deadlock", "source": 1}
+        self.assertEqual(check_question(blank, 5)["question"], "A ____ needs four conditions.")
+        self.assertEqual(check_question(mcq(question="In the bank transfer example, which lock comes first?"), 5)["question"],
+                         "In the bank transfer example, which lock comes first?")
+
+    def test_a_spare_stands_in_for_a_question_that_fails(self):
+        blank = {"type": "blank", "question": "Ordering locks prevents a circular ____.", "answer": "wait", "source": 2}
+        short = {"type": "short", "question": "Why does lock ordering prevent deadlock?", "answer": "No cycle can form.", "source": 1}
+        written = [mcq(), mcq(answer=9), mcq(question="Which is needed?"), mcq(question="Which is also needed?"), mcq(question="A spare too many?"),
+                   blank, blank, short, short]
+        with mock.patch.object(practice, "chat_json", return_value={"questions": written}) as chat, \
+                mock.patch.object(practice.prompts, "answer_request", return_value="Sources: ..."):
+            kept = practice.quiz_questions("deadlock", [None] * 5, 5)
+        self.assertIn("4 multiple choice, 2 fill in the blank and 2 short answer", chat.call_args.args[0][1]["content"])
+        self.assertEqual([q["type"] for q in kept], ["mcq", "mcq", "mcq", "blank", "short"])
+        self.assertNotIn("A spare too many?", [q["question"] for q in kept])
 
 
 if __name__ == "__main__":

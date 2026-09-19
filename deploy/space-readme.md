@@ -21,4 +21,6 @@ A study assistant for placement preparation that answers only from nine openly l
 computer science textbooks, cites the page behind every claim, and says so when the books
 don't cover a question.
 
+Code, evaluation and write-up: https://github.com/kruthikhak/Anchor
+
 The Space needs one secret, `GROQ_API_KEY`, set under Settings → Variables and secrets.

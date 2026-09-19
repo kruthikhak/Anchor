@@ -6,6 +6,10 @@ the study material" when the books don't cover the question.
 
 Built for the Lunorsoft AI Developer assignment, Option 1 (RAG).
 
+**Live demo:** [huggingface.co/spaces/kruthikha/Anchor_Learning](https://huggingface.co/spaces/kruthikha/Anchor_Learning),
+or full screen at [kruthikha-anchor-learning.hf.space](https://kruthikha-anchor-learning.hf.space). It runs
+on free hardware, so the first visit after a quiet spell can take a minute or two to wake it up.
+
 - **Ask**: grounded answers that stream in, with clickable citations that open the exact passage,
   four study modes including a marked quiz, three other ways in when an answer doesn't land, and
   practice questions you grade yourself. Select text in any passage to highlight it in your own
@@ -18,6 +22,23 @@ Built for the Lunorsoft AI Developer assignment, Option 1 (RAG).
   worth another look, and every highlight and note. It lives in your browser and is never sent
   anywhere.
 - **How it's measured**: how well the thing actually works, including what it still gets wrong
+
+![An answer with its first source open beside it](docs/answer.jpg)
+
+Things to try, each of which shows a different part of the pipeline:
+
+- *What conditions must hold for a deadlock to occur?* A cited answer. Click a number to open the
+  passage it came from.
+- *what is DSA* It asks which one you mean, because the books use DSA for two different things.
+- *mutation* The books don't cover it, so instead of an answer it offers the similar-looking topics
+  they do cover.
+- *how do I bake sourdough bread* Refused before the answering model is ever called.
+- Topics → Operating Systems → Synchronization and Deadlocks → Deadlock, then *Quiz me*: a ten-mark
+  quiz on that section.
+
+| Every chapter and section, by subject | A marked quiz, with the reason behind each answer |
+|---|---|
+| ![The topics page](docs/topics.jpg) | ![A quiz with one right and one wrong answer](docs/quiz.jpg) |
 
 ## Why it is built this way
 
@@ -97,7 +118,8 @@ modes change how the reply is written, and none of them relax the grounding rule
   short answer, five marks for a short topic and ten when the book's section runs long. Choices and
   blanks are marked on the page (a typo in a blank still counts), a written answer is compared with
   the model answer, and the score ends with the sections to review. A question that doesn't hold
-  up, say a multiple choice whose answer isn't among its options, is dropped before it's shown.
+  up, say a multiple choice whose answer isn't among its options, is dropped before it's shown, and
+  the model writes one spare of each kind so a dropped question doesn't leave the quiz short.
 - *Socratic* never hands the answer over. It gives one cited hint and a question, reads the reply,
   says what was right and what is missing, and asks the next question.
 
@@ -112,6 +134,8 @@ reaches the LLM. Anything above it goes to the model, which refuses on its own w
 don't answer the question. Both layers earn their place in the numbers below.
 
 ## What the numbers say
+
+![The How it's measured page](docs/measured.jpg)
 
 Measured on 39 placement-style questions written the way an interviewer asks them, each with
 verbatim quotes from the books as the answer key, plus 10 questions the books don't cover.
@@ -232,7 +256,9 @@ same count under every answer and can highlight the weak sentences in place.
 | Book | Authors | Subjects | Licence |
 |---|---|---|---|
 | Algorithms | Jeff Erickson | DSA | CC BY 4.0 |
-| Hash Tables, Disjoint Sets, Amortized Analysis (lecture notes) | Jeff Erickson | DSA | CC BY 4.0 |
+| Hash Tables (lecture notes) | Jeff Erickson | DSA | CC BY 4.0 |
+| Disjoint Sets (lecture notes) | Jeff Erickson | DSA | CC BY 4.0 |
+| Amortized Analysis (lecture notes) | Jeff Erickson | DSA | CC BY 4.0 |
 | Open Data Structures | Pat Morin | DSA, DBMS | CC BY 2.5 |
 | Competitive Programmer's Handbook | Antti Laaksonen | DSA | CC BY-NC-SA 4.0 |
 | Operating Systems and Middleware | Max Hailperin | OS, DBMS | CC BY-SA 3.0 |
@@ -288,7 +314,7 @@ wait on them.
 ```bash
 python deploy/make_space.py           # the app, the built index and the Space settings, in build/space
 hf auth login
-hf upload USER/SPACE build/space . --repo-type space --delete "*"
+hf upload kruthikha/Anchor_Learning build/space . --repo-type space --delete "*"
 ```
 
 Then add the Groq key as a secret named `GROQ_API_KEY` under the Space's Settings, Variables and
@@ -305,6 +331,7 @@ eval/         test questions, the four measurement scripts, and their results
 tests/        unit and endpoint tests, none of which call the API
 data/         corpus.json lists every book; PDFs and the index are built, not committed
 deploy/       the Hugging Face Space's entry point, pinned requirements and settings
+docs/         the screenshots in this README
 ```
 
 ## AI tools used

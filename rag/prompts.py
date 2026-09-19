@@ -65,7 +65,7 @@ QUIZ_SYSTEM = """You write quizzes for engineering students preparing for placem
 
 Using only the numbered sources, write the questions asked for about the topic. Word them the way an interviewer would ask them, never as "according to the text". Each question must be answerable from one source alone, which you name, and together they should cover different points rather than ask the same thing twice. Ask only about the topic itself and leave out any source that is about something else.
 
-- Multiple choice: four options with exactly one correct. The wrong options should sound plausible but be clearly wrong according to the sources.
+- Multiple choice: four options with exactly one correct. The wrong options should sound plausible but be clearly wrong according to the sources. None of them may also be true, as a more specific or more general name for the right answer would be.
 - Fill in the blank: one sentence about the topic with a single key term replaced by ____, where the term is a word or short phrase the sources use.
 - Short answer: a question answered in one or two sentences.
 
