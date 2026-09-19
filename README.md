@@ -1,19 +1,18 @@
 # Anchor
 
-A study assistant for placement preparation that answers **only** from nine openly licensed
-computer science textbooks, shows the page behind every claim, and says "I couldn't find this in
-the study material" when the books don't cover the question.
+An evidence-grounded AI learning assistant for engineering students preparing for placements. It
+answers **only** from nine openly licensed computer science textbooks, shows the page behind every
+claim, and says "I couldn't find this in the study material" when the books don't cover the question.
 
-Built for the Lunorsoft AI Developer assignment, Option 1 (RAG).
+Originally built for the Lunorsoft AI Developer assignment (Option 1, RAG).
 
 **Live demo:** [huggingface.co/spaces/kruthikha/Anchor_Learning](https://huggingface.co/spaces/kruthikha/Anchor_Learning),
 or full screen at [kruthikha-anchor-learning.hf.space](https://kruthikha-anchor-learning.hf.space). It runs
 on free hardware, so the first visit after a quiet spell can take a minute or two to wake it up.
 
-- **Ask**: grounded answers that stream in, with clickable citations that open the exact passage,
-  four study modes including a marked quiz, three other ways in when an answer doesn't land, and
-  practice questions you grade yourself. Select text in any passage to highlight it in your own
-  colour or add a note.
+- **Ask**: answers that stream in with clickable citations to the exact passage, four study modes
+  including a marked quiz, practice questions, and other explanations when you're still confused.
+  Select text in any passage to highlight it in your own colour or add a note.
 - **Topics**: every chapter and section of the books, as their own tables of contents list them,
   filtered by subject. Open one to read it straight from the book, then ask about it, practise it or
   take a quiz on it. The search box finds passages without calling an LLM at all.
@@ -25,16 +24,15 @@ on free hardware, so the first visit after a quiet spell can take a minute or tw
 
 ![An answer with its first source open beside it](docs/answer.jpg)
 
-Things to try, each of which shows a different part of the pipeline:
+### Try it
 
-- *What conditions must hold for a deadlock to occur?* A cited answer. Click a number to open the
-  passage it came from.
-- *what is DSA* It asks which one you mean, because the books use DSA for two different things.
-- *mutation* The books don't cover it, so instead of an answer it offers the similar-looking topics
-  they do cover.
-- *how do I bake sourdough bread* Refused before the answering model is ever called.
-- Topics → Operating Systems → Synchronization and Deadlocks → Deadlock, then *Quiz me*: a ten-mark
-  quiz on that section.
+1. Ask *What conditions must hold for a deadlock to occur?* and click a citation number to open the
+   passage it came from.
+2. Ask *What is DSA?* It asks which one you mean, because the books use DSA for two different things.
+3. Ask *mutation*. The books don't cover it, so it offers the similar-looking topics they do cover.
+4. Ask *How do I bake sourdough bread?* It's refused before the answering model is ever called.
+5. Open Topics → Operating Systems → Synchronization and Deadlocks → Deadlock, then *Quiz me* for a
+   ten-mark quiz on that section.
 
 | Every chapter and section, by subject | A marked quiz, with the reason behind each answer |
 |---|---|
@@ -306,21 +304,9 @@ with a stand-in answering for the models. The endpoint tests need the index buil
 python -m unittest discover tests
 ```
 
-On a Hugging Face Space: a free account can only run a Gradio Space on ZeroGPU hardware now, since
-Docker Spaces and CPU hardware are paid. ZeroGPU stops a Space that hasn't registered a `@spaces.GPU`
-function by start-up, so `deploy/serve.py` registers one that is never called, sends that report
-through an empty Gradio app on a side port, keeps the models on the CPU and serves the FastAPI app on
-port 7860 as usual. The app never touches the GPU, so it uses none of the GPU quota. The two models
-are downloaded while the Space builds, so a cold start doesn't wait on them.
-
-```bash
-python deploy/make_space.py           # the app, the built index and the Space settings, in build/space
-hf auth login
-hf upload kruthikha/Anchor_Learning build/space . --repo-type space --delete "*"
-```
-
-Then add the Groq key as a secret named `GROQ_API_KEY` under the Space's Settings, Variables and
-secrets.
+**Deployment:** the demo runs as the same FastAPI service on a free Hugging Face Space, with the
+models kept on the CPU. [docs/deployment.md](docs/deployment.md) has the steps and the free-tier
+details.
 
 ## Layout
 
@@ -333,17 +319,16 @@ eval/         test questions, the four measurement scripts, and their results
 tests/        unit and endpoint tests, none of which call the API
 data/         corpus.json lists every book; PDFs and the index are built, not committed
 deploy/       the Hugging Face Space's entry point, pinned requirements and settings
-docs/         the screenshots in this README
+docs/         screenshots and deployment notes
 ```
 
 ## AI tools used
 
-The brief allows AI tools provided their use is disclosed, so: this project was built with Claude
-Code (Anthropic) as a pair programmer. I chose the problem, the corpus and the evaluation design,
-decided every tradeoff recorded above, hand-checked the test questions against the books, and ran
-and reviewed everything in this repository. Claude Code wrote much of the implementation to that
-direction, and found two of the bugs listed above while I was testing. The web front end was built
-with its help, from a design direction and feature list I set.
+The brief allows AI tools as long as they're disclosed. Claude Code (Anthropic) was my development
+assistant throughout: it wrote much of the code for both the RAG pipeline and the web app, to my
+direction. I chose the problem and the corpus, agreed the architecture and the evaluation approach,
+reviewed and tested what was built, found the issues that were fixed along the way, and made the
+final product decisions.
 
 The application itself uses `openai/gpt-oss-120b` through Groq to write answers and pick topic
 suggestions, `openai/gpt-oss-20b` to rewrite follow-up questions and check spelling,
