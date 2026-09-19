@@ -1,4 +1,5 @@
 import json
+import os
 import re
 from dataclasses import asdict
 from functools import lru_cache
@@ -22,6 +23,9 @@ STOPWORDS = frozenset(
 
 
 def device():
+    # the Space sets this to cpu: on ZeroGPU hardware torch reports a GPU that only exists inside @spaces.GPU calls
+    if os.environ.get("ANCHOR_DEVICE"):
+        return os.environ["ANCHOR_DEVICE"]
     if torch.backends.mps.is_available():
         return "mps"
     return "cuda" if torch.cuda.is_available() else "cpu"

@@ -1,8 +1,7 @@
-# What the Space installs before Gradio, pinned to the versions the app was built and tested with.
+# What the Space installs before Gradio, pinned to the versions the app was built and tested with,
+# except torch: ZeroGPU hardware, the only kind a free account gets now, needs torch 2.8 or later.
 # PyMuPDF is left out because the Space never reads the PDFs, only the index built from them.
-# CPU-only torch: the default Linux wheel brings ~2.5 GB of CUDA libraries a CPU Space can't use.
---extra-index-url https://download.pytorch.org/whl/cpu
-torch==2.7.1
+torch==2.8.0
 sentence-transformers==6.0.1
 transformers==5.17.0
 tokenizers==0.23.2
@@ -19,3 +18,4 @@ fastapi==0.136.3
 starlette==1.2.1
 pydantic==2.11.5
 uvicorn[standard]==0.49.0
+spaces

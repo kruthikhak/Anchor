@@ -306,10 +306,12 @@ with a stand-in answering for the models. The endpoint tests need the index buil
 python -m unittest discover tests
 ```
 
-On a Hugging Face Space: Docker Spaces are paid now, so the demo uses a free Gradio Space (2 vCPUs,
-16 GB), which only runs a Python file. `deploy/serve.py` starts the FastAPI app from it and Gradio
-itself goes unused. The two models are downloaded while the Space builds, so a cold start doesn't
-wait on them.
+On a Hugging Face Space: a free account can only run a Gradio Space on ZeroGPU hardware now, since
+Docker Spaces and CPU hardware are paid. ZeroGPU stops a Space that hasn't registered a `@spaces.GPU`
+function by start-up, so `deploy/serve.py` registers one that is never called, sends that report
+through an empty Gradio app on a side port, keeps the models on the CPU and serves the FastAPI app on
+port 7860 as usual. The app never touches the GPU, so it uses none of the GPU quota. The two models
+are downloaded while the Space builds, so a cold start doesn't wait on them.
 
 ```bash
 python deploy/make_space.py           # the app, the built index and the Space settings, in build/space

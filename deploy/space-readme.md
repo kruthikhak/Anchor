@@ -5,7 +5,7 @@ colorFrom: blue
 colorTo: gray
 sdk: gradio
 sdk_version: 6.28.0
-python_version: "3.13"
+python_version: "3.12.12"
 app_file: serve.py
 short_description: A domain-grounded AI learning assistant that uses RAG
 pinned: false
